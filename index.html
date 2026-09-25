@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=4">
+<link rel="stylesheet" href="css/style.css?v=5">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -24,8 +24,9 @@
   </nav>
   <div class="switches">
     <div class="seg" id="verSwitch">
-      <button data-v="touch" data-i18n="v.touch"></button><button data-v="ink" data-i18n="v.ink"></button><button data-v="original" data-i18n="v.original"></button>
+      <button data-v="r2" data-i18n="v.r2"></button><button data-v="original" data-i18n="v.original"></button>
     </div>
+    <div class="seg only-r2" id="dispTop"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div>
     <div class="seg" id="langSwitch"><button data-lang="uk">UK</button><button data-lang="en">EN</button></div>
   </div>
 </header>
@@ -37,8 +38,7 @@
     <p data-i18n="hero.sub"></p>
     <p class="hero-intro" data-i18n="hero.intro"></p>
     <div class="hero-btns">
-      <button class="btn" data-v="touch" data-i18n="v.touch"></button>
-      <button class="btn" data-v="ink" data-i18n="v.ink"></button>
+      <button class="btn" data-v="r2" data-i18n="v.r2"></button>
       <button class="btn" data-v="original" data-i18n="v.original"></button>
     </div>
     <small class="hint" data-i18n="hero.hint"></small>
@@ -64,8 +64,7 @@
 </section>
 
 <section id="build" class="sec">
-  <h2 data-i18n="build.title"></h2>
-  <p class="lead" data-i18n="build.lead"></p>
+  <div class="sec-head"><div><h2 data-i18n="build.title"></h2><p class="lead" data-i18n="build.lead"></p></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
   <div class="build">
     <div class="build-view">
       <canvas id="buildCanvas"></canvas>
@@ -76,8 +75,7 @@
 </section>
 
 <section id="parts" class="sec">
-  <h2 data-i18n="parts.title"></h2>
-  <p class="lead" data-i18n="parts.lead"></p>
+  <div class="sec-head"><div><h2 data-i18n="parts.title"></h2><p class="lead" data-i18n="parts.lead"></p></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
   <div class="two">
     <div class="parts-view"><canvas id="partsCanvas"></canvas></div>
     <div>
@@ -88,7 +86,7 @@
 </section>
 
 <section id="wiring" class="sec">
-  <h2 data-i18n="wiring.title"></h2>
+  <div class="sec-head"><div><h2 data-i18n="wiring.title"></h2></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
   <p class="note" id="pinNote" data-i18n="wiring.approx"></p>
   <div class="scroll-x"><table class="tbl" id="pinTbl"></table></div>
   <div class="imgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
@@ -137,6 +135,6 @@
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=6"></script>
+<script type="module" src="js/main.js?v=7"></script>
 </body>
 </html>

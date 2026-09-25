@@ -1,5 +1,5 @@
 // Дані трьох версій (тексти двомовні: {uk, en})
-export const VERSIONS = ['touch', 'ink', 'original'];
+export const VERSIONS = ['r2', 'original'];
 
 export const STEPS = {
   chassis: { uk: ['Шасі', 'Внутрішня рамка з латунного дроту 20 AWG — скелет, до якого кріпиться все інше.'], en: ['Chassis', 'Inner frame of 20 AWG brass wire — the skeleton everything else attaches to.'] },

@@ -7,8 +7,6 @@
  "nav.versions": "Versions",
  "nav.gallery": "Gallery",
  "v.original": "Prototype (Bhoite)",
- "v.touch": "Lander R2 Touch",
- "v.ink": "Lander R2 Ink",
  "hero.title": "Lander R2",
  "hero.sub": "A desk companion lander. Brass wire, a live screen, an RGB beacon on the antenna — and a widget platform written by Claude Code.",
  "hero.hint": "Drag to rotate",
@@ -57,5 +55,9 @@
  "screen.screens": "Screens",
  "screen.scenarios": "Scenarios",
  "screen.play": "▶ Run",
- "screen.playing": "● running"
+ "screen.playing": "● running",
+ "v.r2": "Lander R2",
+ "col.touch": "Lander R2 · AMOLED",
+ "col.ink": "Lander R2 · E-ink",
+ "col.original": "Prototype (Bhoite)"
 }

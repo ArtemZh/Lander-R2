@@ -167,3 +167,6 @@ a.btn { text-decoration: none; display: inline-block; }
   .scen { grid-template-columns: 1fr; }
   .scen-left { position: static; }
 }
+
+.hidden { display: none !important; }
+.sec-head .seg { flex: none; }
