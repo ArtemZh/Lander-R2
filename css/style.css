@@ -67,7 +67,6 @@ button { font: inherit; cursor: pointer; }
 .emu { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
 #screenCanvas { width: 340px; max-width: 100%; image-rendering: pixelated; border: 10px solid #222; border-radius: 6px; touch-action: pan-y; background: #000; }
 #screenCanvas.ink { width: 244px; border-color: #ccc; image-rendering: pixelated; }
-#screenCanvas.flash { filter: invert(1); }
 .emu-side { flex: 1; min-width: 200px; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }

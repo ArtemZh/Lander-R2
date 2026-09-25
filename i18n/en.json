@@ -6,7 +6,7 @@
   "parts.title": "Parts", "parts.lead": "Hover a row or click the model — the part lights up.", "parts.part": "Part", "parts.qty": "Qty",
   "diff.title": "What’s different in this version",
   "wiring.title": "Pins", "wiring.module": "Module", "wiring.pin": "Module pin", "wiring.board": "Board pin", "wiring.approx": "Approximate — this version’s wiring is not verified on hardware.", "wiring.nc": "not connected",
-  "screen.title": "Screen emulator", "screen.lead": "Real time, weather from Open-Meteo (Kyiv), moon phase by formula.", "screen.touch": "Swipe the screen — second page with settings.", "screen.ink": "E-ink refreshes every 10 minutes or on button press.", "screen.refresh": "Refresh", "screen.live": "weather: live", "screen.static": "weather: static data",
+  "screen.title": "Screen emulator", "screen.lead": "Everything is drawn in code: real time, weather from Open-Meteo (Kyiv), moon phase by formula.", "screen.touch": "Swipe between pages (weather, settings). Tap gauges, city, time. Drag the brightness slider.", "screen.ink": "E-ink: black on white. Partial refresh of the clock every minute; full refresh on button or every 10 min.", "screen.refresh": "Refresh", "screen.live": "weather: live", "screen.static": "weather: static data",
   "fw.title": "Firmware", "fw.lead": "Description only — no firmware code on this page.",
   "fw.p1": "The screen is drawn with Adafruit GFX + Adafruit ST7735/ST7789. The background is a static 170×320 BMP read from the display board’s SD card; only changing data is drawn on top.",
   "fw.p2": "Weather and moon phase reach the Photon 2 through Particle Webhooks: the Particle cloud calls OpenWeather and a moon API and returns a short response that a simple parser picks apart.",

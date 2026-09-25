@@ -1,6 +1,6 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildLander, Viewer, STEP_IDS } from './lander-model.js?v=3';
-import { Screen, loadBmp, loadWeather, weather } from './screen.js?v=5';
+import { Screen, loadWeather, weather } from './screen.js?v=7';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=3';
 
 const $ = s => document.querySelector(s);
@@ -13,8 +13,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 // --- Екран-емулятор (спільний канвас: і сторінка, і текстура 3D) ---
 const screenCanvas = $('#screenCanvas');
-const screen = new Screen(screenCanvas, null);
-loadBmp('img/background04.bmp').then(bg => { screen.bg = bg; screen.draw(); }).catch(e => console.warn('BMP', e));
+const screen = new Screen(screenCanvas); window.landerScreen = screen;
 
 // --- 3D ---
 let highlight = null;
@@ -37,12 +36,10 @@ viewers.forEach(v => vio.observe(v.canvas));
 function rebuildModels() {
   for (const v of viewers) v.setModel(buildLander(state.version, screenCanvas));
 }
-setInterval(() => {
-  if (state.version !== 'ink') screen.draw();
-  for (const v of viewers) { const tx = v.model?.userData.screenTex; if (tx) tx.needsUpdate = true; }
-}, 1000);
-// e-ink: автоматичне оновлення раз на 10 хв
-setInterval(() => { if (state.version === 'ink') inkRefresh(); }, 600000);
+// кожен кадр емулятора — оновити текстуру екрана на 3D-моделях
+screen.onDraw = () => { for (const v of viewers) { const tx = v.model?.userData.screenTex; if (tx) tx.needsUpdate = true; } };
+// e-ink: повне оновлення раз на 10 хв
+setInterval(() => { if (state.version === 'ink') screen.fullRefresh(); }, 600000);
 
 // --- Збірка по кроках ---
 function stepText(id) {
@@ -99,16 +96,7 @@ function renderScreenSide() {
   $('#wxState').textContent = T(weather.live ? 'screen.live' : 'screen.static');
   screenCanvas.classList.toggle('ink', state.version === 'ink');
 }
-function inkRefresh() {
-  let n = 0;
-  const tick = () => {
-    screenCanvas.classList.toggle('flash');
-    if (++n < 6) setTimeout(tick, 120);
-    else { screenCanvas.classList.remove('flash'); screen.draw(); viewers.forEach(v => { const tx = v.model?.userData.screenTex; if (tx) tx.needsUpdate = true; }); }
-  };
-  tick();
-}
-$('#inkRefresh').onclick = inkRefresh;
+$('#inkRefresh').onclick = () => screen.fullRefresh();
 
 // --- Галерея + lightbox ---
 $('#grid').innerHTML = GALLERY.map(src => `<img src="${src}" alt="Lander R2" loading="lazy">`).join('');
