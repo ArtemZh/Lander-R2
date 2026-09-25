@@ -66,7 +66,7 @@ button { font: inherit; cursor: pointer; }
 
 .emu { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
 #screenCanvas { width: 340px; max-width: 100%; image-rendering: pixelated; border: 10px solid #222; border-radius: 6px; touch-action: pan-y; background: #000; }
-#screenCanvas.ink { width: 244px; border-color: #ccc; image-rendering: pixelated; }
+#screenCanvas.ink { width: 304px; border-color: #ccc; image-rendering: pixelated; }
 .emu-side { flex: 1; min-width: 200px; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
@@ -88,3 +88,8 @@ button { font: inherit; cursor: pointer; }
   h2 { font-size: 1.3rem; }
   .hero-text { bottom: 20px; right: 16px; }
 }
+.claude-ctl { margin-top: 14px; }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg button { display: inline-flex; align-items: center; gap: 6px; font: inherit; padding: 6px 10px; cursor: pointer; }
+.seg button i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 6px var(--c); }
+.seg button.on { outline: 2px solid var(--c); }

@@ -128,9 +128,15 @@ function led0805(color, hex) {
   const body = box(2, 0.8, 1.25, new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: 2.5, roughness: 0.3 }));
   body.userData.keepEmissive = true; g.add(body);
   for (const sx of [-1, 1]) g.add(at(box(0.5, 0.9, 1.3, solderMat()), sx * 1.05, 0, 0));
-  g.add(glow(color, 9));
+  const gl = glow(color, 9); g.add(gl);
   const pl = new THREE.PointLight(hex, 25, 45, 2); g.add(pl);
+  g.userData.led = { body, glow: gl, light: pl };
   return g;
+}
+// Колір RGB LED на антені (стан Claude Code)
+export function setLedColor(root, hex) {
+  const l = root?.userData.led; if (!l) return;
+  l.body.material.color.set(hex); l.body.material.emissive.set(hex); l.glow.material.color.set(hex); l.light.color.set(hex);
 }
 // Резистор 220 Ω з кольоровими смужками
 function resistor() {
@@ -164,7 +170,7 @@ function controllerBoard(version) {
     for (const [x, y, w, h] of [[-7, -4, 3, 3], [6, -3, 2.5, 4], [7, 14, 2, 2], [-8, 14, 2.2, 2.2], [3, -8, 1.5, 3]])
       g.add(at(box(w, h, 0.9, plastic(0x2a2a2a, 0.4)), x, y, 1.25));
     // зелений LED D0 (0805)
-    const gl = led0805('rgba(60,255,90,0.9)', 0x33ff55); gl.position.set(8.5, -9, 1.3); gl.children[3].intensity = 6; g.add(gl);
+    const gl = led0805('rgba(60,255,90,0.9)', 0x33ff55); gl.position.set(8.5, -9, 1.3); gl.userData.led.light.intensity = 6; g.add(gl);
   } else {
     const isS3 = version === 'touch';
     g.add(pcb(W, H, 0x101010, [[isS3 ? 'ESP32-S3' : 'ESP32-C6', 11, 2.4, true], ['Feather', 14.5, 1.8], [isS3 ? '8MB PSRAM' : 'Wi-Fi 6 / BLE', 40, 1.2]], { pitch: 2.54, left: 12, right: 16, margin: 1.4, yOff: -3 }));
@@ -176,7 +182,7 @@ function controllerBoard(version) {
     g.add(at(box(6, 4.5, 3.5, plastic(0xf5f2e8, 0.6)), -6, -H / 2 + 2.5, 2.8));
     g.add(at(box(4, 4, 1, plastic(0x2a2a2a, 0.4)), 7, -6, 1.3));
     g.add(at(box(2.2, 2.2, 1.6, plastic(0xf8f8f8, 0.3)), -7, -8, 1.6)); // NeoPixel
-    const gl = led0805('rgba(60,255,90,0.9)', 0x33ff55); gl.position.set(8.5, -12, 1.3); gl.children[3].intensity = 6; g.add(gl);
+    const gl = led0805('rgba(60,255,90,0.9)', 0x33ff55); gl.position.set(8.5, -12, 1.3); gl.userData.led.light.intensity = 6; g.add(gl);
   }
   return g;
 }
@@ -186,23 +192,23 @@ function displayModule(version, screenTex) {
   const g = new THREE.Group();
   if (version === 'ink') {
     // E-ink 2.13": скляна панель з білою рамкою, жовтий шлейф, чорна плата-драйвер за нею
-    g.add(pcb(32, 52, 0x101010, [['E-INK 2.13" 122x250', 48, 1.5, true], ['SSD1680', 50.5, 1.2]], { pitch: 2.54, left: 0, right: 0 }));
-    const panel = box(30, 49, 0.9, plastic(0xe9e9e4, 0.35)); panel.position.z = 1.3; g.add(panel);
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(22.5, 46), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0xdddddd }));
-    scr.position.set(0, 0.5, 1.8); scr.userData.isScreen = true; g.add(scr);
-    const flex = box(14, 6, 0.25, plastic(0xe6b422, 0.5)); flex.position.set(0, -25, 0.5); flex.rotation.x = 0.35; g.add(flex);
-    g.add(at(box(20, 2.5, 3, plastic(0xf2f2ec, 0.6)), 0, -24.5, -2.2)); // FPC-конектор ззаду
+    g.add(pcb(30, 56, 0x101010, [['E-INK 2.66" 152x296', 53, 1.4, true], ['SSD1680', 55.3, 1.1]], { pitch: 2.54, left: 0, right: 0 }));
+    const panel = box(30, 59, 0.9, plastic(0xe9e9e4, 0.35)); panel.position.set(0, 1, 1.3); g.add(panel);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(28, 54.5), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0xdddddd }));
+    scr.position.set(0, 1.5, 1.8); scr.userData.isScreen = true; g.add(scr);
+    const flex = box(16, 6, 0.25, plastic(0xe6b422, 0.5)); flex.position.set(0, -28, 0.5); flex.rotation.x = 0.35; g.add(flex);
+    g.add(at(box(20, 2.5, 3, plastic(0xf2f2ec, 0.6)), 0, -27.5, -2.2)); // FPC-конектор ззаду
   } else {
     const isTouch = version === 'touch';
     g.add(pcb(32, 52, isTouch ? 0x0e0e0e : 0x0a1e3c,
-      isTouch ? [['AMOLED 1.9" touch', 49.5, 1.4, true]] : [['adafruit', 3, 2, true], ['1.9" 320x170 IPS TFT', 49, 1.3], ['ST7789', 51, 1.1]],
+      isTouch ? [['AMOLED 1.91" 240x536', 49.5, 1.3, true], ['RM67162 · FT3168 touch', 51.3, 0.9]] : [['adafruit', 3, 2, true], ['1.9" 320x170 IPS TFT', 49, 1.3], ['ST7789', 51, 1.1]],
       { pitch: 2.54, left: 0, right: 0 }));
     // піни знизу
     g.add(pinRow(11, 0, -28, 0));
     // скляна панель
     const glass = box(27, 48, 1.2, new THREE.MeshPhysicalMaterial({ color: 0x050608, roughness: 0.15, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 }));
     glass.position.set(0, 1, 1.4); g.add(glass);
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(24, 45), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0x000000 }));
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(isTouch ? 22 : 24, isTouch ? 49 : 45), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0x000000 }));
     scr.position.set(0, 1, 2.05); scr.userData.isScreen = true; g.add(scr);
     if (isTouch) { const cover = new THREE.Mesh(new THREE.PlaneGeometry(27, 48), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.95, roughness: 0.05, thickness: 0.3, transparent: true, opacity: 0.35 })); cover.position.set(0, 1, 2.1); g.add(cover); }
     // шлейф FPC зверху, заходить за плату
@@ -284,31 +290,44 @@ export function buildLander(version, screenCanvas) {
     audio.add(wire([[15, BODY_Y + 20, 2], [18, BODY_Y + 20, 2]], false, 0.3));
     audio.add(wire([[15, BODY_Y + 24, 2], [18, BODY_Y + 24, 2]], false, 0.3));
   } else if (version === 'touch') {
+    // праворуч: мініспікер 15 мм + MAX98357A; ліворуч: стовпчик сенсорних плат — PDM мік, IMU, BME280, VEML7700
     const sp = new THREE.Group();
-    sp.add(box(15, 11, 3.5, plastic(0x141414, 0.5)));
-    for (let i = -5; i <= 5; i += 2) sp.add(at(box(0.6, 8, 0.3, plastic(0x000000)), i, 0, 1.9));
-    sp.add(at(box(4, 3, 1, plastic(0xf5f2e8)), 0, -7, 0));
-    sp.rotation.y = Math.PI / 2; sp.position.set(18.5, BODY_Y + 22, 2);
-    audio.add(sp);
-    for (const yy of [-3, 3]) audio.add(wire([[15, BODY_Y + 22 + yy, 2], [17, BODY_Y + 22 + yy, 2]], false, 0.3));
+    sp.add(cyl(7.5, 3.5, plastic(0x141414, 0.5), 32));
+    for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2, rr = 3 + (i % 2) * 2; sp.add(at(cyl(0.35, 0.3, plastic(0x000000), 6), Math.cos(a) * rr, 1.8, Math.sin(a) * rr)); }
+    sp.add(at(cyl(3, 0.4, plastic(0x2a2a2a), 24), 0, 1.9, 0));
+    sp.rotation.z = Math.PI / 2; sp.position.set(20, BODY_Y + 26, 2); audio.add(sp);
+    const amp = pcb(10, 12, 0x1f4fb0, [['MAX', 5, 1.5, true], ['98357', 8, 1.5, true]], { pitch: 2.54, left: 0, right: 4, margin: 1.2 });
+    amp.rotation.y = Math.PI / 2; amp.position.set(17.5, BODY_Y + 10, 2); audio.add(amp);
+    for (const yy of [BODY_Y + 8, BODY_Y + 12, BODY_Y + 24, BODY_Y + 28]) { audio.add(wire([[15, yy, 2], [17.5, yy, 2]], false, 0.3)); audio.add(joint([15, yy, 2], 0.55)); }
+    const mods = [['PDM MIC', 0x1f4fb0], ['LSM6DSOX', 0x1f4fb0], ['BME280', 0x6b1fb0], ['VEML7700', 0x1f4fb0]];
+    mods.forEach(([name, col], i) => {
+      const m = new THREE.Group();
+      m.add(pcb(12, 10, col, [[name, 4, 1.35, true]], { pitch: 2.54, left: 0, right: 0 }));
+      m.add(at(box(2.5, 2.5, 1, metal(0xa8acb0, 0.3)), 0, -2.5, 1.3));
+      m.rotation.y = -0.15; m.position.set(-23, BODY_Y + 8 + i * 13, 4);
+      audio.add(m);
+      audio.add(wire([[-15, BODY_Y + 8 + i * 13, 4], [-19.5, BODY_Y + 8 + i * 13, 4]], false, 0.3)); audio.add(joint([-15, BODY_Y + 8 + i * 13, 4], 0.55));
+    });
   }
 
   // 6. Рюкзак-клітка + батарея 14250 (горизонтально) + вимикач
   const pack = add('pack', [0, 0, -70]);
   {
-    const pz = -BODY_D / 2 - 10;
-    const c = cage(29, 17, 17, BODY_Y + 19); c.position.z = pz; pack.add(c);
-    for (const sx of [-1, 1]) for (const yy of [BODY_Y + 19, BODY_Y + 36]) pack.add(wire([[sx * 14.5, yy, -BODY_D / 2], [sx * 14.5, yy, pz - 8.5]]));
+    // original/ink — 14250 (Ø14×25); touch — 16340 (Ø16×34, 800 мАг), клітка ширша
+    const big = version === 'touch', br = big ? 8 : 7, bl = big ? 34 : 24;
+    const pz = -BODY_D / 2 - (big ? 11 : 10);
+    const c = cage(bl + 5, br * 2 + 3, br * 2 + 3, BODY_Y + 27.5 - br - 1.5); c.position.z = pz; pack.add(c);
+    for (const sx of [-1, 1]) for (const yy of [BODY_Y + 27.5 - br - 1.5, BODY_Y + 27.5 + br + 1.5]) pack.add(wire([[sx * Math.min(14.5, (bl + 5) / 2), yy, -BODY_D / 2], [sx * (bl + 5) / 2, yy, pz - br - 1.5]]));
     const bat = new THREE.Group();
     const shellM = metal(0xd6d8da, 0.25);
-    bat.add(cyl(7, 24, shellM, 40));
-    bat.add(at(cyl(2.8, 1.2, metal(0xe8e8e8, 0.3), 24), 0, 12.5, 0)); // плюсовий полюс
-    const label = cyl(7.05, 16, plastic(0x2b6cb0, 0.5), 40); bat.add(label);
-    bat.add(at(cyl(7.06, 1.2, plastic(0xffffff, 0.5), 40), 0, 5, 0));
+    bat.add(cyl(br, bl, shellM, 40));
+    bat.add(at(cyl(br * 0.4, 1.2, metal(0xe8e8e8, 0.3), 24), 0, bl / 2 + 0.5, 0)); // плюсовий полюс
+    const label = cyl(br + 0.05, bl * 0.66, plastic(big ? 0x1f8f5a : 0x2b6cb0, 0.5), 40); bat.add(label);
+    bat.add(at(cyl(br + 0.06, 1.2, plastic(0xffffff, 0.5), 40), 0, bl * 0.2, 0));
     bat.rotation.z = Math.PI / 2; bat.position.set(0, BODY_Y + 27.5, pz);
     pack.add(bat);
-    pack.add(at(box(6, 1.5, 2, solderMat()), 13, BODY_Y + 27.5, pz)); // контакти
-    pack.add(at(box(6, 1.5, 2, solderMat()), -13, BODY_Y + 27.5, pz));
+    pack.add(at(box(6, 1.5, 2, solderMat()), bl / 2 + 1, BODY_Y + 27.5, pz)); // контакти
+    pack.add(at(box(6, 1.5, 2, solderMat()), -bl / 2 - 1, BODY_Y + 27.5, pz));
     // вимикач SPDT знизу
     const sw = new THREE.Group();
     sw.add(box(8.5, 3.6, 3.6, plastic(0x1a1a1a, 0.45)));
@@ -326,12 +345,16 @@ export function buildLander(version, screenCanvas) {
     const ax = -8, az = -8;
     antenna.add(wire([[ax, top - 1, az], [ax, top + 58, az]]));
     antenna.add(joint([ax, top, az]));
-    const r = resistor(); r.position.set(ax + 2.2, top + 10, az); antenna.add(r);
-    antenna.add(wire([[ax, top + 5, az], [ax + 2.2, top + 5, az]], false, 0.25));
-    antenna.add(wire([[ax, top + 15, az], [ax + 2.2, top + 15, az]], false, 0.25));
-    const led = led0805('rgba(255,70,40,0.95)', 0xff2a1a);
-    led.position.set(ax, top + 59, az); led.children[3].intensity = 40; led.children[2].scale.set(14, 14, 1);
+    // три резистори 220 Ω (R, G, B) віялом біля основи
+    [[2.2, 0], [1.6, 1.6], [0, 2.2]].forEach(([dx, dz], i) => {
+      const r = resistor(); r.position.set(ax + dx, top + 10 + i * 6, az + dz); antenna.add(r);
+      antenna.add(wire([[ax, top + 5 + i * 6, az], [ax + dx, top + 5 + i * 6, az + dz]], false, 0.25));
+      antenna.add(wire([[ax, top + 15 + i * 6, az], [ax + dx, top + 15 + i * 6, az + dz]], false, 0.25));
+    });
+    const led = led0805('rgba(60,255,90,0.95)', 0x22c55e);
+    led.position.set(ax, top + 59, az); led.userData.led.light.intensity = 40; led.userData.led.glow.scale.set(14, 14, 1);
     antenna.add(led);
+    root.userData.led = led.userData.led;
   }
 
   // 8. Чотири ноги: драбина з двох стійок + поперечки + трикутний розкос

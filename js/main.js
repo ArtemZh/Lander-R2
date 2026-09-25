@@ -1,6 +1,6 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildLander, Viewer, STEP_IDS } from './lander-model.js?v=3';
-import { Screen, loadWeather, weather } from './screen.js?v=7';
+import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=4';
+import { Screen, loadWeather, weather, claude, STATE_COLORS } from './screen.js?v=9';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=3';
 
 const $ = s => document.querySelector(s);
@@ -37,7 +37,11 @@ function rebuildModels() {
   for (const v of viewers) v.setModel(buildLander(state.version, screenCanvas));
 }
 // кожен кадр емулятора — оновити текстуру екрана на 3D-моделях
-screen.onDraw = () => { for (const v of viewers) { const tx = v.model?.userData.screenTex; if (tx) tx.needsUpdate = true; } };
+screen.onDraw = () => {
+  for (const v of viewers) { const tx = v.model?.userData.screenTex; if (tx) tx.needsUpdate = true; if (v.model) setLedColor(v.model, STATE_COLORS[claude.state]); }
+  document.querySelectorAll('#claudeState button').forEach(b => b.classList.toggle('on', b.dataset.state === claude.state));
+};
+document.querySelectorAll('#claudeState button').forEach(b => b.onclick = () => screen.setClaude(b.dataset.state));
 // e-ink: повне оновлення раз на 10 хв
 setInterval(() => { if (state.version === 'ink') screen.fullRefresh(); }, 600000);
 
