@@ -424,7 +424,7 @@ export class Viewer {
     const sc = document.createElement('canvas'); sc.width = sc.height = 128;
     const sctx = sc.getContext('2d');
     const gr = sctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-    gr.addColorStop(0, 'rgba(0,0,0,0.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    gr.addColorStop(0, 'rgba(18,27,54,0.28)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
     sctx.fillStyle = gr; sctx.fillRect(0, 0, 128, 128);
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(170, 170),
       new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
