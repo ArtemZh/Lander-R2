@@ -1,12 +1,12 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=5';
-import { Screen, loadWeather, weather, claude, STATE_COLORS } from './screen.js?v=10';
+import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=6';
+import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS } from './screen.js?v=14';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=3';
 
 const $ = s => document.querySelector(s);
 const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 
-const state = { lang: store.get('lang') === 'en' ? 'en' : 'uk', version: 'original', step: 1, dict: {} };
+const state = { lang: store.get('lang') === 'en' ? 'en' : 'uk', version: 'touch', step: 1, dict: {}, sel: null };
 const tr = o => (o && typeof o === 'object' ? o[state.lang] : o);
 const T = k => state.dict[k] ?? k;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -36,14 +36,55 @@ viewers.forEach(v => vio.observe(v.canvas));
 function rebuildModels() {
   for (const v of viewers) v.setModel(buildLander(state.version, screenCanvas));
 }
-// кожен кадр емулятора — оновити текстуру екрана на 3D-моделях
-screen.onDraw = () => {
-  for (const v of viewers) { const tx = v.model?.userData.screenTex; if (tx) tx.needsUpdate = true; if (v.model) setLedColor(v.model, STATE_COLORS[claude.state]); }
-  document.querySelectorAll('#claudeState button').forEach(b => b.classList.toggle('on', b.dataset.state === claude.state));
+// Антена з RGB-маяком (2D), синхронна з LED-контролером емулятора
+const ant = $('#antennaCanvas'), actx = ant.getContext('2d');
+function drawAntenna(v, color) {
+  const W = ant.width, H = ant.height; actx.clearRect(0, 0, W, H);
+  actx.strokeStyle = '#c9a227'; actx.lineWidth = 3; actx.lineCap = 'round';
+  actx.beginPath(); actx.moveTo(W / 2, H); actx.lineTo(W / 2, 22); actx.stroke();
+  actx.fillStyle = '#d9d9d9'; actx.beginPath(); actx.arc(W / 2, H - 2, 4, 0, Math.PI * 2); actx.fill();
+  const g = actx.createRadialGradient(W / 2, 18, 0, W / 2, 18, 40 * (0.3 + v));
+  g.addColorStop(0, color); g.addColorStop(0.25, color + 'aa'); g.addColorStop(1, color + '00');
+  actx.globalAlpha = 0.25 + 0.75 * v; actx.fillStyle = g; actx.beginPath(); actx.arc(W / 2, 18, 40, 0, Math.PI * 2); actx.fill(); actx.globalAlpha = 1;
+  actx.fillStyle = '#222'; actx.fillRect(W / 2 - 4, 15, 8, 5);
+  actx.fillStyle = v > 0.1 ? color : '#333'; actx.fillRect(W / 2 - 2.5, 16, 5, 3);
+}
+// кадр емулятора → антена завжди, текстура 3D — 12 разів/с і лише видимим глядачам
+let lastTex = 0;
+screen.onDraw = (v, color) => {
+  drawAntenna(v, color);
+  const tn = performance.now(); if (tn - lastTex < 80) return; lastTex = tn;
+  for (const vw of viewers) { if (!vw.active || !vw.model) continue; const tx = vw.model.userData.screenTex; if (tx) tx.needsUpdate = true; setLedColor(vw.model, color, v); }
 };
-document.querySelectorAll('#claudeState button').forEach(b => b.onclick = () => screen.setClaude(b.dataset.state));
+
+// --- Екрани і сценарії ---
+function renderScreensPanel() {
+  const L = state.lang, d = screen.version[0];
+  $('#screenTiles').innerHTML = SCREENS.filter(x => x[3].includes(d)).map(([id, name]) => `<button class="tile" data-scr="${id}"><span class="tile-ic">▣</span><b>${esc(name[L])}</b></button>`).join('');
+  $('#scenTiles').innerHTML = SCENARIOS.filter(x => x[3].includes(d)).map(([id, name]) => `<button class="tile tile--play" data-scn="${id}"><span class="tile-ic">▶</span><b>${esc(name[L])}</b></button>`).join('');
+  document.querySelectorAll('[data-scr]').forEach(b => b.onclick = () => { screen.stopScenario(true); screen.show(b.dataset.scr); select('scr', b.dataset.scr); });
+  document.querySelectorAll('[data-scn]').forEach(b => b.onclick = () => { screen.run(b.dataset.scn); select('scn', b.dataset.scn); });
+  document.querySelectorAll('#dispSwitch button').forEach(b => b.classList.toggle('on', b.dataset.d === screen.version));
+  updateScrName();
+}
+function select(kind, id) {
+  state.sel = { kind, id };
+  const src = kind === 'scr' ? SCREENS : SCENARIOS, it = src.find(x => x[0] === id); if (!it) return;
+  $('#scrDescTitle').textContent = (kind === 'scn' ? '▶ ' : '') + it[1][state.lang];
+  $('#scrDescText').textContent = it[2][state.lang];
+  document.querySelectorAll('.tile').forEach(t => t.classList.toggle('on', t.dataset.scr === id && kind === 'scr' || t.dataset.scn === id && kind === 'scn'));
+}
+function updateScrName() {
+  const it = SCREENS.find(x => x[0] === screen.screen);
+  $('#scrName').textContent = it ? it[1][state.lang] : screen.screen;
+  if (!state.sel || state.sel.kind === 'scr') { if (it) select('scr', it[0]); }
+}
+screen.onScreen = () => { updateScrName(); if (!screen.scenario && state.sel?.kind === 'scn') { /* сценарій завершено — лишаємо опис */ } };
+$('#prevScr').onclick = () => { screen.stopScenario(true); screen.next(-1); state.sel = null; updateScrName(); };
+$('#nextScr').onclick = () => { screen.stopScenario(true); screen.next(1); state.sel = null; updateScrName(); };
+document.querySelectorAll('#dispSwitch button').forEach(b => b.onclick = () => setVersion(b.dataset.d));
 // e-ink: повне оновлення раз на 10 хв
-setInterval(() => { if (state.version === 'ink') screen.fullRefresh(); }, 600000);
+setInterval(() => { if (screen.version === 'ink') screen.fullRefresh(); }, 600000);
 
 // --- Збірка по кроках ---
 function stepText(id) {
@@ -95,12 +136,10 @@ function renderCompare() {
     `<td class="${VERSIONS[i] === state.version ? 'cur' : ''}">${esc(tr(c))}</td>`).join('')}</tr>`).join('');
 }
 function renderScreenSide() {
-  $('#emuHint').textContent = state.version === 'touch' ? T('screen.touch') : state.version === 'ink' ? T('screen.ink') : '';
-  $('#inkRefresh').hidden = state.version !== 'ink';
   $('#wxState').textContent = T(weather.live ? 'screen.live' : 'screen.static');
-  screenCanvas.classList.toggle('ink', state.version === 'ink');
+  screenCanvas.classList.toggle('ink', screen.version === 'ink');
+  renderScreensPanel();
 }
-$('#inkRefresh').onclick = () => screen.fullRefresh();
 
 // --- Галерея + lightbox ---
 $('#grid').innerHTML = GALLERY.map(src => `<img src="${src}" alt="Lander R2" loading="lazy">`).join('');
@@ -115,16 +154,16 @@ async function setLang(l) {
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
-  screen.lang = l;
-  if (state.version === 'ink') screen.draw();
+  screen.lang = l; screen.draw();
   renderAll();
+  if (state.sel) select(state.sel.kind, state.sel.id);
 }
 function setVersion(v, push = true) {
   if (!VERSIONS.includes(v)) v = 'original';
-  state.version = v; store.set('version', v);
+  state.version = v; store.set('version2', v);
   if (push) history.replaceState(null, '', `#v=${v}`);
   document.querySelectorAll('[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v));
-  screen.setVersion(v);
+  screen.setVersion(v); state.sel = null;
   rebuildModels();
   renderAll();
 }
@@ -135,6 +174,7 @@ document.querySelectorAll('#langSwitch button').forEach(b => b.addEventListener(
 const hashV = () => (location.hash.match(/v=(\w+)/) || [])[1];
 addEventListener('hashchange', () => { const v = hashV(); if (v && v !== state.version) setVersion(v, false); });
 
-setVersion(hashV() || store.get('version') || 'original', !!hashV());
+setVersion(hashV() || store.get('version2') || 'touch', !!hashV());
 await setLang(state.lang);
 loadWeather().then(() => { screen.draw(); renderScreenSide(); });
+loadExtras().then(() => screen.draw());

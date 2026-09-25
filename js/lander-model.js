@@ -134,9 +134,10 @@ function led0805(color, hex) {
   return g;
 }
 // Колір RGB LED на антені (стан Claude Code)
-export function setLedColor(root, hex) {
+export function setLedColor(root, hex, v = 1) {
   const l = root?.userData.led; if (!l) return;
-  l.body.material.color.set(hex); l.body.material.emissive.set(hex); l.glow.material.color.set(hex); l.light.color.set(hex);
+  l.body.material.color.set(hex); l.body.material.emissive.set(hex); l.body.material.emissiveIntensity = 0.3 + 2.5 * v;
+  l.glow.material.color.set(hex); l.glow.material.opacity = 0.15 + 0.85 * v; l.light.color.set(hex); l.light.intensity = 40 * v;
 }
 // Резистор 220 Ω з кольоровими смужками
 function resistor() {

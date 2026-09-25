@@ -110,7 +110,6 @@ export const COMPARE = [
   ['Споживання', 'Power draw', '~80 мА', '~130 мА', { uk: '~15 мкА сон, ~30 мА оновл.', en: '~15 µA sleep, ~30 mA refresh' }],
   ['Від батареї (оцінка)', 'Battery life (est.)', { uk: '~3 год', en: '~3 h' }, { uk: '~6 год', en: '~6 h' }, { uk: '~3–4 тижні', en: '~3–4 weeks' }],
   ['Ввід', 'Input', { uk: 'мікрофон (хлопок)', en: 'microphone (clap)' }, { uk: 'тач, свайп, стук, нахил', en: 'touch, swipe, tap, tilt' }, { uk: 'кнопка', en: 'button' }],
-  ['Ціна деталей (орієнт.)', 'Parts cost (approx.)', '~$55', '~$70', '~$40'],
   ['Плюси', 'Pros', { uk: 'як в оригіналі, яскраво', en: 'faithful, vivid' }, { uk: 'інтерактив, контраст', en: 'interactive, contrast' }, { uk: 'автономність, читабельність', en: 'battery life, readability' }],
   ['Мінуси', 'Cons', { uk: 'мало живе від батареї', en: 'short battery life' }, { uk: 'складніший драйвер', en: 'harder driver' }, { uk: 'повільно, ч/б', en: 'slow, B/W' }],
 ];

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=4">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -20,7 +20,7 @@
   <a class="logo" href="#top">LANDER&nbsp;R2</a>
   <nav class="nav">
     <a href="#build" data-i18n="nav.build"></a><a href="#parts" data-i18n="nav.parts"></a><a href="#wiring" data-i18n="nav.wiring"></a>
-    <a href="#screen" data-i18n="nav.screen"></a><a href="#firmware" data-i18n="nav.firmware"></a><a href="#versions" data-i18n="nav.versions"></a><a href="#gallery" data-i18n="nav.gallery"></a>
+    <a href="#idea" data-i18n="nav.idea"></a><a href="#screens" data-i18n="nav.screen"></a><a href="#firmware" data-i18n="nav.firmware"></a><a href="#versions" data-i18n="nav.versions"></a><a href="#gallery" data-i18n="nav.gallery"></a>
   </nav>
   <div class="switches">
     <div class="seg" id="verSwitch">
@@ -35,12 +35,31 @@
   <div class="hero-text">
     <h1 data-i18n="hero.title"></h1>
     <p data-i18n="hero.sub"></p>
+    <p class="hero-intro" data-i18n="hero.intro"></p>
     <div class="hero-btns">
       <button class="btn" data-v="original" data-i18n="v.original"></button>
       <button class="btn" data-v="touch" data-i18n="v.touch"></button>
       <button class="btn" data-v="ink" data-i18n="v.ink"></button>
     </div>
     <small class="hint" data-i18n="hero.hint"></small>
+  </div>
+</section>
+
+<section id="idea" class="sec idea">
+  <div class="idea-grid">
+    <div>
+      <h2 data-i18n="idea.title"></h2>
+      <p class="lead" data-i18n="idea.lead"></p>
+      <p data-i18n="idea.p1"></p>
+      <p data-i18n="idea.p2"></p>
+      <div class="cta-row"><a class="btn" href="https://github.com/ArtemZh/Lander-R2/issues/new?title=Widget%3A%20" target="_blank" rel="noopener" data-i18n="idea.cta"></a><a class="btn btn--ghost" href="#screens" data-i18n="idea.cta2"></a></div>
+    </div>
+    <ul class="idea-list">
+      <li><b data-i18n="idea.k1"></b><span data-i18n="idea.v1"></span></li>
+      <li><b data-i18n="idea.k2"></b><span data-i18n="idea.v2"></span></li>
+      <li><b data-i18n="idea.k3"></b><span data-i18n="idea.v3"></span></li>
+      <li><b data-i18n="idea.k4"></b><span data-i18n="idea.v4"></span></li>
+    </ul>
   </div>
 </section>
 
@@ -75,23 +94,25 @@
   <div class="imgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
 </section>
 
-<section id="screen" class="sec">
-  <h2 data-i18n="screen.title"></h2>
-  <p class="lead" data-i18n="screen.lead"></p>
-  <div class="emu">
-    <canvas id="screenCanvas" width="170" height="320"></canvas>
-    <div class="emu-side">
-      <p id="emuHint"></p>
-      <button class="btn" id="inkRefresh" data-i18n="screen.refresh" hidden></button>
-      <p class="note" id="wxState"></p>
-      <div class="claude-ctl">
-        <p class="note" data-i18n="screen.claudeLed"></p>
-        <div class="seg" id="claudeState">
-          <button data-state="working"><i style="--c:#22c55e"></i><span data-i18n="screen.stWorking"></span></button>
-          <button data-state="question"><i style="--c:#ef4444"></i><span data-i18n="screen.stQuestion"></span></button>
-          <button data-state="idle"><i style="--c:#f5a623"></i><span data-i18n="screen.stIdle"></span></button>
-        </div>
+<section id="screens" class="sec">
+  <div class="sec-head">
+    <div><h2 data-i18n="screen.title"></h2><p class="lead" data-i18n="screen.lead"></p></div>
+    <div class="seg" id="dispSwitch"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div>
+  </div>
+  <div class="scen">
+    <div class="scen-left">
+      <div class="device">
+        <canvas id="antennaCanvas" width="120" height="150"></canvas>
+        <canvas id="screenCanvas" width="240" height="536"></canvas>
       </div>
+      <div class="scr-nav"><button class="btn btn--ghost" id="prevScr">‹</button><span id="scrName"></span><button class="btn btn--ghost" id="nextScr">›</button></div>
+      <div class="scr-desc" id="scrDesc"><b id="scrDescTitle"></b><p id="scrDescText"></p><p class="note" id="wxState"></p></div>
+    </div>
+    <div class="scen-right">
+      <h3 data-i18n="screen.screens"></h3>
+      <div class="tiles" id="screenTiles"></div>
+      <h3 data-i18n="screen.scenarios"></h3>
+      <div class="tiles" id="scenTiles"></div>
     </div>
   </div>
 </section>
@@ -116,6 +137,6 @@
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=3"></script>
+<script type="module" src="js/main.js?v=5"></script>
 </body>
 </html>
