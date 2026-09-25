@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lander R2 — демо</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="#top">LANDER&nbsp;R2</a>
+  <nav class="nav">
+    <a href="#build" data-i18n="nav.build"></a><a href="#parts" data-i18n="nav.parts"></a><a href="#wiring" data-i18n="nav.wiring"></a>
+    <a href="#screen" data-i18n="nav.screen"></a><a href="#firmware" data-i18n="nav.firmware"></a><a href="#versions" data-i18n="nav.versions"></a><a href="#gallery" data-i18n="nav.gallery"></a>
+  </nav>
+  <div class="switches">
+    <div class="seg" id="verSwitch">
+      <button data-v="original" data-i18n="v.original"></button><button data-v="touch" data-i18n="v.touch"></button><button data-v="ink" data-i18n="v.ink"></button>
+    </div>
+    <div class="seg" id="langSwitch"><button data-lang="uk">UK</button><button data-lang="en">EN</button></div>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-text">
+    <h1 data-i18n="hero.title"></h1>
+    <p data-i18n="hero.sub"></p>
+    <div class="hero-btns">
+      <button class="btn" data-v="original" data-i18n="v.original"></button>
+      <button class="btn" data-v="touch" data-i18n="v.touch"></button>
+      <button class="btn" data-v="ink" data-i18n="v.ink"></button>
+    </div>
+    <small class="hint" data-i18n="hero.hint"></small>
+  </div>
+</section>
+
+<section id="build" class="sec">
+  <h2 data-i18n="build.title"></h2>
+  <p class="lead" data-i18n="build.lead"></p>
+  <div class="build">
+    <div class="build-view">
+      <canvas id="buildCanvas"></canvas>
+      <div class="step-ctrl"><button class="btn" id="prevStep">‹</button><span id="stepNum">1 / 9</span><button class="btn" id="nextStep">›</button></div>
+    </div>
+    <ol class="steps" id="steps"></ol>
+  </div>
+</section>
+
+<section id="parts" class="sec">
+  <h2 data-i18n="parts.title"></h2>
+  <p class="lead" data-i18n="parts.lead"></p>
+  <div class="two">
+    <div class="parts-view"><canvas id="partsCanvas"></canvas></div>
+    <div>
+      <table class="tbl" id="partsTbl"></table>
+      <div class="diff"><h3 data-i18n="diff.title"></h3><ul id="diffList"></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="wiring" class="sec">
+  <h2 data-i18n="wiring.title"></h2>
+  <p class="note" id="pinNote" data-i18n="wiring.approx"></p>
+  <div class="scroll-x"><table class="tbl" id="pinTbl"></table></div>
+  <div class="imgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
+</section>
+
+<section id="screen" class="sec">
+  <h2 data-i18n="screen.title"></h2>
+  <p class="lead" data-i18n="screen.lead"></p>
+  <div class="emu">
+    <canvas id="screenCanvas" width="170" height="320"></canvas>
+    <div class="emu-side">
+      <p id="emuHint"></p>
+      <button class="btn" id="inkRefresh" data-i18n="screen.refresh" hidden></button>
+      <p class="note" id="wxState"></p>
+    </div>
+  </div>
+</section>
+
+<section id="firmware" class="sec">
+  <h2 data-i18n="fw.title"></h2>
+  <p class="lead" data-i18n="fw.lead"></p>
+  <p data-i18n="fw.p1"></p><p data-i18n="fw.p2"></p><p data-i18n="fw.p3"></p>
+  <div class="imgs three"><img src="img/particle-webhooks.png" alt="Particle webhooks" loading="lazy"><img src="img/moon-webhook.png" alt="Moon webhook" loading="lazy"><img src="img/custom-webhook.png" alt="Custom webhook" loading="lazy"></div>
+</section>
+
+<section id="versions" class="sec">
+  <h2 data-i18n="versions.title"></h2>
+  <div class="scroll-x"><table class="tbl cmp" id="cmpTbl"></table></div>
+</section>
+
+<section id="gallery" class="sec">
+  <h2 data-i18n="gallery.title"></h2>
+  <div class="grid" id="grid"></div>
+</section>
+
+<footer class="foot"><p data-i18n="footer.credit"></p></footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

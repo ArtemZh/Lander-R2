@@ -1,0 +1,17 @@
+{
+  "nav.build": "Build", "nav.parts": "Parts", "nav.wiring": "Pins", "nav.screen": "Screen", "nav.firmware": "Firmware", "nav.versions": "Versions", "nav.gallery": "Gallery",
+  "v.original": "Original", "v.touch": "Touch", "v.ink": "E-ink",
+  "hero.title": "Lander R2", "hero.sub": "A brass-wire lander sculpture with a live weather screen. Three versions — pick yours.", "hero.hint": "Drag to rotate",
+  "build.title": "Step-by-step build", "build.lead": "Scroll through the steps — parts fly into place.",
+  "parts.title": "Parts", "parts.lead": "Hover a row or click the model — the part lights up.", "parts.part": "Part", "parts.qty": "Qty",
+  "diff.title": "What’s different in this version",
+  "wiring.title": "Pins", "wiring.module": "Module", "wiring.pin": "Module pin", "wiring.board": "Board pin", "wiring.approx": "Approximate — this version’s wiring is not verified on hardware.", "wiring.nc": "not connected",
+  "screen.title": "Screen emulator", "screen.lead": "Real time, weather from Open-Meteo (Kyiv), moon phase by formula.", "screen.touch": "Swipe the screen — second page with settings.", "screen.ink": "E-ink refreshes every 10 minutes or on button press.", "screen.refresh": "Refresh", "screen.live": "weather: live", "screen.static": "weather: static data",
+  "fw.title": "Firmware", "fw.lead": "Description only — no firmware code on this page.",
+  "fw.p1": "The screen is drawn with Adafruit GFX + Adafruit ST7735/ST7789. The background is a static 170×320 BMP read from the display board’s SD card; only changing data is drawn on top.",
+  "fw.p2": "Weather and moon phase reach the Photon 2 through Particle Webhooks: the Particle cloud calls OpenWeather and a moon API and returns a short response that a simple parser picks apart.",
+  "fw.p3": "Original code and the author’s other projects are on GitHub: github.com/mohitbhoite",
+  "versions.title": "Version comparison", "versions.param": "Parameter",
+  "gallery.title": "Gallery",
+  "footer.credit": "Original project and photos — Mohit Bhoite, bhoite.com/sculptures/lander-r2. This page is an unofficial demo / educational."
+}
