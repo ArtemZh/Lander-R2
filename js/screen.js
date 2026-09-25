@@ -88,7 +88,7 @@ function bar(ctx, x, y, w, h, v, color, bg = '#2a2f3a') {
 const pad = n => String(n).padStart(2, '0');
 const tzTime = (tz, d) => d.toLocaleTimeString('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false });
 const ease = t => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
-const CITIES = [['MUMBAI', 'Asia/Kolkata'], ['TOKYO', 'Asia/Tokyo'], ['LONDON', 'Europe/London'], ['NEW YORK', 'America/New_York']];
+const CITIES = [['ЛЬВІВ', 'Europe/Kyiv', 'LVIV'], ['ВАРШАВА', 'Europe/Warsaw', 'WARSAW'], ['ГДИНЯ', 'Europe/Warsaw', 'GDYNIA']];
 const F = (px, b = '') => `${b} ${px}px "Share Tech Mono", monospace`;
 const lerp = (a, b, k) => a + (b - a) * k;
 
@@ -334,7 +334,7 @@ export class Screen {
     c.strokeStyle = '#2a2f3a'; c.beginPath(); c.moveTo(8, 128); c.lineTo(W - 8, 128); c.stroke();
     horizonIcon(c, 44, 152, true, '#ffd34d', t); horizonIcon(c, 126, 152, false, ORANGE, t + 1);
     c.textAlign = 'center'; c.fillStyle = '#fff'; c.font = F(11); c.fillText(weather.sunrise, 44, 172); c.fillText(weather.sunset, 126, 172);
-    const [cityName, tz] = CITIES[this.settings.city];
+    const [cityUk, tz, cityEn] = CITIES[this.settings.city], cityName = uk ? cityUk : cityEn;
     c.textAlign = 'left'; c.fillStyle = ORANGE; c.font = F(12, 'italic bold'); c.fillText(cityName, 10, 208);
     plate(c, 92, 192, 72, 26, ORANGE, 8);
     c.textAlign = 'center'; c.fillStyle = '#111'; c.font = F(17, 'bold'); c.fillText(tzTime(tz, now), 128, 211);
@@ -447,7 +447,7 @@ export class Screen {
     const br = st.autoBright ? 0.25 + 0.75 * Math.min(1, sensors.lux / 250) : st.bright;
     c.fillStyle = '#2a2f3a'; c.fillRect(16, 64, 138, 4); c.fillStyle = ORANGE; c.fillRect(16, 64, 138 * br, 4);
     c.beginPath(); c.arc(16 + 138 * br, 66, 6, 0, Math.PI * 2); c.fill();
-    const rows = [[uk ? 'авто (VEML7700)' : 'auto (VEML7700)', st.autoBright, 92], [uk ? 'звук' : 'sound', st.sound, 128], [uk ? 'місто 2' : 'city 2', CITIES[st.city][0], 164], [uk ? 'формат часу' : 'time format', st.h24 ? '24h' : '12h', 200], ['LED', STATE_TEXT[claude.state][uk ? 'uk' : 'en'], 236]];
+    const rows = [[uk ? 'авто (VEML7700)' : 'auto (VEML7700)', st.autoBright, 92], [uk ? 'звук' : 'sound', st.sound, 128], [uk ? 'місто 2' : 'city 2', CITIES[st.city][uk ? 0 : 2], 164], [uk ? 'формат часу' : 'time format', st.h24 ? '24h' : '12h', 200], ['LED', STATE_TEXT[claude.state][uk ? 'uk' : 'en'], 236]];
     for (const [label, val, y] of rows) {
       c.fillStyle = '#151923'; c.fillRect(10, y, 150, 30);
       c.fillStyle = '#ddd'; c.font = F(10); c.textAlign = 'left'; c.fillText(label, 18, y + 19);
@@ -500,8 +500,8 @@ export class Screen {
     horizonIcon(c, 38, 172, true, INK, 0, 1.2); horizonIcon(c, 114, 172, false, INK, 0, 1.2);
     c.textAlign = 'center'; c.fillStyle = INK; c.font = F(12); c.fillText(weather.sunrise, 38, 191); c.fillText(weather.sunset, 114, 191);
     c.fillStyle = INK; c.fillRect(8, 200, W - 16, 22);
-    c.fillStyle = PAPER; c.textAlign = 'left'; c.font = F(11, 'bold'); c.fillText('MUMBAI', 13, 215);
-    c.textAlign = 'right'; c.font = F(14, 'bold'); c.fillText(tzTime('Asia/Kolkata', now), W - 13, 216);
+    c.fillStyle = PAPER; c.textAlign = 'left'; c.font = F(11, 'bold'); c.fillText(uk ? 'ВАРШАВА' : 'WARSAW', 13, 215);
+    c.textAlign = 'right'; c.font = F(14, 'bold'); c.fillText(tzTime('Europe/Warsaw', now), W - 13, 216);
     c.fillStyle = INK; c.textAlign = 'left'; c.font = F(9); c.fillText('HUM', 8, 240);
     c.strokeRect(34.5, 231.5, 56, 10); c.fillRect(36, 233, 53 * weather.hum / 100, 7); c.fillText(`${weather.hum}%`, 96, 240);
     c.fillText('WIND', 8, 258); c.font = F(13, 'bold'); c.fillText(`${weather.wind}`, 38, 259); c.font = F(9); c.fillText('km/h', 60, 258);

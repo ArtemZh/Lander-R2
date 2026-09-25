@@ -1,6 +1,6 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=5';
-import { Screen, loadWeather, weather, claude, STATE_COLORS } from './screen.js?v=9';
+import { Screen, loadWeather, weather, claude, STATE_COLORS } from './screen.js?v=10';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=3';
 
 const $ = s => document.querySelector(s);
