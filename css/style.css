@@ -139,12 +139,12 @@ a.btn { text-decoration: none; display: inline-block; }
 
 /* екрани і сценарії */
 .sec-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
-.scen { display: grid; grid-template-columns: 420px 1fr; gap: 40px; align-items: start; }
+.scen { display: grid; grid-template-columns: 460px 1fr; gap: 40px; align-items: start; }
 .scen-left { position: sticky; top: 80px; }
 .device { display: flex; flex-direction: column; align-items: center; }
 #antennaCanvas { width: 120px; height: 150px; display: block; margin-bottom: -6px; }
-#screenCanvas { width: 240px; max-width: 100%; border: 10px solid var(--ink); border-radius: var(--r-md); touch-action: pan-y; background: #000; box-shadow: var(--lift); image-rendering: auto; }
-#screenCanvas.ink { width: 228px; border-color: #d9d9d3; image-rendering: pixelated; }
+#screenCanvas { width: 300px; max-width: 100%; border: 10px solid var(--ink); border-radius: var(--r-md); touch-action: pan-y; background: #000; box-shadow: var(--lift); image-rendering: auto; }
+#screenCanvas.ink { width: 266px; border-color: #d9d9d3; image-rendering: pixelated; }
 .scr-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 14px 0; }
 .scr-nav .btn { padding: 8px 14px; }
 .scr-nav span { font-family: var(--mono); font-size: 14px; color: var(--ink); min-width: 140px; text-align: center; }

@@ -101,7 +101,7 @@ const pad = n => String(n).padStart(2, '0');
 const tzTime = (tz, d) => d.toLocaleTimeString('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false });
 const ease = t => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
 const CITIES = [['ЛЬВІВ', 'Europe/Kyiv', 'LVIV'], ['ВАРШАВА', 'Europe/Warsaw', 'WARSAW'], ['ГДИНЯ', 'Europe/Warsaw', 'GDYNIA']];
-const F = (px, b = '') => `${b} ${px}px "Share Tech Mono", monospace`;
+const F = (px, b = '') => `${b} ${Math.max(px, 8)}px "Share Tech Mono", monospace`;
 const lerp = (a, b, k) => a + (b - a) * k;
 const rnd = (a, b) => a + Math.random() * (b - a);
 
@@ -242,7 +242,7 @@ export class Screen {
     this.tank = this.makeTank();
     this.setupPointer();
     ledFromClaude();
-    const loop = () => { this.frame(); requestAnimationFrame(loop); };
+    const loop = () => { try { this.frame(); } catch (e) { console.error('screen frame', e); } requestAnimationFrame(loop); };
     requestAnimationFrame(loop);
   }
   setVersion(v) {
@@ -266,7 +266,7 @@ export class Screen {
   // ---------- сценарії ----------
   run(id) {
     const sc = SCENARIOS.find(s => s[0] === id); if (!sc) return;
-    this.stopScenario(); this.snapshot();
+    if (!this.scenario) this.snapshot(); else this.stopScenario();
     this.scenario = { id, t0: performance.now(), dur: sc[4] };
     sc[5](this);
     this.timers.push(setTimeout(() => this.stopScenario(true), sc[4]));
@@ -491,10 +491,11 @@ export class Screen {
     // 24 год графік температури в кімнаті (симуляція навколо поточної)
     c.fillStyle = '#889'; c.fillText(uk ? 'кімната, 24 год' : 'room, 24 h', 10, 192);
     const gx = 10, gy = 198, gw = W - 20, gh = 60; c.fillStyle = '#151923'; c.fillRect(gx, gy, gw, gh);
+    c.save(); c.beginPath(); c.rect(gx, gy, gw, gh); c.clip();
     c.strokeStyle = ORANGE; c.lineWidth = 1.5; c.beginPath();
     for (let i = 0; i <= 48; i++) { const v = sensors.temp - 1.5 + Math.sin(i / 48 * Math.PI * 2 - 1.5) * 1.5; const x = gx + i / 48 * gw, y = gy + gh / 2 - (v - sensors.temp) * 12; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
     c.strokeStyle = '#7aa2f7'; c.beginPath();
-    for (let i = 0; i <= 48; i++) { const v = sensors.hum + Math.cos(i / 48 * Math.PI * 2) * 5; const x = gx + i / 48 * gw, y = gy + gh - (v - 30) / 50 * gh; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
+    for (let i = 0; i <= 48; i++) { const v = sensors.hum + Math.cos(i / 48 * Math.PI * 2) * 5; const x = gx + i / 48 * gw, y = gy + gh - (v - 30) / 50 * gh; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); c.restore();
     c.fillStyle = '#556'; c.font = F(7); c.fillText(uk ? 'BME280 — низ рюкзака, подалі від чипа; VEML7700 — зверху, дивиться в стелю' : 'BME280 — bottom of the backpack, away from the chip; VEML7700 — on top, facing the ceiling', 10, 272);
     wrap(c, uk ? 'Сценарії: сухо → зволожувач; тиск падає → дощ; темно вдень → штори.' : 'Scenarios: dry → humidifier; pressure falling → rain; dark by day → curtains.', 10, 284, W - 20, 10);
   }

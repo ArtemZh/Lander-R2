@@ -1,6 +1,6 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=6';
-import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS } from './screen.js?v=14';
+import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS } from './screen.js?v=16';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=5';
 
 const $ = s => document.querySelector(s);
@@ -40,7 +40,9 @@ function rebuildModels() {
 }
 // Антена з RGB-маяком (2D), синхронна з LED-контролером емулятора
 const ant = $('#antennaCanvas'), actx = ant.getContext('2d');
+const hex6 = c => (/^#[0-9a-f]{3}$/i.test(c) ? '#' + c[1] + c[1] + c[2] + c[2] + c[3] + c[3] : c);
 function drawAntenna(v, color) {
+  color = hex6(color);
   const W = ant.width, H = ant.height; actx.clearRect(0, 0, W, H);
   actx.strokeStyle = '#c9a227'; actx.lineWidth = 3; actx.lineCap = 'round';
   actx.beginPath(); actx.moveTo(W / 2, H); actx.lineTo(W / 2, 22); actx.stroke();
