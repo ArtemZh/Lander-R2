@@ -11,7 +11,7 @@ export const STEPS = {
   display: {
     original: { uk: ['Дисплей', 'TFT 1.9″ 170×320 ST7789 припаюється прямо до дротяних шин.'], en: ['Display', '1.9″ 170×320 ST7789 TFT is soldered straight onto the wire bus.'] },
     touch: { uk: ['Дисплей', 'AMOLED 1.9″ з ємнісним тачем — сторінки гортаються свайпом.'], en: ['Display', '1.9″ AMOLED with capacitive touch — swipe between pages.'] },
-    ink: { uk: ['Дисплей', 'E-ink 2.13″ 250×122 — тримає картинку без живлення.'], en: ['Display', '2.13″ 250×122 e-ink — keeps the image without power.'] },
+    ink: { uk: ['Дисплей', 'E-ink 2.13″ 122×250 — тримає картинку без живлення.'], en: ['Display', '2.13″ 122×250 e-ink — keeps the image without power.'] },
   },
   shell: { uk: ['Шкаралупа', 'Зовнішня прямокутна клітка ≈30×32×60 мм замикає корпус.'], en: ['Shell', 'Outer rectangular cage ≈30×32×60 mm closes the body.'] },
   audio: {
@@ -50,7 +50,7 @@ export const PARTS = {
   ],
   ink: [
     ['board', 'ESP32-C6 Feather', 'ESP32-C6 Feather', 1],
-    ['display', 'E-ink 2.13″ 250×122 (SSD1680)', '2.13″ 250×122 e-ink (SSD1680)', 1],
+    ['display', 'E-ink 2.13″ 122×250 (SSD1680)', '2.13″ 122×250 e-ink (SSD1680)', 1],
     ['pack', 'Батарея 14250 + вимикач', '14250 cell + switch', 2],
     ['antenna', 'Червоний LED + 220 Ω (блимає при оновленні)', 'Red LED + 220 Ω (blinks on refresh)', 1],
     ['chassis', 'Латунний дріт 20 AWG', 'Brass wire 20 AWG', '~3 м'],
@@ -94,7 +94,7 @@ export const DIFFS = {
 
 // Рядки порівняння: [мітка uk, мітка en, original, touch, ink] (значення — рядок або {uk,en})
 export const COMPARE = [
-  ['Екран', 'Screen', 'TFT 1.9″ 170×320', 'AMOLED 1.9″ + touch', 'E-ink 2.13″ 250×122'],
+  ['Екран', 'Screen', 'TFT 1.9″ 170×320', 'AMOLED 1.9″ + touch', 'E-ink 2.13″ 122×250'],
   ['Контролер', 'Controller', 'Particle Photon 2', 'ESP32-S3 Feather', 'ESP32-C6 Feather'],
   ['RAM / Flash', 'RAM / Flash', '3 MB / 2 MB', '512 KB + 8 MB PSRAM / 8 MB', '512 KB / 4 MB'],
   ['Споживання', 'Power draw', '~80 мА', '~110 мА', { uk: '~15 мкА сон, ~30 мА оновл.', en: '~15 µA sleep, ~30 mA refresh' }],

@@ -94,14 +94,18 @@ export class Screen {
   }
   setVersion(v) {
     this.version = v; this.page = 0;
-    const [w, h] = v === 'ink' ? [250, 122] : [170, 320];
+    const [w, h] = v === 'ink' ? [122, 250] : [170, 320];
     this.canvas.width = w; this.canvas.height = h;
+    if (!this.off) { this.off = document.createElement('canvas'); this.off.width = 170; this.off.height = 320; }
     this.draw();
   }
   draw(now = new Date()) {
     if (this.version === 'ink') return this.drawInk(now);
     if (this.page === 1) return this.drawSettings();
-    const c = this.ctx, W = 170;
+    this.drawMain(this.ctx, now);
+  }
+  drawMain(c, now) {
+    const W = 170;
     if (this.bg) c.drawImage(this.bg, 0, 0); else { c.fillStyle = '#000'; c.fillRect(0, 0, 170, 320); }
     const loc = this.lang === 'uk' ? 'uk-UA' : 'en-GB';
     const F = (px, b = '') => `${b} ${px}px "Share Tech Mono", monospace`;
@@ -111,7 +115,7 @@ export class Screen {
     c.textAlign = 'right'; c.fillStyle = '#ccc'; c.font = F(10);
     c.fillText(now.toLocaleDateString(loc, { day: '2-digit', month: 'short' }), 166, 32);
     // Час на помаранчевій плашці: «тінь 88:88» + чорні цифри
-    sevenSeg(c, `${pad(now.getHours())}:${pad(now.getMinutes())}`, 9, 48, 22, 44, '#111', 'rgba(0,0,0,.13)');
+    sevenSeg(c, `${pad(now.getHours())}:${pad(now.getMinutes())}`, 9, 48, 22, 44, '#111', this.version === 'ink' ? null : 'rgba(0,0,0,.13)');
     // Температура праворуч від плашки
     c.textAlign = 'center'; c.fillStyle = '#fff'; c.font = F(15, 'bold');
     c.fillText(`${weather.temp}°`, 148, 76);
@@ -161,19 +165,21 @@ export class Screen {
     });
     c.fillStyle = '#777'; c.textAlign = 'center'; c.fillText('‹ swipe ›', 85, 305);
   }
+  // E-ink: той самий макет, що й на TFT, зменшений до 122×250 і переведений у ч/б за порогом
   drawInk(now) {
-    const c = this.ctx;
-    c.fillStyle = '#fff'; c.fillRect(0, 0, 250, 122);
-    c.fillStyle = '#000'; c.textAlign = 'left';
-    sevenSeg(c, `${pad(now.getHours())}:${pad(now.getMinutes())}`, 8, 12, 26, 44, '#000', null);
-    const loc = this.lang === 'uk' ? 'uk-UA' : 'en-GB';
-    c.font = 'bold 13px "Share Tech Mono", monospace';
-    c.fillText(now.toLocaleDateString(loc, { weekday: 'short', day: '2-digit', month: 'short' }), 10, 80);
-    c.font = '11px "Share Tech Mono", monospace';
-    c.fillText(`${this.lang === 'uk' ? 'Київ' : 'Kyiv'} ${weather.temp}°C  ${weather.hum}%  ${weather.wind} km/h`, 10, 98);
-    c.fillText(`↑${weather.sunrise} ↓${weather.sunset}  Mumbai ${tzTime('Asia/Kolkata', now)}`, 10, 114);
-    c.fillRect(168, 8, 2, 70);
-    drawMoon(c, 210, 42, 26, moonPhase(now), '#fff', '#000');
-    c.strokeStyle = '#000'; c.lineWidth = 2; c.beginPath(); c.arc(210, 42, 26, 0, Math.PI * 2); c.stroke();
+    const oc = this.off.getContext('2d');
+    this.drawMain(oc, now);
+    const c = this.ctx, W = this.canvas.width, H = this.canvas.height;
+    c.imageSmoothingEnabled = true;
+    c.drawImage(this.off, 0, 0, W, H);
+    const img = c.getImageData(0, 0, W, H), d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i], g = d[i + 1], b = d[i + 2];
+      const l = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      // чорний фон TFT → білий «папір»; світлий текст і помаранчеві плашки → чорне чорнило; темні цифри на плашках → білі
+      const ink = l > 0.5 || (r > 170 && g > 90 && b < 110);
+      d[i] = d[i + 1] = d[i + 2] = ink ? 0 : 255; d[i + 3] = 255;
+    }
+    c.putImageData(img, 0, 0);
   }
 }

@@ -186,7 +186,7 @@ function displayModule(version, screenTex) {
   const g = new THREE.Group();
   if (version === 'ink') {
     // E-ink 2.13": скляна панель з білою рамкою, жовтий шлейф, чорна плата-драйвер за нею
-    g.add(pcb(32, 52, 0x101010, [['E-INK 2.13"', 48, 1.6, true], ['SSD1680', 50.5, 1.2]], { pitch: 2.54, left: 0, right: 0 }));
+    g.add(pcb(32, 52, 0x101010, [['E-INK 2.13" 122x250', 48, 1.5, true], ['SSD1680', 50.5, 1.2]], { pitch: 2.54, left: 0, right: 0 }));
     const panel = box(30, 49, 0.9, plastic(0xe9e9e4, 0.35)); panel.position.z = 1.3; g.add(panel);
     const scr = new THREE.Mesh(new THREE.PlaneGeometry(22.5, 46), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0xdddddd }));
     scr.position.set(0, 0.5, 1.8); scr.userData.isScreen = true; g.add(scr);
@@ -253,7 +253,6 @@ export function buildLander(version, screenCanvas) {
   if (screenCanvas) {
     screenTex = new THREE.CanvasTexture(screenCanvas);
     screenTex.colorSpace = THREE.SRGBColorSpace;
-    if (version === 'ink') { screenTex.center.set(0.5, 0.5); screenTex.rotation = Math.PI / 2; }
   }
   const dm = displayModule(version, screenTex);
   dm.position.set(0, BODY_Y + 30, 12);
@@ -435,6 +434,26 @@ export class Viewer {
     this.scene.add(model);
     for (const g of model.children) g.userData.t = STEP_IDS.indexOf(g.name) < this.step ? 1 : 0;
     this.setHighlight(this.highlight);
+    this.fit();
+  }
+
+  // Підібрати відстань камери, щоб уся модель (з антеною і ногами) влазила у вікно
+  fit() {
+    if (!this.model) return;
+    const box = new THREE.Box3().setFromObject(this.model);
+    if (box.isEmpty()) return;
+    const size = box.getSize(new THREE.Vector3()), center = box.getCenter(new THREE.Vector3());
+    const fovV = THREE.MathUtils.degToRad(this.camera.fov);
+    const fovH = 2 * Math.atan(Math.tan(fovV / 2) * this.camera.aspect);
+    const radius = Math.hypot(size.x, size.z) / 2;
+    const dist = Math.max(size.y / 2 / Math.tan(fovV / 2), radius / Math.tan(fovH / 2)) * 1.15 + radius;
+    this.controls.target.copy(center);
+    const dir = this.camera.position.clone().sub(this.controls.target).normalize();
+    if (!dir.length()) dir.set(0.6, 0.55, 0.8).normalize();
+    this.camera.position.copy(center).addScaledVector(dir, dist);
+    this.controls.minDistance = Math.min(this.controls.minDistance, dist * 0.4);
+    this.controls.maxDistance = Math.max(this.controls.maxDistance, dist * 2);
+    this.controls.update();
   }
 
   setStep(n) { this.step = n; }
@@ -471,6 +490,7 @@ export class Viewer {
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
+    this.fit();
   }
 
   render() {
