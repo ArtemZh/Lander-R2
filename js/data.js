@@ -1,5 +1,5 @@
 // Дані трьох версій (тексти двомовні: {uk, en})
-export const VERSIONS = ['original', 'touch', 'ink'];
+export const VERSIONS = ['touch', 'ink', 'original'];
 
 export const STEPS = {
   chassis: { uk: ['Шасі', 'Внутрішня рамка з латунного дроту 20 AWG — скелет, до якого кріпиться все інше.'], en: ['Chassis', 'Inner frame of 20 AWG brass wire — the skeleton everything else attaches to.'] },
@@ -102,16 +102,16 @@ export const DIFFS = {
 
 // Рядки порівняння: [мітка uk, мітка en, original, touch, ink] (значення — рядок або {uk,en})
 export const COMPARE = [
-  ['Екран', 'Screen', 'TFT 1.9″ 170×320 (~190 dpi)', 'AMOLED 1.91″ 240×536 + touch (~300 dpi)', 'E-ink 2.66″ 152×296 (~128 dpi)'],
-  ['Контролер', 'Controller', 'Particle Photon 2', 'ESP32-S3 Feather', 'ESP32-C6 Feather'],
-  ['RAM / Flash', 'RAM / Flash', '3 MB / 2 MB', '512 KB + 8 MB PSRAM / 8 MB', '512 KB / 4 MB'],
-  ['Сенсори', 'Sensors', { uk: 'PDM-мікрофон', en: 'PDM mic' }, { uk: 'мікрофон, IMU, BME280, світло', en: 'mic, IMU, BME280, light' }, '—'],
-  ['Батарея', 'Battery', '14250 · 300 мАг', '16340 · 800 мАг', '14250 · 300 мАг'],
-  ['Споживання', 'Power draw', '~80 мА', '~130 мА', { uk: '~15 мкА сон, ~30 мА оновл.', en: '~15 µA sleep, ~30 mA refresh' }],
-  ['Від батареї (оцінка)', 'Battery life (est.)', { uk: '~3 год', en: '~3 h' }, { uk: '~6 год', en: '~6 h' }, { uk: '~3–4 тижні', en: '~3–4 weeks' }],
-  ['Ввід', 'Input', { uk: 'мікрофон (хлопок)', en: 'microphone (clap)' }, { uk: 'тач, свайп, стук, нахил', en: 'touch, swipe, tap, tilt' }, { uk: 'кнопка', en: 'button' }],
-  ['Плюси', 'Pros', { uk: 'як в оригіналі, яскраво', en: 'faithful, vivid' }, { uk: 'інтерактив, контраст', en: 'interactive, contrast' }, { uk: 'автономність, читабельність', en: 'battery life, readability' }],
-  ['Мінуси', 'Cons', { uk: 'мало живе від батареї', en: 'short battery life' }, { uk: 'складніший драйвер', en: 'harder driver' }, { uk: 'повільно, ч/б', en: 'slow, B/W' }],
+  ['Екран', 'Screen', 'AMOLED 1.91″ 240×536 + touch (~300 dpi)', 'E-ink 2.66″ 152×296 (~128 dpi)', 'TFT 1.9″ 170×320 (~190 dpi)'],
+  ['Контролер', 'Controller', 'ESP32-S3 Feather', 'ESP32-C6 Feather', 'Particle Photon 2'],
+  ['RAM / Flash', 'RAM / Flash', '512 KB + 8 MB PSRAM / 8 MB', '512 KB / 4 MB', '3 MB / 2 MB'],
+  ['Сенсори', 'Sensors', { uk: 'мікрофон, IMU, BME280, світло', en: 'mic, IMU, BME280, light' }, '—', { uk: 'PDM-мікрофон', en: 'PDM mic' }],
+  ['Батарея', 'Battery', '16340 · 800 мАг', '14250 · 300 мАг', '14250 · 300 мАг'],
+  ['Споживання', 'Power draw', '~130 мА', { uk: '~15 мкА сон, ~30 мА оновл.', en: '~15 µA sleep, ~30 mA refresh' }, '~80 мА'],
+  ['Від батареї (оцінка)', 'Battery life (est.)', { uk: '~6 год', en: '~6 h' }, { uk: '~3–4 тижні', en: '~3–4 weeks' }, { uk: '~3 год', en: '~3 h' }],
+  ['Ввід', 'Input', { uk: 'тач, свайп, стук, нахил', en: 'touch, swipe, tap, tilt' }, { uk: 'кнопка', en: 'button' }, { uk: 'мікрофон (хлопок)', en: 'microphone (clap)' }],
+  ['Плюси', 'Pros', { uk: 'інтерактив, контраст', en: 'interactive, contrast' }, { uk: 'автономність, читабельність', en: 'battery life, readability' }, { uk: 'як в оригіналі, яскраво', en: 'faithful, vivid' }],
+  ['Мінуси', 'Cons', { uk: 'складніший драйвер', en: 'harder driver' }, { uk: 'повільно, ч/б', en: 'slow, B/W' }, { uk: 'мало живе від батареї', en: 'short battery life' }],
 ];
 
 export const GALLERY = ['IMG_1420', 'IMG_1423', 'IMG_1425', 'IMG_1427', 'IMG_1430', 'IMG_1431', 'IMG_1432', 'IMG_1433', 'IMG_1440', 'IMG_1482', 'IMG_1483', 'IMG_1485', 'IMG_1486']
