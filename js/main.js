@@ -1,8 +1,8 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=8';
+import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=9';
 import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=18';
-import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE } from './data.js?v=8';
-import { schematicSVG, blockSVG, pinRows, SOURCES } from './schematic.js?v=3';
+import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE } from './data.js?v=9';
+import { schematicSVG, blockSVG, pinRows, SOURCES } from './schematic.js?v=5';
 
 const $ = s => document.querySelector(s);
 const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
@@ -173,7 +173,7 @@ function renderScreenSide() {
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=6`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=7`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));

@@ -65,8 +65,8 @@
  "src.component": "Компонент",
  "src.docs": "Документація",
  "src.status": "Звірено",
- "src.ok": "звірено з pins_arduino.h",
+ "src.ok": "звірено з офіційною документацією",
  "src.partial": "назви сигналів — з пам'яті, сайт не відкривався",
  "src.memory": "з пам'яті, не звірялось",
- "src.note": "Офіційні сторінки: Adafruit Learn, репозиторій Espressif arduino-esp32, Waveshare Wiki, ST, Bosch, Vishay, Analog Devices. Статус «звірено» означає, що GPIO-номери взяті безпосередньо з файлу pins_arduino.h виробника; решта — з попереднього досвіду й потребує перевірки перед пайкою."
+ "src.note": "Офіційні сторінки: Waveshare Wiki (таблиці Display/Touch Control і розпіновка гребінки — з збереженої копії документації), Adafruit Learn, репозиторій Espressif arduino-esp32, ST, Bosch, Vishay, Analog Devices. «Звірено» — номери GPIO взяті безпосередньо з документації виробника; решта — з попереднього досвіду й потребує перевірки перед пайкою."
 }

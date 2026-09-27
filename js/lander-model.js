@@ -174,7 +174,22 @@ function controllerBoard(version) {
     const gl = led0805('rgba(60,255,90,0.9)', 0x33ff55); gl.position.set(8.5, -9, 1.3); gl.userData.led.light.intensity = 6; g.add(gl);
   } else {
     const isS3 = version === 'touch';
-    g.add(pcb(W, H, 0x101010, [[isS3 ? 'ESP32-S3' : 'ESP32-C6', 11, 2.4, true], ['Feather', 14.5, 1.8], [isS3 ? '8MB PSRAM' : 'Wi-Fi 6 / BLE', 40, 1.2]], { pitch: 2.54, left: 12, right: 16, margin: 1.4, yOff: -3 }));
+    if (isS3) {
+      // Waveshare ESP32-S3-Touch-AMOLED-1.91: 24.5×57.5 мм, дисплей на лицьовому боці, компоненти й гребінки 2×20 — на тильному
+      const g2 = new THREE.Group();
+      g2.add(pcb(24.5, 57.5, 0x0d0d0d, [['ESP32-S3-Touch-AMOLED-1.91', 6, 1.2, true], ['Waveshare', 9, 1.1]], { pitch: 2.54, left: 20, right: 20, margin: 1.5, yOff: 2 }));
+      g2.add(at(box(9, 9, 1.2, metal(0xb8bcc2, 0.35)), 0, 6, 1.7));            // ESP32-S3R8
+      g2.add(at(box(11, 9, 1.8, metal(0xc4c8cc, 0.3)), 0, 18, 2.0));            // слот TF
+      g2.add(at(box(5, 5, 1, plastic(0x2a2a2a, 0.4)), -6, -6, 1.5));           // W25Q128
+      g2.add(at(box(3.5, 3, 1, plastic(0x2a2a2a, 0.4)), 6, -4, 1.4));          // QMI8658 (умовно)
+      g2.add(at(box(6, 4.5, 3.5, plastic(0xf5f2e8, 0.6)), 0, -12, 2.8));       // роз'єм BAT
+      g2.add(at(box(8.9, 3.2, 7.3, metal(0xc8ccd0, 0.3)), 0, -57.5 / 2 + 1.6, 3.2)); // USB-C
+      for (const x of [-9.5, 9.5]) { g2.add(at(box(3.5, 3, 1.6, metal(0xcfd3d8)), x, -24, 1.6)); }  // BOOT / RESET
+      g2.add(at(box(6, 2, 1.2, plastic(0xf0e8d8, 0.4)), 8, 26, 1.4));           // керамічна антена
+      const gl = led0805('rgba(60,255,90,0.9)', 0x33ff55); gl.position.set(-8, -20, 1.3); gl.userData.led.light.intensity = 4; g2.add(gl);
+      g.add(g2); return g;
+    }
+    g.add(pcb(W, H, 0x101010, [['ESP32-C6', 11, 2.4, true], ['Feather', 14.5, 1.8], ['Wi-Fi 6 / BLE', 40, 1.2]], { pitch: 2.54, left: 12, right: 16, margin: 1.4, yOff: -3 }));
     // великий модуль з екраном + PCB-антена
     g.add(at(box(15.5, 17.5, 2.6, metal(0xc4c8cc, 0.3)), 0, 6, 2.1));
     g.add(at(box(15.5, 5, 0.3, new THREE.MeshStandardMaterial({ color: 0x0c1a10, roughness: 0.4 })), 0, 22, 1.0));
@@ -201,23 +216,23 @@ function displayModule(version, screenTex) {
     g.add(at(box(20, 2.5, 3, plastic(0xf2f2ec, 0.6)), 0, -27.5, -2.2)); // FPC-конектор ззаду
   } else {
     const isTouch = version === 'touch';
-    g.add(pcb(32, 52, isTouch ? 0x0e0e0e : 0x0a1e3c,
-      isTouch ? [['AMOLED 1.91" 240x536', 49.5, 1.3, true], ['RM67162 · FT3168 touch', 51.3, 0.9]] : [['adafruit', 3, 2, true], ['1.9" 320x170 IPS TFT', 49, 1.3], ['ST7789', 51, 1.1]],
-      { pitch: 2.54, left: 0, right: 0 }));
-    // піни знизу
-    g.add(pinRow(11, 0, -28, 0));
+    if (!isTouch) {
+      g.add(pcb(32, 52, 0x0a1e3c, [['adafruit', 3, 2, true], ['1.9" 320x170 IPS TFT', 49, 1.3], ['ST7789', 51, 1.1]], { pitch: 2.54, left: 0, right: 0 }));
+      g.add(pinRow(11, 0, -28, 0)); // піни знизу
+    }
     // скляна панель
-    const glass = box(27, 48, 1.2, new THREE.MeshPhysicalMaterial({ color: 0x050608, roughness: 0.15, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 }));
-    glass.position.set(0, 1, 1.4); g.add(glass);
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(isTouch ? 22 : 24, isTouch ? 49 : 45), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0x000000 }));
-    scr.position.set(0, 1, 2.05); scr.userData.isScreen = true; g.add(scr);
-    if (isTouch) { const cover = new THREE.Mesh(new THREE.PlaneGeometry(27, 48), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.95, roughness: 0.05, thickness: 0.3, transparent: true, opacity: 0.35 })); cover.position.set(0, 1, 2.1); g.add(cover); }
-    // шлейф FPC зверху, заходить за плату
-    const flex = box(16, 5, 0.25, plastic(0xa7643a, 0.5)); flex.position.set(0, 26.2, 1.0); flex.rotation.x = 0.5; g.add(flex);
-    // microSD-слот ззаду
-    g.add(at(box(14, 15, 2, metal(0xc0c4c8, 0.35)), 0, 14, -1.8));
-    g.add(at(box(12, 2, 1, plastic(0x111111)), 0, 22.5, -1.3));
-    for (const [x, y] of [[-10, -12], [8, -14], [-6, -20]]) g.add(at(box(2.2, 2.2, 0.9, plastic(0x2a2a2a, 0.4)), x, y, -1.25));
+    // скло: у Waveshare — 24.5×57.5 з активною зоною 19.8×44.2; у прототипу — 27×48 з зоною 24×45
+    const glass = box(isTouch ? 24.5 : 27, isTouch ? 57.5 : 48, 1.2, new THREE.MeshPhysicalMaterial({ color: 0x050608, roughness: 0.15, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 }));
+    glass.position.set(0, isTouch ? 0 : 1, 1.4); g.add(glass);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(isTouch ? 19.8 : 24, isTouch ? 44.2 : 45), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0x000000 }));
+    scr.position.set(0, isTouch ? 4.5 : 1, 2.05); scr.userData.isScreen = true; g.add(scr);
+    if (isTouch) { const cover = new THREE.Mesh(new THREE.PlaneGeometry(24.5, 57.5), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.95, roughness: 0.05, thickness: 0.3, transparent: true, opacity: 0.35 })); cover.position.set(0, 0, 2.1); g.add(cover); }
+    if (!isTouch) {
+      const flex = box(16, 5, 0.25, plastic(0xa7643a, 0.5)); flex.position.set(0, 26.2, 1.0); flex.rotation.x = 0.5; g.add(flex); // шлейф FPC
+      g.add(at(box(14, 15, 2, metal(0xc0c4c8, 0.35)), 0, 14, -1.8)); // microSD ззаду
+      g.add(at(box(12, 2, 1, plastic(0x111111)), 0, 22.5, -1.3));
+      for (const [x, y] of [[-10, -12], [8, -14], [-6, -20]]) g.add(at(box(2.2, 2.2, 0.9, plastic(0x2a2a2a, 0.4)), x, y, -1.25));
+    }
   }
   return g;
 }
@@ -256,8 +271,11 @@ export function buildLander(version, screenCanvas, form = 'v1') {
   // 2. Плата контролера — стоїть вертикально, компонентами назад, USB униз
   const board = add('board', [-70, 0, 0]);
   const cb = controllerBoard(version);
-  cb.rotation.y = Math.PI; cb.position.set(0, BODY_Y + 31, -5.5);
-  board.add(cb);
+  if (version === 'touch') {
+    // Waveshare-модуль: сама плата і є дисплеєм — стоїть у передній грані під нахилом, компонентами всередину
+    const bp = new THREE.Group(); bp.position.set(0, BODY_Y + 4, 14.5); bp.rotation.x = TILT;
+    cb.rotation.y = Math.PI; cb.position.set(0, 26, -1.2); bp.add(cb); board.add(bp);
+  } else { cb.rotation.y = Math.PI; cb.position.set(0, BODY_Y + 31, -5.5); board.add(cb); }
 
   // 3. Дисплей — спереду, паралельно платі
   const display = add('display', [0, 0, 70]);
@@ -336,7 +354,6 @@ export function buildLander(version, screenCanvas, form = 'v1') {
     const mod = (name, col, w = 10, h = 8) => { const m = new THREE.Group(); m.add(pcb(w, h, col, [[name, h / 2 + 1, 1.2, true]], { pitch: 2.54, left: 0, right: 0 })); m.add(at(box(2.4, 2.4, 1, metal(0xa8acb0, 0.3)), w / 2 - 3, -h / 2 + 2.5, 1.3)); return m; };
     const mic = mod('PDM MIC', 0x1f4fb0, 10, 12); mic.position.set(-19.5, BODY_Y + 27, 4); mic.rotation.y = -0.15; audio.add(mic);
     for (const yy of [-3, 3]) { audio.add(wire([[-15, BODY_Y + 27 + yy, 4], [-18, BODY_Y + 27 + yy, 4]], false, 0.3)); audio.add(joint([-15, BODY_Y + 27 + yy, 4], 0.55)); }
-    const imu = mod('LSM6DSOX', 0x1f4fb0, 10, 8); imu.position.set(0, BODY_Y + 30, -11.5); imu.rotation.y = Math.PI; audio.add(imu);
     const bme = mod('BME280', 0x6b1fb0, 10, 8); bme.position.set(0, BODY_Y + 10, -BODY_D / 2 - 9); bme.rotation.x = Math.PI / 2; audio.add(bme);
     const veml = mod('VEML7700', 0x1f4fb0, 10, 8); veml.position.set(6, top + 1.2, TRAP ? -4 : 6); veml.rotation.x = -Math.PI / 2; audio.add(veml);
   }

@@ -65,8 +65,8 @@
  "src.component": "Component",
  "src.docs": "Documentation",
  "src.status": "Verified",
- "src.ok": "verified against pins_arduino.h",
+ "src.ok": "verified against official docs",
  "src.partial": "signal names from memory, site not opened",
  "src.memory": "from memory, not verified",
- "src.note": "Official pages: Adafruit Learn, Espressif's arduino-esp32 repository, Waveshare Wiki, ST, Bosch, Vishay, Analog Devices. “Verified” means GPIO numbers were taken directly from the vendor's pins_arduino.h; the rest comes from prior experience and must be checked before soldering."
+ "src.note": "Official pages: Waveshare Wiki (Display/Touch Control tables and header pinout — from a saved copy of the docs), Adafruit Learn, Espressif's arduino-esp32 repository, ST, Bosch, Vishay, Analog Devices. “Verified” — GPIO numbers taken directly from the vendor's documentation; the rest comes from prior experience and must be checked before soldering."
 }
