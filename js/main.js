@@ -2,6 +2,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=7';
 import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=17';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=5';
+import { schematicSVG, blockSVG, pinRows } from './schematic.js?v=2';
 
 const $ = s => document.querySelector(s);
 const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
@@ -141,8 +142,11 @@ function renderParts() {
 }
 function renderPins() {
   $('#pinTbl').innerHTML = `<tr><th>${T('wiring.module')}</th><th>${T('wiring.pin')}</th><th>${T('wiring.board')}</th></tr>` +
-    PINS[key()].map(([m, p, b]) => `<tr><td>${esc(m)}</td><td>${esc(p)}</td><td>${b === '—' ? `<span class="nc">${T('wiring.nc')}</span>` : esc(b)}</td></tr>`).join('');
+    (key() === 'original' ? PINS.original : pinRows(key())).map(([m, p, b]) => `<tr><td>${esc(m)}</td><td>${esc(p)}</td><td>${b === '—' ? `<span class="nc">${T('wiring.nc')}</span>` : esc(b)}</td></tr>`).join('');
   $('#pinNote').hidden = key() === 'original';
+  const orig = key() === 'original';
+  $('#wiringImgs').hidden = !orig; $('#wiringSvg').hidden = orig;
+  if (!orig) $('#wiringSvg').innerHTML = `<figure><figcaption>${T('wiring.schematic')}</figcaption>${schematicSVG(key(), state.lang)}</figure><figure><figcaption>${T('wiring.block')}</figcaption>${blockSVG(key(), state.lang)}</figure>`;
 }
 function renderCompare() {
   const L = state.lang === 'uk' ? 0 : 1;
@@ -166,7 +170,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape') $('#lightbox').hidden
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=2`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=3`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));

@@ -183,3 +183,9 @@ a.btn { text-decoration: none; display: inline-block; }
 .story-bar { height: 100%; width: 0; background: var(--signal); transition: width .2s linear; }
 .story-box p { margin: 0 0 8px; font-size: 14px; color: #fff; max-width: none; }
 .story-box .btn { padding: 6px 12px; font-size: 13px; }
+
+.svgs { display: grid; gap: 24px; margin-top: 24px; }
+.svgs figure { margin: 0; }
+.svgs figcaption { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--grey-500); margin-bottom: 8px; }
+.svgs svg { display: block; box-shadow: var(--lift-sm); }
+[hidden] { display: none !important; }

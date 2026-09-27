@@ -21,7 +21,7 @@
  "wiring.module": "Module",
  "wiring.pin": "Module pin",
  "wiring.board": "Board pin",
- "wiring.approx": "Approximate — this version’s wiring is not verified on hardware.",
+ "wiring.approx": "GPIOs assigned indicatively from Adafruit PrettyPins; not verified on hardware. The frame is GND.",
  "wiring.nc": "not connected",
  "screen.title": "Screens & scenarios",
  "screen.lead": "Left — the device: antenna with the RGB beacon and the screen. Right — the catalog of screens and scenarios. Pick a tile — its description appears under the screen.",
@@ -63,5 +63,7 @@
  "screen.stories": "Stories",
  "screen.storiesLead": "Connected 20–35 s plots: press ▶ and watch the device live — the step caption appears under the screen.",
  "screen.sec": "s",
- "screen.stop": "■ Stop"
+ "screen.stop": "■ Stop",
+ "wiring.schematic": "Wiring — Lander R2",
+ "wiring.block": "Block diagram: sources → hub → device"
 }

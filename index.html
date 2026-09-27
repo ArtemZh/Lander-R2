@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -89,7 +89,8 @@
   <div class="sec-head"><div><h2 data-i18n="wiring.title"></h2></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
   <p class="note" id="pinNote" data-i18n="wiring.approx"></p>
   <div class="scroll-x"><table class="tbl" id="pinTbl"></table></div>
-  <div class="imgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
+  <div class="imgs" id="wiringImgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
+  <div class="svgs" id="wiringSvg" hidden></div>
 </section>
 
 <section id="screens" class="sec">
@@ -139,6 +140,6 @@
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=11"></script>
+<script type="module" src="js/main.js?v=12"></script>
 </body>
 </html>
