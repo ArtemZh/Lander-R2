@@ -199,33 +199,78 @@ export const SCREENS = [
 ];
 // ---------- сценарії: id, назва, опис, дисплеї, тривалість мс, start(scr) ----------
 export const SCENARIOS = [
-  ['claude-working', { uk: 'Claude працює', en: 'Claude working' }, { uk: 'Агент виконує задачу: LED зелений «дихає», на Dev-екрані біжить таймер сесії.', en: 'Agent is working: LED breathes green, session timer runs on the Dev screen.' }, 'ti', 6000, s => { claude.state = 'working'; ledFromClaude(); s.show('dev'); }],
-  ['claude-question', { uk: 'Claude поставив питання', en: 'Claude asks a question' }, { uk: 'LED червоний блимає 2 Гц + короткий «пінг»; Dev-екран виходить наперед. На e-ink — часткове оновлення рядка стану.', en: 'LED blinks red at 2 Hz + short ping; Dev screen comes forward. On e-ink — partial refresh of the status line.' }, 'ti', 6000, s => { claude.state = 'question'; ledFromClaude(); s.show('dev'); s.toast({ uk: 'Claude: «Пушити зараз чи після рев’ю?»', en: 'Claude: “Push now or after review?”' }, RED); }],
-  ['claude-idle', { uk: 'Claude простоює', en: 'Claude idle' }, { uk: 'Понад 10 хв без задач: LED помаранчевий, екран повертається на «Місію».', en: 'Idle > 10 min: LED orange, screen returns to Mission.' }, 'ti', 5000, s => { claude.state = 'idle'; ledFromClaude(); s.show('mission'); }],
-  ['limit-90', { uk: 'Ліміт 5 год > 90 %', en: '5h limit > 90 %' }, { uk: 'Смуга ліміту червоніє, LED жовтий подвійний блим кожні 30 с.', en: 'Limit bar turns red, LED gives a yellow double blink every 30 s.' }, 'ti', 6000, s => { claude.used5h = 0.93; led.set('#facc15', 'double', 0.5); s.show('dev'); }],
-  ['pr-merged', { uk: 'PR змержено / CI ок', en: 'PR merged / CI green' }, { uk: '2 с зелена «конфеті»-анімація і мелодія.', en: '2 s of green confetti and a chime.' }, 't', 4000, s => { claude.prs[0][1] = 'merged'; led.set(GREEN, 'strobe', 4, 2000); s.show('dev'); s.confetti(GREEN); }],
-  ['ci-failed', { uk: 'CI впав', en: 'CI failed' }, { uk: 'Червона смуга зверху екрана, поки не глянеш — тап знімає.', en: 'Red bar at the top until you look — tap clears it.' }, 'ti', 6000, s => { claude.prs[0][2] = 'fail'; led.set(RED, 'solid'); s.show('dev'); s.banner({ uk: 'CI ✗ lander-r2 · build #128', en: 'CI ✗ lander-r2 · build #128' }, RED); }],
-  ['meeting-5', { uk: 'Мітинг за 5 хв', en: 'Meeting in 5 min' }, { uk: 'LED синій 1 Гц, екран «Наступний мітинг» наперед; за 1 хв — 3 Гц; на початку — тон і QR.', en: 'LED blue at 1 Hz, Next meeting screen comes forward; 3 Hz at 1 min; chime and QR at start.' }, 'ti', 8000, s => { cal.next.inMin = 5; led.set(BLUE, 'blink', 1); s.show('meeting'); s.timeline([[4000, () => { cal.next.inMin = 1; led.set(BLUE, 'blink', 3); }], [7000, () => { cal.next.inMin = 0; led.set(BLUE, 'solid'); s.toast({ uk: '🔔 Sync: Lander R2 — почалось', en: '🔔 Sync: Lander R2 — starting' }, BLUE); }]]); }],
-  ['on-air', { uk: 'Мітинг триває', en: 'Meeting in progress' }, { uk: 'LED рівний синій «on air», мікрофон чує голос → на екрані «в ефірі», Dev-екран ховається.', en: 'Steady blue “on air” LED, mic hears voice → “on air” on screen, Dev screen hidden.' }, 't', 6000, s => { cal.next.inMin = -12; led.set(BLUE, 'solid'); s.show('meeting'); }],
   ['knock', { uk: 'Стук по столу', en: 'Knock on the desk' }, { uk: 'IMU ловить удар → наступний екран. Подвійний стук — назад на «Місію».', en: 'IMU detects a tap → next screen. Double knock — back to Mission.' }, 't', 3000, s => { s.flash(ORANGE); sensors.mic = 0.9; setTimeout(() => s.next(), 300); }],
-  ['morning', { uk: 'Ранок', en: 'Morning' }, { uk: 'Світло + перший рух: «Доброго ранку» — погода, перший мітинг, факт дня, слово дня.', en: 'Light + first motion: “Good morning” — weather, first meeting, fact and word of the day.' }, 'ti', 9000, s => { led.set('#ffd34d', 'breathe', 0.4); s.show('morning'); s.timeline([[3500, () => s.show('forecast')], [6000, () => s.show('fact')]]); }],
-  ['free-slot', { uk: 'Вільне вікно ≥ 45 хв', en: 'Free slot ≥ 45 min' }, { uk: 'Пропозиція «фокус-сесія?» → тап запускає Pomodoro, LED синій.', en: 'Suggests “focus session?” → tap starts Pomodoro, LED blue.' }, 't', 7000, s => { s.show('focus'); s.toast({ uk: 'Вільно до 15:00 — фокус-сесія?', en: 'Free until 15:00 — focus session?' }, BLUE); s.timeline([[2500, () => { focus.running = true; focus.left = 25 * 60; led.set(BLUE, 'solid'); }]]); }],
-  ['focus-done', { uk: 'Pomodoro закінчився', en: 'Pomodoro finished' }, { uk: 'Спікер, LED синій → зелений, 5 хв перерви з великим таймером.', en: 'Chime, LED blue → green, 5-minute break with a big timer.' }, 't', 6000, s => { focus.running = true; focus.left = 3; s.show('focus'); s.timeline([[1200, () => { focus.left = 0; focus.breakMode = true; focus.sessions++; focus.left = 300; led.set(GREEN, 'solid'); s.confetti(GREEN); }]]); }],
-  ['task-done', { uk: 'Задачу виконано', en: 'Task done' }, { uk: 'Тап по чекбоксу: конфеті й тон. Усі три — «день зроблено».', en: 'Tap the checkbox: confetti and a tone. All three — “day done”.' }, 't', 6000, s => { s.show('tasks'); s.timeline([[1500, () => { tasks.list[0][2] = true; s.confetti(GREEN); }], [3500, () => { tasks.list[1][2] = true; s.confetti(GREEN); led.set(GREEN, 'strobe', 3, 2000); }]]); }],
-  ['night', { uk: 'Темно 2 хв', en: 'Dark for 2 min' }, { uk: 'VEML7700 бачить темряву → нічний екран, яскравість мінімальна, LED вимкнений. Світло ввімкнули → boot «доброго ранку».', en: 'VEML7700 sees darkness → night screen, minimum brightness, LED off. Lights on → “good morning” boot.' }, 'ti', 7000, s => { sensors.lux = 2; led.set('#000', 'off'); s.show('night'); s.timeline([[5000, () => { sensors.lux = 300; s.show('morning'); led.set('#ffd34d', 'breathe', 0.5); }]]); }],
-  ['tilt', { uk: 'Нахил > 20°', en: 'Tilt > 20°' }, { uk: 'IMU: показати «Посадку» з горизонтом; > 30° — «вирівняй посадку», рідина в баку переливається.', en: 'IMU: show Landing with the horizon; > 30° — “level the lander”, tank liquid spills.' }, 't', 7000, s => { s.show('landing'); s.animTilt(28, 6); s.timeline([[3500, () => s.show('tank')]]); }],
-  ['shake', { uk: 'Струс', en: 'Shake' }, { uk: 'Червона тривога «перевір ноги», LED червоний 3 с, у баку — сплеск і бризки.', en: 'Red alert “check the legs”, LED red 3 s, splash and spray in the tank.' }, 't', 5000, s => { s.show('tank'); s.shake(); led.set(RED, 'strobe', 5, 3000); s.banner({ uk: '⚠ СТРУС · ПЕРЕВІР НОГИ', en: '⚠ SHAKE · CHECK LEGS' }, RED); }],
-  ['face-down', { uk: 'Догори дном', en: 'Face down' }, { uk: 'IMU: пристрій перевернули → сон, екран чорний, тьмяний годинник.', en: 'IMU: device flipped → sleep, black screen, dim clock.' }, 't', 5000, s => { led.set('#000', 'off'); s.show('sleep'); }],
-  ['charging', { uk: 'Підключили зарядку', en: 'Charger connected' }, { uk: 'У баку — бульбашки, рівень росте, рідина синя; батарея в шапці «заряджається».', en: 'Bubbles in the tank, level rises, liquid turns blue; header battery shows charging.' }, 't', 7000, s => { sensors.charging = true; s.show('tank'); led.set(BLUE, 'breathe', 0.5); }],
-  ['battery-low', { uk: 'Батарея < 15 %', en: 'Battery < 15 %' }, { uk: 'Іконка червона, LED вимикається для економії; e-ink переходить на оновлення раз на 30 хв.', en: 'Red icon, LED turns off to save power; e-ink switches to 30-min refresh.' }, 'ti', 5000, s => { sensors.battery = 0.12; led.set('#000', 'off'); s.show('mission'); s.toast({ uk: 'Батарея 12 % — LED вимкнено', en: 'Battery 12 % — LED off' }, RED); }],
-  ['wifi-lost', { uk: 'Wi-Fi зник', en: 'Wi-Fi lost' }, { uk: '«offline · 5 хв тому» на всіх екранах, дані з кешу; час і погода — напряму.', en: '“offline · 5 min ago” on every screen, cached data; time and weather fetched directly.' }, 'ti', 5000, s => { sensors.wifi = false; s.show('mission'); led.set(ORANGE, 'solid'); }],
-  ['guest', { uk: 'Гість поруч', en: 'Guest nearby' }, { uk: 'Мікрофон чує чужий голос > 30 с → показати «Місію» з великим часом, сховати Dev (приватність).', en: 'Mic hears another voice > 30 s → show Mission with a big clock, hide Dev (privacy).' }, 't', 5000, s => { s.show('dev'); s.timeline([[1500, () => { sensors.mic = 0.8; s.show('mission'); s.toast({ uk: 'Гість · Dev-екран приховано', en: 'Guest · Dev screen hidden' }, ORANGE); }]]); }],
   ['clap', { uk: 'Хлопок', en: 'Clap' }, { uk: 'Мікрофон: хлопок → обличчя підморгує; у баку — сплеск.', en: 'Mic: clap → the face winks; splash in the tank.' }, 't', 4000, s => { s.show('face'); s.wink(); sensors.mic = 1; }],
-  ['rocket', { uk: 'Запуск ракети за 10 хв', en: 'Rocket launch in 10 min' }, { uk: 'Екран «Місяць і небо» з відліком у стилі «місія», LED помаранчевий; T-0 → «старт».', en: 'Moon & sky screen with a mission-style countdown, LED orange; T-0 → “liftoff”.' }, 'ti', 8000, s => { s.launchT = performance.now() + 6000; s.show('moon'); led.set(ORANGE, 'breathe', 1); s.timeline([[6000, () => { led.set('#ffd34d', 'strobe', 6, 2000); s.confetti('#ffd34d'); s.toast({ uk: 'T-0 · СТАРТ', en: 'T-0 · LIFTOFF' }, ORANGE); }]]); }],
-  ['eod', { uk: 'Кінець робочого дня', en: 'End of workday' }, { uk: 'Останній мітинг минув + 18:00 → підсумок: мітингів, комітів, PR, фокус-сесій; LED теплий.', en: 'Last meeting passed + 18:00 → summary: meetings, commits, PRs, focus sessions; warm LED.' }, 'ti', 7000, s => { led.set('#ffb86b', 'breathe', 0.3); s.show('eod'); }],
-  ['ink-partial', { uk: 'Часткове оновлення', en: 'Partial refresh' }, { uk: 'Тільки e-ink: змінилась хвилина → блимає лише зона годинника, решта картинки не торкається.', en: 'E-ink only: minute changed → only the clock area flickers, the rest untouched.' }, 'i', 4000, s => { s.show('mission'); s.inkPartial = performance.now(); }],
-  ['ink-full', { uk: 'Повне оновлення', en: 'Full refresh' }, { uk: 'Тільки e-ink: 3 інверсії по 130 мс, щоб прибрати «привиди», потім новий кадр.', en: 'E-ink only: 3 inversions of 130 ms to clear ghosting, then a fresh frame.' }, 'i', 3000, s => { s.fullRefresh(); }],
-  ['power-off', { uk: 'Вимкнули живлення', en: 'Power off' }, { uk: 'Тільки e-ink: картинка лишається — записка на екрані читається без батареї.', en: 'E-ink only: the image stays — the note is readable without a battery.' }, 'i', 6000, s => { s.show('note'); led.set('#000', 'off'); s.timeline([[2500, () => { s.powerOff = true; }]]); }],
+  ['shake', { uk: 'Струс', en: 'Shake' }, { uk: 'Червона тривога «перевір ноги», LED червоний 3 с, у баку — сплеск і бризки.', en: 'Red alert “check the legs”, LED red 3 s, splash and spray in the tank.' }, 't', 5000, s => { s.show('tank'); s.shake(); led.set(RED, 'strobe', 5, 3000); s.banner({ uk: '⚠ СТРУС · ПЕРЕВІР НОГИ', en: '⚠ SHAKE · CHECK LEGS' }, RED); }],
+  ['rocket', { uk: 'Запуск ракети', en: 'Rocket launch' }, { uk: 'Відлік у стилі «місія», LED помаранчевий; T-0 → «старт».', en: 'Mission-style countdown, LED orange; T-0 → “liftoff”.' }, 'ti', 8000, s => { s.launchT = performance.now() + 6000; s.show('moon'); led.set(ORANGE, 'breathe', 1); s.timeline([[6000, () => { led.set('#ffd34d', 'strobe', 6, 2000); s.confetti('#ffd34d'); s.toast({ uk: 'T-0 · СТАРТ', en: 'T-0 · LIFTOFF' }, ORANGE); }]]); }],
+  ['claude-question', { uk: 'Claude поставив питання', en: 'Claude asks a question' }, { uk: 'LED червоний блимає 2 Гц + «пінг»; Dev-екран наперед.', en: 'LED blinks red at 2 Hz + ping; Dev screen comes forward.' }, 'ti', 6000, s => { claude.state = 'question'; ledFromClaude(); s.show('dev'); s.toast({ uk: 'Claude: «Пушити зараз чи після рев’ю?»', en: 'Claude: “Push now or after review?”' }, RED); }],
+  ['ink-partial', { uk: 'Часткове оновлення', en: 'Partial refresh' }, { uk: 'Тільки e-ink: змінилась хвилина → блимає лише зона годинника.', en: 'E-ink only: minute changed → only the clock area flickers.' }, 'i', 4000, s => { s.show('mission'); s.inkPartial = performance.now(); }],
+  ['ink-full', { uk: 'Повне оновлення', en: 'Full refresh' }, { uk: 'Тільки e-ink: 3 інверсії по 130 мс проти «привидів».', en: 'E-ink only: 3 inversions of 130 ms against ghosting.' }, 'i', 3000, s => { s.fullRefresh(); }],
+];
+// ---------- історії: зв'язні сюжети з підписами кроків: [id, назва, опис, дисплеї, тривалість, [[ms, підпис, fn]...]] ----------
+const Q = (uk, en) => ({ uk, en });
+export const STORIES = [
+  ['morning', Q('Робочий ранок', 'Work morning'), Q('Ніч → світло → «доброго ранку» → прогноз → розклад → за 5 хв розклад зникає, наперед виходить конкретний мітинг із синім маяком → старт → у ефірі → черга повідомлень після.', 'Night → lights on → “good morning” → forecast → day plan → 5 min before, the plan gives way to the specific meeting with a blue beacon → start → on air → queued notifications after.'), 't', 34000, [
+    [0, Q('Ніч: темно, LED вимкнений', 'Night: dark, LED off'), s => { sensors.lux = 2; led.set('#000', 'off'); s.show('night'); }],
+    [3000, Q('Світло ввімкнули → «Доброго ранку» з погодою, мітингом, фактом', 'Lights on → “Good morning” with weather, meeting, fact'), s => { sensors.lux = 300; led.set('#ffd34d', 'breathe', 0.4); s.show('morning'); }],
+    [7000, Q('Прогноз на день', 'Forecast for the day'), s => s.show('forecast')],
+    [10000, Q('Розклад: стрічка дня з мітингами', 'Day plan: timeline with meetings'), s => { cal.next.inMin = 42; s.show('day'); }],
+    [14000, Q('За 5 хв до Standup: розклад ховається, наперед — мітинг, LED синій 1 Гц', '5 min before Standup: plan hides, the meeting comes forward, LED blue 1 Hz'), s => { cal.next.title = 'Standup'; cal.next.dur = 15; cal.next.inMin = 5; led.set(BLUE, 'blink', 1); s.show('meeting'); }],
+    [19000, Q('За 1 хв — блимає швидше', '1 min — faster blink'), s => { cal.next.inMin = 1; led.set(BLUE, 'blink', 3); }],
+    [22000, Q('Старт: тон, QR для телефону, LED рівний «в ефірі»', 'Start: chime, QR for the phone, steady “on air” LED'), s => { cal.next.inMin = 0; led.set(BLUE, 'solid'); s.toast(Q('🔔 Standup — почалось', '🔔 Standup — starting'), BLUE); }],
+    [26000, Q('Claude поставив питання під час мітингу — відкладено в чергу, LED не смикається', 'Claude asks during the meeting — queued, LED stays calm'), s => { claude.state = 'question'; s.toast(Q('Claude питає · у черзі до кінця мітингу', 'Claude asks · queued until the meeting ends'), '#889'); }],
+    [30000, Q('Мітинг закінчився → «Місія» і черга: питання Claude, LED червоний', 'Meeting over → Mission and the queue: Claude’s question, LED red'), s => { cal.next.inMin = 42; cal.next.title = 'Sync: Lander R2 widgets'; cal.next.dur = 30; ledFromClaude(); s.show('mission'); s.toast(Q('Claude: «Пушити зараз чи після рев’ю?»', 'Claude: “Push now or after review?”'), RED); }],
+  ]],
+  ['claude', Q('Сесія з Claude Code', 'A Claude Code session'), Q('Агент почав задачу → Dev-екран → питання (червоний) → відповіли → PR змержено (конфеті) → CI впав (смуга, поки не тапнеш) → ліміт > 90 % → простій.', 'Agent starts → Dev screen → question (red) → answered → PR merged (confetti) → CI failed (bar until tapped) → limit > 90 % → idle.'), 'ti', 30000, [
+    [0, Q('Claude почав задачу: LED зелений «дихає»', 'Claude starts: LED breathes green'), s => { claude.state = 'working'; ledFromClaude(); s.show('mission'); }],
+    [3000, Q('Dev-екран: сесія, ліміти, останні PR', 'Dev screen: session, limits, recent PRs'), s => s.show('dev')],
+    [7000, Q('Питання: LED червоний 2 Гц + тост', 'Question: LED red 2 Hz + toast'), s => { claude.state = 'question'; ledFromClaude(); s.toast(Q('Claude: «Пушити зараз чи після рев’ю?»', 'Claude: “Push now or after review?”'), RED); }],
+    [11000, Q('Відповіли — знову працює', 'Answered — working again'), s => { claude.state = 'working'; ledFromClaude(); }],
+    [15000, Q('PR змержено: конфеті, зелений строб', 'PR merged: confetti, green strobe'), s => { claude.prs[0][1] = 'merged'; led.set(GREEN, 'strobe', 4, 2500); s.confetti(GREEN); }],
+    [19000, Q('CI впав: червона смуга зверху, поки не тапнеш', 'CI failed: red bar on top until tapped'), s => { claude.prs[0][2] = 'fail'; led.set(RED, 'solid'); s.banner(Q('CI ✗ lander-r2 · build #128', 'CI ✗ lander-r2 · build #128'), RED); }],
+    [23000, Q('Ліміт 5 год > 90 %: смуга червона, LED жовтий подвійний блим', '5h limit > 90 %: red bar, yellow double blink'), s => { s.bannerT = null; claude.used5h = 0.93; led.set('#facc15', 'double', 0.5); }],
+    [27000, Q('Простій: LED помаранчевий, назад на «Місію»', 'Idle: LED orange, back to Mission'), s => { claude.state = 'idle'; ledFromClaude(); s.show('mission'); }],
+  ]],
+  ['focus', Q('Фокус-блок', 'Focus block'), Q('Розклад показує вільне вікно → пропозиція фокусу → Pomodoro, LED синій «не турбувати», повідомлення в чергу → перерва з конфеті → черга віддає питання Claude.', 'Plan shows a free slot → focus suggestion → Pomodoro, blue “do not disturb” LED, notifications queued → break with confetti → queue delivers Claude’s question.'), 't', 26000, [
+    [0, Q('Розклад: вільне вікно 45 хв', 'Plan: a free 45-minute slot'), s => s.show('day')],
+    [3000, Q('Пропозиція: «фокус-сесія?»', 'Suggestion: “focus session?”'), s => { s.show('focus'); s.toast(Q('Вільно до 15:00 — фокус-сесія?', 'Free until 15:00 — focus session?'), BLUE); }],
+    [6000, Q('Pomodoro пішов: LED синій рівний, повідомлення приховані', 'Pomodoro running: steady blue LED, notifications hidden'), s => { focus.running = true; focus.breakMode = false; focus.left = 25 * 60; led.set(BLUE, 'solid'); }],
+    [10000, Q('Claude питає — у чергу, екран не смикається', 'Claude asks — queued, screen stays'), s => { claude.state = 'question'; s.toast(Q('1 повідомлення у черзі', '1 notification queued'), '#889'); }],
+    [14000, Q('…25 хвилин по тому', '…25 minutes later'), s => { focus.left = 3; }],
+    [17500, Q('Перерва 5 хв: спікер, конфеті, LED зелений', '5-minute break: chime, confetti, LED green'), s => { focus.left = 300; focus.breakMode = true; focus.sessions++; led.set(GREEN, 'solid'); s.confetti(GREEN); }],
+    [21000, Q('Черга: питання Claude, LED червоний, Dev-екран', 'Queue: Claude’s question, red LED, Dev screen'), s => { ledFromClaude(); s.show('dev'); s.toast(Q('Claude: «Пушити зараз чи після рев’ю?»', 'Claude: “Push now or after review?”'), RED); }],
+  ]],
+  ['home', Q('Погода і дім', 'Weather & home'), Q('Прогноз → тиск падає, «дощ» і краплі на склі → кімната: сухо → «зволожувач» → повітря чисте → «відкрий вікно».', 'Forecast → pressure falling, “rain” and drops on the glass → room: dry → “humidifier” → clean air → “open the window”.'), 't', 22000, [
+    [0, Q('Прогноз на 7 днів (Open-Meteo наживо)', '7-day forecast (Open-Meteo live)'), s => s.show('forecast')],
+    [3500, Q('BME280: тиск падає → «дощ можливий», дощ на склі', 'BME280: pressure falling → “rain likely”, rain on the glass'), s => { s.trendOverride = -0.6; s.codeOverride = 61; s.toast(Q('тиск −3 hPa за 3 год', 'pressure −3 hPa in 3 h'), '#7aa2f7'); }],
+    [8000, Q('Кімната: вологість 26 % → «увімкни зволожувач»', 'Room: humidity 26 % → “turn on the humidifier”'), s => { s.humOverride = 26; s.show('room'); }],
+    [13000, Q('Повітря: AQI низький, температура ок → «ВІДКРИЙ ВІКНО»', 'Air: low AQI, temperature ok → “OPEN THE WINDOW”'), s => { s.aqiOverride = 14; s.show('air'); }],
+    [18000, Q('«Місія» з підказкою про вікно', 'Mission with the window hint'), s => { s.show('mission'); s.toast(Q('на вулиці краще, ніж у кімнаті — відкрий вікно', 'outdoors beats indoors — open the window'), GREEN); }],
+  ]],
+  ['physics', Q('Фізика: нахил, струс, сон', 'Physics: tilt, shake, sleep'), Q('Посадка з горизонтом → нахил > 30° «вирівняй» → бак переливається → струс, сплеск, тривога → догори дном → сон → повернули → boot.', 'Landing with the horizon → tilt > 30° “level it” → tank spills → shake, splash, alert → face down → sleep → back up → boot.'), 't', 24000, [
+    [0, Q('Посадка: штучний горизонт з IMU', 'Landing: IMU artificial horizon'), s => { s.show('landing'); s.animTilt(12, 3); }],
+    [4000, Q('Нахил 35° → «ВИРІВНЯЙ ПОСАДКУ»', 'Tilt 35° → “LEVEL THE LANDER”'), s => s.animTilt(35, 6)],
+    [8000, Q('Бак: рідина переливається за нахилом', 'Tank: liquid follows the tilt'), s => s.show('tank')],
+    [12000, Q('Струс: сплеск, бризки, тривога «перевір ноги»', 'Shake: splash, spray, “check the legs” alert'), s => { s.animTilt(0, 0); s.shake(); led.set(RED, 'strobe', 5, 3000); s.banner(Q('⚠ СТРУС · ПЕРЕВІР НОГИ', '⚠ SHAKE · CHECK LEGS'), RED); }],
+    [16000, Q('Догори дном → сон, LED вимкнений', 'Face down → sleep, LED off'), s => { s.bannerT = null; led.set('#000', 'off'); s.show('sleep'); }],
+    [20000, Q('Повернули → boot-заставка → «Місія»', 'Back up → boot splash → Mission'), s => { s.boot = performance.now(); ledFromClaude(); s.show('mission'); }],
+  ]],
+  ['night', Q('Вечір, ніч, живлення', 'Evening, night, power'), Q('Кінець дня з підсумком → темно → нічний екран, LED off → батарея < 15 % → зарядку підключили: бульбашки в баку → ранок.', 'End of day with a summary → dark → night screen, LED off → battery < 15 % → charger in: bubbles in the tank → morning.'), 't', 24000, [
+    [0, Q('18:00, останній мітинг минув → підсумок дня, LED теплий', '18:00, last meeting over → day summary, warm LED'), s => { led.set('#ffb86b', 'breathe', 0.3); s.show('eod'); }],
+    [5000, Q('Темно 2 хв → нічний екран, LED вимкнений', 'Dark for 2 min → night screen, LED off'), s => { sensors.lux = 2; led.set('#000', 'off'); s.show('night'); }],
+    [10000, Q('Батарея 12 % → іконка червона', 'Battery 12 % → red icon'), s => { sensors.battery = 0.12; s.show('mission'); s.toast(Q('Батарея 12 % — LED вимкнено', 'Battery 12 % — LED off'), RED); }],
+    [14000, Q('Зарядку підключили: бак синіє, бульбашки, рівень росте', 'Charger in: tank turns blue, bubbles, level rises'), s => { sensors.charging = true; led.set(BLUE, 'breathe', 0.5); s.show('tank'); }],
+    [20000, Q('Ранок: світло → «Доброго ранку»', 'Morning: light → “Good morning”'), s => { sensors.lux = 300; sensors.charging = false; sensors.battery = 0.78; led.set('#ffd34d', 'breathe', 0.4); s.show('morning'); }],
+  ]],
+  ['inkday', Q('День e-ink', 'An e-ink day'), Q('Місія → хвилина змінилась: часткове оновлення лише годинника → розклад → за 5 хв повне оновлення на «Мітинг» → факт дня → записка → живлення вимкнули, картинка лишилась.', 'Mission → minute changes: partial refresh of the clock only → day plan → 5 min before, full refresh to Meeting → fact → note → power off, the image stays.'), 'i', 28000, [
+    [0, Q('Місія: чорне по білому, LED зелений', 'Mission: black on white, green LED'), s => { claude.state = 'working'; ledFromClaude(); s.show('mission'); }],
+    [4000, Q('Змінилась хвилина → блимає тільки зона годинника', 'Minute changed → only the clock area flickers'), s => { s.inkPartial = performance.now(); }],
+    [8000, Q('Розклад дня — змінюється рідко, ідеально для e-ink', 'Day plan — rarely changes, perfect for e-ink'), s => s.show('day')],
+    [13000, Q('За 5 хв до мітингу: повне оновлення (3 інверсії) → «Мітинг», LED синій', '5 min before: full refresh (3 inversions) → Meeting, LED blue'), s => { cal.next.inMin = 5; led.set(BLUE, 'blink', 1); s.show('meeting'); }],
+    [18000, Q('Факт дня з Wikipedia', 'Fact of the day from Wikipedia'), s => { cal.next.inMin = 42; ledFromClaude(); s.show('fact'); }],
+    [22000, Q('Записка з телефону', 'A note sent from the phone'), s => s.show('note')],
+    [25000, Q('Живлення вимкнули — картинка лишилась', 'Power off — the image stays'), s => { led.set('#000', 'off'); s.powerOff = true; }],
+  ]],
 ];
 
 export class Screen {
@@ -237,7 +282,7 @@ export class Screen {
     this.settings = { bright: 1, autoBright: false, city: 0, h24: true };
     this.ripples = []; this.parts = []; this.toasts = []; this.bannerT = null; this.flashT = 0; this.winkT = 0; this.shakeT = 0; this.launchT = 0; this.powerOff = false;
     this.inkFlash = 0; this.inkPartial = 0; this.inkMinute = -1; this.inkImage = null; this.inkKey = '';
-    this.scenario = null; this.timers = [];
+    this.scenario = null; this.story = null; this.timers = [];
     this.onDraw = null; this.onScreen = null;
     this.tank = this.makeTank();
     this.setupPointer();
@@ -272,6 +317,14 @@ export class Screen {
     this.timers.push(setTimeout(() => this.stopScenario(true), sc[4]));
   }
   timeline(steps) { for (const [ms, fn] of steps) this.timers.push(setTimeout(fn, ms)); }
+  runStory(id) {
+    const st = STORIES.find(x => x[0] === id); if (!st) return;
+    this.stopScenario(true); this.snapshot();
+    this.story = { id, t0: performance.now(), dur: st[4], step: -1, caption: null, n: st[5].length };
+    st[5].forEach(([ms, cap, fn], i) => this.timers.push(setTimeout(() => { this.story.step = i; this.story.caption = cap; try { fn(this); } catch (e) { console.error(e); } this.onStory?.(); }, ms)));
+    this.timers.push(setTimeout(() => this.stopScenario(true), st[4]));
+    this.onStory?.();
+  }
   snapshot() { this.snap = { claude: JSON.parse(JSON.stringify(claude)), cal: JSON.parse(JSON.stringify(cal)), tasks: JSON.parse(JSON.stringify(tasks)), focus: { ...focus }, sensors: { ...sensors }, screen: this.screen }; }
   stopScenario(restore = false) {
     this.timers.forEach(clearTimeout); this.timers = [];
@@ -280,7 +333,9 @@ export class Screen {
       Object.assign(sensors, { battery: this.snap.sensors.battery, charging: false, wifi: true, lux: 300 });
       this.powerOff = false; this.bannerT = null; ledFromClaude(); this.show(this.snap.screen);
     }
-    this.scenario = null; this.inkImage = null;
+    this.scenario = null; this.story = null; this.inkImage = null;
+    this.trendOverride = null; this.humOverride = null; this.codeOverride = null; this.aqiOverride = null;
+    this.onStory?.();
   }
   toast(text, color) { this.toasts.push({ text, color, t: performance.now() }); this.inkImage = null; }
   banner(text, color) { this.bannerT = { text, color }; this.inkImage = null; }
@@ -294,8 +349,8 @@ export class Screen {
   setupPointer() {
     const c = this.canvas;
     const pos = e => { const r = c.getBoundingClientRect(); return [(e.clientX - r.left) * c.width / r.width / this.S, (e.clientY - r.top) * c.height / r.height / this.S]; };
-    c.addEventListener('pointermove', e => { if (this.version === 'touch' && !sensors.real && !this.scenario) { const [x, y] = pos(e); sensors.tRoll = (x / 170 - 0.5) * 50; sensors.tPitch = (y / 380 - 0.5) * 30; } });
-    c.addEventListener('pointerleave', () => { if (!sensors.real && !this.scenario) { sensors.tRoll = 0; sensors.tPitch = 0; } });
+    c.addEventListener('pointermove', e => { if (this.version === 'touch' && !sensors.real && !this.scenario && !this.story) { const [x, y] = pos(e); sensors.tRoll = (x / 170 - 0.5) * 50; sensors.tPitch = (y / 380 - 0.5) * 30; } });
+    c.addEventListener('pointerleave', () => { if (!sensors.real && !this.scenario && !this.story) { sensors.tRoll = 0; sensors.tPitch = 0; } });
     c.addEventListener('pointerdown', e => { if (this.version !== 'touch') return; this.tap(pos(e)); });
   }
   tap([x, y]) {
@@ -313,11 +368,12 @@ export class Screen {
   // ---------- симуляція ----------
   tick(now, t) {
     const dt = 1 / 60;
-    if (!this.scenario) { claude.resetMin = 134 - Math.floor(t / 60) % 134; claude.sessionMin = 47 + Math.floor(t / 60); }
+    if (!this.scenario && !this.story) { claude.resetMin = 134 - Math.floor(t / 60) % 134; claude.sessionMin = 47 + Math.floor(t / 60); }
     sensors.roll = lerp(sensors.roll, sensors.tRoll, 0.08); sensors.pitch = lerp(sensors.pitch, sensors.tPitch, 0.08);
     sensors.mic = lerp(sensors.mic, 0.08 + Math.random() * 0.2, 0.15);
     sensors.temp = weather.temp + 2.3 + Math.sin(t * 0.05) * 0.2; sensors.hum = weather.hum - 8 + Math.sin(t * 0.07);
-    sensors.pressure = sensors.pBase + Math.sin(t / 90) * 1.5; sensors.trend = Math.cos(t / 90);
+    sensors.pressure = sensors.pBase + Math.sin(t / 90) * 1.5; sensors.trend = this.trendOverride ?? Math.cos(t / 90);
+    if (this.humOverride != null) sensors.hum = this.humOverride;
     sensors.alt = Math.round(44330 * (1 - Math.pow(sensors.pressure / 1013.25, 0.1903)));
     if (sensors.charging) sensors.battery = Math.min(1, sensors.battery + dt * 0.03);
     if (focus.running && focus.left > 0) { focus.left -= dt; if (focus.left <= 0) { focus.left = 0; focus.running = false; } }
@@ -513,11 +569,11 @@ export class Screen {
     const fc = sensors.trend > 0.2 ? (uk ? 'тиск росте → прояснення' : 'pressure rising → clearing') : sensors.trend < -0.2 ? (uk ? 'тиск падає → дощ можливий' : 'pressure falling → rain likely') : (uk ? 'тиск стабільний' : 'pressure steady');
     tile(c, 8, 302, W - 16, 30, '#7aa2f7'); c.fillStyle = '#fff'; c.font = F(10, 'bold'); c.textAlign = 'left'; c.fillText(`${sensors.pressure.toFixed(1)} hPa`, 16, 315); c.fillStyle = '#aab'; c.font = F(7); c.fillText(fc, 16, 326);
     c.fillStyle = '#556'; c.font = F(7); c.fillText(weather.live ? 'open-meteo · live' : 'open-meteo · static', 10, 348);
-    if (weather.code >= 51 && weather.code < 70) this.rainOnGlass(c, t, W, H);
+    if ((this.codeOverride ?? weather.code) >= 51 && (this.codeOverride ?? weather.code) < 70) this.rainOnGlass(c, t, W, H);
   }
   rainOnGlass(c, t, W, H) { c.fillStyle = 'rgba(120,170,255,0.35)'; for (let i = 0; i < 30; i++) { const x = (i * 53) % W, y = ((t * (20 + i % 5 * 8)) + i * 37) % H; c.beginPath(); c.ellipse(x, y, 1.5, 3, 0, 0, Math.PI * 2); c.fill(); } }
   scr_air(c, now, t, H) {
-    const uk = this.lang === 'uk', W = 170, a = weather.aq;
+    const uk = this.lang === 'uk', W = 170, a = this.aqiOverride != null ? { ...weather.aq, aqi: this.aqiOverride } : weather.aq;
     frame(c, W, H); title(c, uk ? 'ПОВІТРЯ' : 'AIR');
     const col = a.aqi <= 20 ? GREEN : a.aqi <= 40 ? '#a3e635' : a.aqi <= 60 ? ORANGE : RED;
     c.lineWidth = 8; c.strokeStyle = '#2a2f3a'; c.beginPath(); c.arc(85, 80, 38, Math.PI * 0.75, Math.PI * 2.25); c.stroke();
@@ -649,7 +705,7 @@ export class Screen {
     for (let i = 0; i < tk.n; i++) { const target = g * (i / tk.n - 0.5) * 40; tk.v[i] += (target - tk.h[i]) * k * 60 * dtc; tk.v[i] *= damp; }
     for (let pass = 0; pass < 4; pass++) for (let i = 0; i < tk.n; i++) { if (i > 0) tk.v[i] += (tk.h[i - 1] - tk.h[i]) * spread; if (i < tk.n - 1) tk.v[i] += (tk.h[i + 1] - tk.h[i]) * spread; }
     for (let i = 0; i < tk.n; i++) { tk.h[i] += tk.v[i] * dtc * 60 * 0.12; tk.h[i] = Math.max(-60, Math.min(60, tk.h[i])); }
-    if (!this.scenario && Math.random() < 0.02) tk.v[Math.floor(Math.random() * tk.n)] += rnd(-2, 2);
+    if (!this.scenario && !this.story && Math.random() < 0.02) tk.v[Math.floor(Math.random() * tk.n)] += rnd(-2, 2);
     const tn = performance.now(); tk.drops = tk.drops.filter(d => tn - d.t < 1500);
     for (const d of tk.drops) { d.vy += 120 * dtc; d.x += d.vx * dtc; d.y += d.vy * dtc; if (d.y > tk.level() + tk.h[Math.max(0, Math.min(tk.n - 1, Math.round(d.x / 170 * (tk.n - 1))))] && d.vy > 0) { const i = Math.max(0, Math.min(tk.n - 1, Math.round(d.x / 170 * (tk.n - 1)))); tk.v[i] -= d.drop ? 40 : 15; d.t = 0; } }
     if (sensors.charging && Math.random() < 0.3) tk.bubbles.push({ x: rnd(20, 150), y: 330, r: rnd(1, 3), t: tn });

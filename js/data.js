@@ -10,23 +10,35 @@ export const STEPS = {
   },
   display: {
     original: { uk: ['Дисплей', 'TFT 1.9″ 170×320 ST7789 припаюється прямо до дротяних шин.'], en: ['Display', '1.9″ 170×320 ST7789 TFT is soldered straight onto the wire bus.'] },
-    touch: { uk: ['Дисплей', 'AMOLED 1.91″ 240×536 (RM67162, QSPI) з ємнісним тачем FT3168 — сторінки гортаються свайпом.'], en: ['Display', '1.91″ 240×536 AMOLED (RM67162, QSPI) with FT3168 capacitive touch — swipe between pages.'] },
-    ink: { uk: ['Дисплей', 'E-ink 2.66″ 152×296 (SSD1680), активна зона 30×59 мм — рівно в каркас, тримає картинку без живлення.'], en: ['Display', '2.66″ 152×296 e-ink (SSD1680), 30×59 mm active area — fits the frame exactly, keeps the image without power.'] },
+    touch: { uk: ['Дисплей під нахилом', 'AMOLED 1.91″ 240×536 (RM67162, QSPI) з ємнісним тачем FT3168. Стоїть під нахилом 12° назад на двох дужках — читається з робочого місця, без бліків; винесений на 1.5 мм уперед від дроту, щоб палець не впирався в рамку.'], en: ['Tilted display', '1.91″ 240×536 AMOLED (RM67162, QSPI) with FT3168 capacitive touch. Tilted 12° back on two brackets — readable from the desk, no glare; 1.5 mm proud of the wire so the finger clears the frame.'] },
+    ink: { uk: ['Дисплей під нахилом', 'E-ink 2.66″ 152×296 (SSD1680), активна зона 30×59 мм — рівно в каркас, під нахилом 12° назад; тримає картинку без живлення.'], en: ['Tilted display', '2.66″ 152×296 e-ink (SSD1680), 30×59 mm active area — fits the frame, tilted 12° back; keeps the image without power.'] },
   },
   shell: { uk: ['Шкаралупа', 'Зовнішня прямокутна клітка ≈30×32×60 мм замикає корпус.'], en: ['Shell', 'Outer rectangular cage ≈30×32×60 mm closes the body.'] },
   audio: {
     original: { uk: ['Мікрофон і бузер', 'PDM-мікрофон (синя плата) збоку, п’єзобузер з іншого боку.'], en: ['Mic & buzzer', 'PDM mic (blue board) on one side, piezo buzzer on the other.'] },
-    touch: { uk: ['Сенсори і звук', 'PDM-мікрофон, IMU LSM6DSOX (гіроскоп+акселерометр), BME280 (температура/вологість/тиск), датчик світла VEML7700 і мініспікер 15 мм через MAX98357A.'], en: ['Sensors & audio', 'PDM mic, LSM6DSOX IMU (gyro+accel), BME280 (temp/humidity/pressure), VEML7700 light sensor and a 15 mm mini speaker via MAX98357A.'] },
+    touch: { uk: ['Сенсори в тілі', 'Мікрофон PDM — збоку; IMU LSM6DSOX — за платою по центру мас; BME280 — низ рюкзака отвором униз, подалі від чипа (інакше +2–3 °C); VEML7700 — зверху шкаралупи, дивиться в стелю; спікер 15 мм + MAX98357A — правий борт.'], en: ['Sensors in the body', 'PDM mic on the side; LSM6DSOX IMU behind the board at the centre of mass; BME280 at the bottom of the backpack facing down, away from the chip (else +2–3 °C); VEML7700 on top of the shell facing the ceiling; 15 mm speaker + MAX98357A on the right side.'] },
     ink: { uk: ['Без звуку', 'У e-ink версії немає ні бузера, ні мікрофона — крок пропускається.'], en: ['No audio', 'The e-ink build has no buzzer or mic — this step is skipped.'] },
   },
   pack: {
     original: { uk: ['Рюкзак і батарея', 'Клітка-рюкзак ззаду тримає батарею 14250 (300 мАг) і вимикач.'], en: ['Backpack & battery', 'Rear cage holds the 14250 cell (300 mAh) and the power switch.'] },
-    touch: { uk: ['Рюкзак і батарея', 'Та сама «бочка», але 16340 (Ø16×34, 800 мАг) — ~6 год; клітка трохи ширша.'], en: ['Backpack & battery', 'Same “barrel” but a 16340 (Ø16×34, 800 mAh) — ~6 h; the cage is slightly wider.'] },
-    ink: { uk: ['Рюкзак і батарея', 'Клітка-рюкзак ззаду тримає батарею 14250 і вимикач — на тижні роботи.'], en: ['Backpack & battery', 'Rear cage holds the 14250 cell and the switch — weeks of runtime.'] },
+    touch: { uk: ['Рюкзак, знімна батарея, USB-C', '16340 з платою захисту стоїть вертикально у вузькому рюкзаку в габариті корпусу і тримається двома пружними латунними клемами — міняється без паяльника. Вимикач збоку під палець, USB-C виведено на «спину».'], en: ['Backpack, removable cell, USB-C', 'A protected 16340 stands vertically in a narrow backpack within the body outline, held by two brass spring clips — swap without a soldering iron. Side switch under the thumb, USB-C routed to the back.'] },
+    ink: { uk: ['Рюкзак, знімна батарея, USB-C', 'Той самий рюкзак із пружними клемами; для e-ink вистачає 16340 на місяці. Вимикач збоку, USB-C на «спині».'], en: ['Backpack, removable cell, USB-C', 'Same backpack with spring clips; for e-ink a 16340 lasts months. Side switch, USB-C on the back.'] },
   },
-  antenna: { uk: ['Антена', 'Дротяна антена 60 мм з RGB LED на кінці — показує стан Claude Code: зелений — працює, червоний — чекає відповіді, помаранчевий — простій.'], en: ['Antenna', '60 mm wire antenna with an RGB LED on top — shows Claude Code state: green working, red waiting for an answer, orange idle.'] },
-  legs: { uk: ['Ноги', 'Чотири ноги — подвійні стійки з поперечками й розкосами.'], en: ['Legs', 'Four legs — double struts with cross-bars and braces.'] },
-  pads: { uk: ['Посадкові диски', 'Диски Ø14 мм на кінцях ніг — як у справжнього посадкового модуля.'], en: ['Landing pads', 'Ø14 mm pads on the feet — just like a real lander.'] },
+  antenna: {
+    original: { uk: ['Антена', 'Дротяна антена 60 мм з LED на кінці і резисторами на самій антені.'], en: ['Antenna', '60 mm wire antenna with the LED on top and resistors on the antenna itself.'] },
+    touch: { uk: ['Антена-маяк', 'Чистий дріт 60 мм, три тонкі провідники R/G/B, резистори — на платі. RGB LED показує стан Claude Code: зелений — працює, червоний — чекає відповіді, помаранчевий — простій; синій — мітинг/фокус.'], en: ['Beacon antenna', 'Clean 60 mm wire, three thin R/G/B leads, resistors on the board. The RGB LED shows Claude Code state: green working, red waiting, orange idle; blue — meeting/focus.'] },
+    ink: { uk: ['Антена-маяк', 'Чистий дріт 60 мм, резистори на платі. RGB LED показує стан Claude Code й мітинги.'], en: ['Beacon antenna', 'Clean 60 mm wire, resistors on the board. The RGB LED shows Claude Code state and meetings.'] },
+  },
+  legs: {
+    original: { uk: ['Ноги', 'Чотири ноги — подвійні стійки з поперечками й розкосами, паяні прямо до шкаралупи.'], en: ['Legs', 'Four legs — double struts with cross-bars and braces, soldered straight to the shell.'] },
+    touch: { uk: ['Ноги-модулі', 'Кожна нога — окремий модуль на трьох штирях, що входять у трубочки-гнізда на шкаралупі: зняв — поправив — вставив. Розкос замкнутий у трикутник — жорсткість у 2–3 рази вища.'], en: ['Modular legs', 'Each leg is a module on three pins that slide into tube sockets on the shell: pull — straighten — push back. The brace closes a triangle — 2–3× stiffer.'] },
+    ink: { uk: ['Ноги-модулі', 'Ті самі ноги-модулі на штирях із трикутним розкосом.'], en: ['Modular legs', 'The same pinned leg modules with a triangular brace.'] },
+  },
+  pads: {
+    original: { uk: ['Посадкові диски', 'Плоскі диски Ø14 мм, паяються останніми, щоб не хиталось.'], en: ['Landing pads', 'Flat Ø14 mm discs, soldered last so nothing wobbles.'] },
+    touch: { uk: ['Посадкові диски', 'Диски Ø14 мм з відбортовкою 0.5 мм — точка пайки не на площині, стоїть без хитання.'], en: ['Landing pads', 'Ø14 mm discs with a 0.5 mm rim — the solder point is off the plane, no wobble.'] },
+    ink: { uk: ['Посадкові диски', 'Диски Ø14 мм з відбортовкою 0.5 мм.'], en: ['Landing pads', 'Ø14 mm discs with a 0.5 mm rim.'] },
+  },
 };
 
 export const PARTS = {

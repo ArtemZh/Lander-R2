@@ -53,11 +53,15 @@
  "idea.k4": "Відкритий каталог",
  "idea.v4": "Віджети й сценарії — у репозиторії на GitHub. Запропонуй свій через issue.",
  "screen.screens": "Екрани",
- "screen.scenarios": "Сценарії",
+ "screen.scenarios": "Швидкі події",
  "screen.play": "▶ Запустити",
  "screen.playing": "● триває",
  "v.r2": "Lander R2",
  "col.touch": "Lander R2 · AMOLED",
  "col.ink": "Lander R2 · E-ink",
- "col.original": "Прототип (Bhoite)"
+ "col.original": "Прототип (Bhoite)",
+ "screen.stories": "Історії",
+ "screen.storiesLead": "Зв'язні сюжети на 20–35 с: натисніть ▶ і дивіться, як пристрій живе — підпис кроку під екраном.",
+ "screen.sec": "с",
+ "screen.stop": "■ Зупинити"
 }
