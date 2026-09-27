@@ -89,7 +89,7 @@
   <div class="sec-head"><div><h2 data-i18n="wiring.title"></h2></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
   <p class="note" id="pinNote" data-i18n="wiring.approx"></p>
   <div class="scroll-x"><table class="tbl" id="pinTbl"></table></div>
-  <p class="note" id="wiringImgs" data-i18n="wiring.protoNote"></p>
+  <div class="imgs" id="wiringImgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
   <div class="svgs" id="wiringSvg" hidden></div>
 </section>
 
@@ -120,13 +120,27 @@
   </div>
 </section>
 
+<section id="firmware" class="sec only-proto">
+  <h2 data-i18n="fw.title"></h2>
+  <p class="lead" data-i18n="fw.lead"></p>
+  <p data-i18n="fw.p1"></p><p data-i18n="fw.p2"></p><p data-i18n="fw.p3"></p>
+  <div class="imgs three"><img src="img/particle-webhooks.png" alt="Particle webhooks" loading="lazy"><img src="img/moon-webhook.png" alt="Moon webhook" loading="lazy"><img src="img/custom-webhook.png" alt="Custom webhook" loading="lazy"></div>
+</section>
+
+<section id="gallery" class="sec only-proto">
+  <h2 data-i18n="gallery.title"></h2>
+  <p class="lead" data-i18n="gallery.lead"></p>
+  <div class="grid" id="grid"></div>
+</section>
+
 <section id="versions" class="sec">
   <h2 data-i18n="versions.title"></h2>
   <div class="scroll-x"><table class="tbl cmp" id="cmpTbl"></table></div>
 </section>
 
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
+<div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=16"></script>
+<script type="module" src="js/main.js?v=17"></script>
 </body>
 </html>

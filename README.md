@@ -31,5 +31,5 @@ driving the screen and the RGB beacon.
 Статичний сайт, без збірки: `python3 -m http.server` і відкрити `index.html`.
 
 ## Credits
-Inspired by [Mohit Bhoite’s Lander R2](https://bhoite.com/sculptures/lander-r2); no photos by the author are used.
+Prototype, photos and schematics — [Mohit Bhoite, Lander R2](https://bhoite.com/sculptures/lander-r2); shown only in the Prototype view.
 Unofficial educational demo. Firmware is described only, not included.
