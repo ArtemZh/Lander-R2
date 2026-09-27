@@ -435,14 +435,14 @@ export class Screen {
   }
   claudeWidget(c, x, y, w, t) {
     const uk = this.lang === 'uk', col = STATE_COLORS[claude.state], v = led.value(t);
-    tile(c, x, y, w, 50, col);
+    tile(c, x, y, w, 54, col);
     c.globalAlpha = 0.4 + 0.6 * v; c.fillStyle = col; c.beginPath(); c.arc(x + 12, y + 11, 3.5, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
     c.textAlign = 'left'; c.fillStyle = '#fff'; c.font = F(8, 'bold'); c.fillText('CLAUDE CODE', x + 20, y + 9);
     c.fillStyle = col; c.font = F(8); c.fillText(STATE_TEXT[claude.state][uk ? 'uk' : 'en'], x + 20, y + 18);
     const r = `${Math.floor(claude.resetMin / 60)}h${pad(claude.resetMin % 60)}`;
-    c.fillStyle = '#aab'; c.font = F(7); c.fillText(uk ? `ліміт 5 год · скид ${r}` : `5h limit · reset ${r}`, x + 8, y + 30); bar(c, x + 8, y + 33, w - 16, 4, claude.used5h, claude.used5h > 0.9 ? RED : col);
-    c.fillText(uk ? 'ліміт тижня' : 'weekly limit', x + 8, y + 44); bar(c, x + 8, y + 47, w - 16, 3, claude.usedWeek, '#7aa2f7');
-    c.textAlign = 'right'; c.fillText(`${Math.round(claude.used5h * 100)}%`, x + w - 6, y + 30); c.fillText(`${Math.round(claude.usedWeek * 100)}%`, x + w - 6, y + 44);
+    c.fillStyle = '#aab'; c.font = F(8); c.fillText(uk ? `ліміт 5 год · скид ${r}` : `5h limit · reset ${r}`, x + 8, y + 31); bar(c, x + 8, y + 34, w - 16, 4, claude.used5h, claude.used5h > 0.9 ? RED : col);
+    c.fillText(uk ? 'ліміт тижня' : 'weekly limit', x + 8, y + 46); bar(c, x + 8, y + 49, w - 16, 3, claude.usedWeek, '#7aa2f7');
+    c.textAlign = 'right'; c.fillText(`${Math.round(claude.used5h * 100)}%`, x + w - 6, y + 31); c.fillText(`${Math.round(claude.usedWeek * 100)}%`, x + w - 6, y + 46);
   }
   // --- екрани ---
   scr_mission(c, now, t, H) {
@@ -468,7 +468,7 @@ export class Screen {
     c.fillStyle = '#aab'; c.font = F(8); c.fillText(cal.next.inMin > 0 ? (uk ? `через ${cal.next.inMin} хв · ${cal.next.dur} хв` : `in ${cal.next.inMin} min · ${cal.next.dur} min`) : (uk ? 'триває' : 'in progress'), 16, 259);
     this.claudeWidget(c, 8, 272, W - 16, t);
     // вологість · місяць · вітер
-    const gy = 350;
+    const gy = 352;
     c.fillStyle = '#889'; c.font = F(7); c.textAlign = 'center';
     c.fillText(`HUM ${weather.hum}%`, 40, gy + 16); c.fillText(`WIND ${weather.wind}`, 130, gy + 16);
     bar(c, 16, gy + 20, 48, 3, weather.hum / 100, ORANGE); bar(c, 106, gy + 20, 48, 3, weather.wind / 60, ORANGE);
@@ -488,7 +488,7 @@ export class Screen {
     tile(c, 10, 140, W - 20, 70, BLUE);
     c.textAlign = 'left'; c.fillStyle = '#fff'; c.font = F(12, 'bold'); wrap(c, m.title, 18, 158, W - 36, 14, 2);
     c.fillStyle = '#aab'; c.font = F(8); c.fillText(`${m.dur} ${uk ? 'хв' : 'min'} · ${m.link}`, 18, 186);
-    m.who.forEach((w, i) => { c.fillStyle = ['#7aa2f7', ORANGE, GREEN][i]; c.beginPath(); c.arc(26 + i * 20, 200, 7, 0, Math.PI * 2); c.fill(); c.fillStyle = '#111'; c.font = F(6, 'bold'); c.textAlign = 'center'; c.fillText(w, 26 + i * 20, 202); });
+    m.who.forEach((w, i) => { c.fillStyle = ['#7aa2f7', ORANGE, GREEN][i]; c.beginPath(); c.arc(27 + i * 22, 200, 8, 0, Math.PI * 2); c.fill(); c.fillStyle = '#111'; c.font = F(8, 'bold'); c.textAlign = 'center'; c.fillText(w, 27 + i * 22, 203); });
     // QR-заглушка
     c.fillStyle = '#fff'; c.fillRect(110, 222, 50, 50); c.fillStyle = '#000';
     for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) if ((i * 7 + j * 13 + i * j) % 3 === 0) c.fillRect(113 + i * 3.7, 225 + j * 3.7, 3.2, 3.2);
@@ -498,7 +498,7 @@ export class Screen {
   dayStrip(c, x, y, w, h, now) {
     const uk = this.lang === 'uk', h0 = 8, h1 = 20, cur = now.getHours() + now.getMinutes() / 60;
     c.fillStyle = '#151923'; c.fillRect(x, y, w, h);
-    for (let hh = h0; hh <= h1; hh += 2) { const xx = x + (hh - h0) / (h1 - h0) * w; c.fillStyle = '#2a2f3a'; c.fillRect(xx, y, 1, h); c.fillStyle = '#667'; c.font = F(6); c.textAlign = 'center'; c.fillText(hh, xx, y + h - 3); }
+    for (let hh = h0; hh <= h1; hh += 2) { const xx = x + (hh - h0) / (h1 - h0) * w; c.fillStyle = '#2a2f3a'; c.fillRect(xx, y, 1, h); c.fillStyle = '#8a92a6'; c.font = F(7); c.textAlign = 'center'; c.fillText(hh, xx, y + h - 3); }
     for (const [a, b, name] of cal.day) { const xa = x + (a - h0) / (h1 - h0) * w, xb = x + (b - h0) / (h1 - h0) * w; c.fillStyle = b < cur ? '#3a3f4a' : BLUE; c.fillRect(xa, y + 6, Math.max(2, xb - xa - 1), h - 20); }
     const xc = x + Math.min(1, Math.max(0, (cur - h0) / (h1 - h0))) * w; c.fillStyle = ORANGE; c.fillRect(xc - 0.5, y, 1.5, h);
     c.fillStyle = '#889'; c.font = F(7); c.textAlign = 'left'; c.fillText(uk ? 'сьогодні' : 'today', x + 3, y + 5 + 3);
@@ -507,7 +507,7 @@ export class Screen {
     const uk = this.lang === 'uk', W = 170, cur = now.getHours() + now.getMinutes() / 60;
     frame(c, W, H); title(c, uk ? 'ДЕНЬ' : 'DAY');
     const y0 = 34, hpx = 26;
-    for (let hh = 8; hh <= 20; hh++) { const y = y0 + (hh - 8) * hpx; c.fillStyle = '#2a2f3a'; c.fillRect(30, y, W - 40, 1); c.fillStyle = '#667'; c.font = F(7); c.textAlign = 'right'; c.fillText(pad(hh), 26, y + 3); }
+    for (let hh = 8; hh <= 20; hh++) { const y = y0 + (hh - 8) * hpx; c.fillStyle = '#2a2f3a'; c.fillRect(30, y, W - 40, 1); c.fillStyle = '#8a92a6'; c.font = F(7); c.textAlign = 'right'; c.fillText(pad(hh), 26, y + 3); }
     for (const [a, b, name] of cal.day) { const y = y0 + (a - 8) * hpx, h = (b - a) * hpx; const past = b < cur; c.fillStyle = past ? '#20242e' : '#1c2a44'; c.fillRect(32, y + 1, W - 44, h - 2); c.fillStyle = past ? '#556' : BLUE; c.fillRect(32, y + 1, 2, h - 2); c.fillStyle = past ? '#889' : '#fff'; c.font = F(8, 'bold'); c.textAlign = 'left'; c.fillText(name, 38, y + 11); }
     if (cur >= 8 && cur <= 20) { const y = y0 + (cur - 8) * hpx; c.fillStyle = ORANGE; c.fillRect(28, y, W - 36, 1.5); c.beginPath(); c.arc(28, y, 3, 0, Math.PI * 2); c.fill(); }
     c.fillStyle = '#889'; c.font = F(7); c.textAlign = 'left'; c.fillText(uk ? 'вільно: 12:00–13:30, 15:30–17:00' : 'free: 12:00–13:30, 15:30–17:00', 10, H - 14);
@@ -516,9 +516,9 @@ export class Screen {
     const uk = this.lang === 'uk', W = 170;
     frame(c, W, H); title(c, 'DEV · CLAUDE CODE');
     this.claudeWidget(c, 8, 30, W - 16, t);
-    tile(c, 8, 86, W - 16, 30, '#7aa2f7');
-    c.textAlign = 'left'; c.fillStyle = '#fff'; c.font = F(8, 'bold'); c.fillText(claude.session, 16, 98);
-    c.fillStyle = '#aab'; c.font = F(7); c.fillText(`${uk ? 'сесія' : 'session'} ${Math.floor(claude.sessionMin / 60)}h ${pad(claude.sessionMin % 60)}m · ${claude.commits} ${uk ? 'комітів сьогодні' : 'commits today'}`, 16, 109);
+    tile(c, 8, 90, W - 16, 30, '#7aa2f7');
+    c.textAlign = 'left'; c.fillStyle = '#fff'; c.font = F(8, 'bold'); c.fillText(claude.session, 16, 102);
+    c.fillStyle = '#aab'; c.font = F(8); c.fillText(`${uk ? 'сесія' : 'session'} ${Math.floor(claude.sessionMin / 60)}h ${pad(claude.sessionMin % 60)}m · ${claude.commits} ${uk ? 'комітів сьогодні' : 'commits today'}`, 16, 114);
     c.fillStyle = '#889'; c.font = F(8); c.fillText(uk ? 'останні PR' : 'recent PRs', 10, 132);
     claude.prs.forEach(([name, st, ci], i) => {
       const y = 138 + i * 28; tile(c, 8, y, W - 16, 24, st === 'merged' ? '#a371f7' : ci === 'fail' ? RED : GREEN);
@@ -529,8 +529,8 @@ export class Screen {
     // графік комітів за тиждень
     c.fillStyle = '#889'; c.font = F(8); c.textAlign = 'left'; c.fillText(uk ? 'коміти за тиждень' : 'commits this week', 10, 238);
     const wk = [3, 8, 5, 11, 7, 2, claude.commits];
-    wk.forEach((v, i) => { c.fillStyle = i === 6 ? ORANGE : '#3a3f4a'; c.fillRect(12 + i * 22, 300 - v * 4, 16, v * 4); c.fillStyle = '#667'; c.font = F(6); c.textAlign = 'center'; c.fillText('ПВСЧПСН'[i], 20 + i * 22, 310); });
-    c.fillStyle = '#556'; c.font = F(7); c.textAlign = 'left'; wrap(c, uk ? 'Джерело: hooks Claude Code → локальний хаб на ноуті → SSE на пристрій, < 1 с.' : 'Source: Claude Code hooks → local hub on the laptop → SSE to the device, < 1 s.', 10, 330, W - 20, 10);
+    wk.forEach((v, i) => { c.fillStyle = i === 6 ? ORANGE : '#3a3f4a'; c.fillRect(12 + i * 22, 300 - v * 4, 16, v * 4); c.fillStyle = '#8a92a6'; c.font = F(7); c.textAlign = 'center'; c.fillText('ПВСЧПСН'[i], 20 + i * 22, 310); });
+    c.fillStyle = '#8a92a6'; c.font = F(7); c.textAlign = 'left'; wrap(c, uk ? 'Джерело: hooks Claude Code → локальний хаб на ноуті → SSE на пристрій, < 1 с.' : 'Source: Claude Code hooks → local hub on the laptop → SSE to the device, < 1 s.', 10, 330, W - 20, 10);
   }
   scr_room(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170;
@@ -552,8 +552,8 @@ export class Screen {
     for (let i = 0; i <= 48; i++) { const v = sensors.temp - 1.5 + Math.sin(i / 48 * Math.PI * 2 - 1.5) * 1.5; const x = gx + i / 48 * gw, y = gy + gh / 2 - (v - sensors.temp) * 12; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
     c.strokeStyle = '#7aa2f7'; c.beginPath();
     for (let i = 0; i <= 48; i++) { const v = sensors.hum + Math.cos(i / 48 * Math.PI * 2) * 5; const x = gx + i / 48 * gw, y = gy + gh - (v - 30) / 50 * gh; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); c.restore();
-    c.fillStyle = '#556'; c.font = F(7); c.fillText(uk ? 'BME280 — низ рюкзака, подалі від чипа; VEML7700 — зверху, дивиться в стелю' : 'BME280 — bottom of the backpack, away from the chip; VEML7700 — on top, facing the ceiling', 10, 272);
-    wrap(c, uk ? 'Сценарії: сухо → зволожувач; тиск падає → дощ; темно вдень → штори.' : 'Scenarios: dry → humidifier; pressure falling → rain; dark by day → curtains.', 10, 284, W - 20, 10);
+    c.fillStyle = '#8a92a6'; c.font = F(8); const n1 = wrap(c, uk ? 'BME280 — низ рюкзака, подалі від чипа; VEML7700 — зверху, дивиться в стелю.' : 'BME280 — bottom of the backpack, away from the chip; VEML7700 — on top, facing the ceiling.', 10, 274, W - 20, 11, 3);
+    wrap(c, uk ? 'Сценарії: сухо → зволожувач; тиск падає → дощ; темно вдень → штори.' : 'Scenarios: dry → humidifier; pressure falling → rain; dark by day → curtains.', 10, 274 + n1 * 11 + 6, W - 20, 11, 3);
   }
   scr_forecast(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170, loc = uk ? 'uk-UA' : 'en-GB';
@@ -561,14 +561,14 @@ export class Screen {
     weather.daily.slice(0, 7).forEach((d, i) => {
       const y = 32 + i * 38; tile(c, 8, y, W - 16, 34, i === 0 ? ORANGE : '#2a2f3a');
       c.fillStyle = i === 0 ? '#fff' : '#aab'; c.font = F(8, 'bold'); c.textAlign = 'left'; c.fillText(d.date.toLocaleDateString(loc, { weekday: 'short' }).toUpperCase(), 16, y + 13);
-      c.fillStyle = '#667'; c.font = F(7); c.fillText(d.date.toLocaleDateString(loc, { day: '2-digit', month: 'short' }), 16, y + 25);
+      c.fillStyle = '#8a92a6'; c.font = F(7); c.fillText(d.date.toLocaleDateString(loc, { day: '2-digit', month: 'short' }), 16, y + 25);
       wxIcon(c, d.code, 66, y + 17, 14, t);
       c.fillStyle = '#fff'; c.font = F(11, 'bold'); c.textAlign = 'right'; c.fillText(`${d.max}°`, 120, y + 15); c.fillStyle = '#889'; c.font = F(8); c.fillText(`${d.min}°`, 120, y + 27);
-      c.fillStyle = d.pop > 50 ? '#7aa2f7' : '#667'; c.font = F(7); c.fillText(`${d.pop}%`, 150, y + 13); c.fillStyle = '#667'; c.fillText(`${d.wind} km/h`, 158, y + 26);
+      c.fillStyle = d.pop > 50 ? '#7aa2f7' : '#8a92a6'; c.font = F(7); c.fillText(`${d.pop}%`, 150, y + 13); c.fillStyle = '#8a92a6'; c.fillText(`${d.wind} km/h`, 158, y + 26);
     });
     const fc = sensors.trend > 0.2 ? (uk ? 'тиск росте → прояснення' : 'pressure rising → clearing') : sensors.trend < -0.2 ? (uk ? 'тиск падає → дощ можливий' : 'pressure falling → rain likely') : (uk ? 'тиск стабільний' : 'pressure steady');
     tile(c, 8, 302, W - 16, 30, '#7aa2f7'); c.fillStyle = '#fff'; c.font = F(10, 'bold'); c.textAlign = 'left'; c.fillText(`${sensors.pressure.toFixed(1)} hPa`, 16, 315); c.fillStyle = '#aab'; c.font = F(7); c.fillText(fc, 16, 326);
-    c.fillStyle = '#556'; c.font = F(7); c.fillText(weather.live ? 'open-meteo · live' : 'open-meteo · static', 10, 348);
+    c.fillStyle = '#8a92a6'; c.font = F(7); c.fillText(weather.live ? 'open-meteo · live' : 'open-meteo · static', 10, 348);
     if ((this.codeOverride ?? weather.code) >= 51 && (this.codeOverride ?? weather.code) < 70) this.rainOnGlass(c, t, W, H);
   }
   rainOnGlass(c, t, W, H) { c.fillStyle = 'rgba(120,170,255,0.35)'; for (let i = 0; i < 30; i++) { const x = (i * 53) % W, y = ((t * (20 + i % 5 * 8)) + i * 37) % H; c.beginPath(); c.ellipse(x, y, 1.5, 3, 0, 0, Math.PI * 2); c.fill(); } }
@@ -582,69 +582,72 @@ export class Screen {
     const tiles = [[`${a.pm25}`, 'PM2.5 µg/m³'], [`${a.pm10}`, 'PM10 µg/m³'], [`${a.uv}`, 'UV'], [`${weather.temp}°`, uk ? 'на вулиці' : 'outdoors']];
     tiles.forEach(([v, l], i) => { const x = 10 + (i % 2) * 78, y = 130 + Math.floor(i / 2) * 44; tile(c, x, y, 72, 38, col); c.fillStyle = '#fff'; c.font = F(13, 'bold'); c.textAlign = 'left'; c.fillText(v, x + 8, y + 18); c.fillStyle = '#889'; c.font = F(7); c.fillText(l, x + 8, y + 30); });
     const open = a.aqi <= 40 && Math.abs(weather.temp - 22) < 8;
-    tile(c, 8, 224, W - 16, 60, open ? GREEN : RED);
-    c.fillStyle = '#fff'; c.font = F(14, 'bold'); c.textAlign = 'left'; c.fillText(open ? (uk ? 'ВІДКРИЙ ВІКНО' : 'OPEN THE WINDOW') : (uk ? 'ВІКНО ЗАКРИТИ' : 'KEEP IT CLOSED'), 16, 246);
-    c.fillStyle = '#aab'; c.font = F(8); wrap(c, uk ? `Вулиця: ${weather.temp}°, AQI ${a.aqi}. Кімната: ${sensors.temp.toFixed(0)}°, ${Math.round(sensors.hum)}%.` : `Outdoors: ${weather.temp}°, AQI ${a.aqi}. Room: ${sensors.temp.toFixed(0)}°, ${Math.round(sensors.hum)}%.`, 16, 262, W - 36, 10);
-    c.fillStyle = '#556'; c.font = F(7); c.fillText(a.live ? 'open-meteo air quality · live' : 'static', 10, 300);
+    tile(c, 8, 232, W - 16, 96, open ? GREEN : RED);
+    c.fillStyle = '#fff'; c.font = F(15, 'bold'); c.textAlign = 'left'; c.fillText(open ? (uk ? 'ВІДКРИЙ ВІКНО' : 'OPEN THE WINDOW') : (uk ? 'ВІКНО ЗАКРИТИ' : 'KEEP IT CLOSED'), 16, 256);
+    c.fillStyle = '#aab'; c.font = F(9); wrap(c, uk ? `Вулиця: ${weather.temp}°, AQI ${a.aqi}. Кімната: ${sensors.temp.toFixed(0)}°, ${Math.round(sensors.hum)}%.` : `Outdoors: ${weather.temp}°, AQI ${a.aqi}. Room: ${sensors.temp.toFixed(0)}°, ${Math.round(sensors.hum)}%.`, 16, 276, W - 36, 13);
+    c.fillStyle = '#aab'; c.font = F(9); wrap(c, open ? (uk ? 'Провітрювання 10 хв опустить CO₂ і температуру.' : 'Ten minutes of fresh air lowers CO₂ and temperature.') : (uk ? 'Зачекай, поки AQI впаде нижче 40.' : 'Wait until AQI drops below 40.'), 16, 306, W - 36, 13, 2);
+    c.fillStyle = '#8a92a6'; c.font = F(8); c.fillText(a.live ? 'open-meteo air quality · live' : 'static', 10, H - 22);
   }
   scr_focus(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170;
     frame(c, W, H); title(c, uk ? 'ФОКУС' : 'FOCUS');
     const total = focus.breakMode ? 300 : focus.total, p = 1 - focus.left / total, col = focus.breakMode ? GREEN : BLUE;
-    c.lineWidth = 10; c.strokeStyle = '#2a2f3a'; c.beginPath(); c.arc(85, 120, 60, 0, Math.PI * 2); c.stroke();
-    c.strokeStyle = col; c.beginPath(); c.arc(85, 120, 60, -Math.PI / 2, -Math.PI / 2 + p * Math.PI * 2); c.stroke();
+    c.lineWidth = 12; c.strokeStyle = '#2a2f3a'; c.beginPath(); c.arc(85, 140, 66, 0, Math.PI * 2); c.stroke();
+    c.strokeStyle = col; c.beginPath(); c.arc(85, 140, 66, -Math.PI / 2, -Math.PI / 2 + p * Math.PI * 2); c.stroke();
     const m = Math.floor(focus.left / 60), s = Math.floor(focus.left % 60);
-    c.fillStyle = '#fff'; c.font = F(30, 'bold'); c.textAlign = 'center'; c.fillText(`${pad(m)}:${pad(s)}`, 85, 130);
-    c.fillStyle = '#889'; c.font = F(8); c.fillText(focus.breakMode ? (uk ? 'перерва' : 'break') : focus.running ? (uk ? 'фокус · не турбувати' : 'focus · do not disturb') : (uk ? 'тап — старт' : 'tap to start'), 85, 148);
-    c.fillStyle = '#889'; c.textAlign = 'left'; c.fillText(uk ? 'сесії сьогодні' : 'sessions today', 10, 210);
-    for (let i = 0; i < 8; i++) { c.fillStyle = i < focus.sessions ? col : '#2a2f3a'; c.fillRect(10 + i * 19, 216, 15, 8); }
-    c.fillStyle = '#556'; c.font = F(7); wrap(c, uk ? 'Поки триває сесія — LED синій «on air», Dev-екран і повідомлення приховані. Кінець — спікер, 5 хв перерви.' : 'While a session runs the LED is blue “on air”, Dev and notifications hidden. End — chime, 5-minute break.', 10, 240, W - 20, 10);
+    c.fillStyle = '#fff'; c.font = F(34, 'bold'); c.textAlign = 'center'; c.fillText(`${pad(m)}:${pad(s)}`, 85, 152);
+    c.fillStyle = '#889'; c.font = F(9); c.fillText(focus.breakMode ? (uk ? 'перерва' : 'break') : focus.running ? (uk ? 'фокус · не турбувати' : 'focus · do not disturb') : (uk ? 'тап — старт' : 'tap to start'), 85, 172);
+    c.fillStyle = '#889'; c.textAlign = 'left'; c.fillText(uk ? 'сесії сьогодні' : 'sessions today', 10, 242);
+    for (let i = 0; i < 8; i++) { c.fillStyle = i < focus.sessions ? col : '#2a2f3a'; c.fillRect(10 + i * 19, 250, 15, 10); }
+    c.fillStyle = '#8a92a6'; c.font = F(9); wrap(c, uk ? 'Поки триває сесія — LED синій «on air», Dev-екран і повідомлення приховані. Кінець — спікер, 5 хв перерви.' : 'While a session runs the LED is blue “on air”, Dev and notifications hidden. End — chime, 5-minute break.', 10, 282, W - 20, 12);
   }
   scr_tasks(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170;
     frame(c, W, H); title(c, uk ? 'ЗАДАЧІ · СЬОГОДНІ' : 'TASKS · TODAY');
     tasks.list.forEach(([tu, te, done], i) => {
-      const y = 40 + i * 52; tile(c, 8, y, W - 16, 44, done ? GREEN : '#2a2f3a');
-      c.strokeStyle = done ? GREEN : '#667'; c.lineWidth = 1.5; c.strokeRect(18.5, y + 14.5, 14, 14);
-      if (done) { c.strokeStyle = GREEN; c.beginPath(); c.moveTo(21, y + 22); c.lineTo(25, y + 26); c.lineTo(31, y + 17); c.stroke(); }
-      c.fillStyle = done ? '#889' : '#fff'; c.font = F(9, done ? '' : 'bold'); c.textAlign = 'left'; wrap(c, uk ? tu : te, 40, y + 20, W - 60, 11, 2);
-      if (done) { c.strokeStyle = '#889'; c.beginPath(); c.moveTo(40, y + 17); c.lineTo(40 + Math.min(W - 60, c.measureText(uk ? tu : te).width), y + 17); c.stroke(); }
+      const y = 40 + i * 66; tile(c, 8, y, W - 16, 58, done ? GREEN : '#2a2f3a');
+      c.strokeStyle = done ? GREEN : '#8a92a6'; c.lineWidth = 1.5; c.strokeRect(18.5, y + 21.5, 16, 16);
+      if (done) { c.strokeStyle = GREEN; c.beginPath(); c.moveTo(21, y + 30); c.lineTo(26, y + 35); c.lineTo(33, y + 24); c.stroke(); }
+      c.fillStyle = done ? '#889' : '#fff'; c.font = F(10, done ? '' : 'bold'); c.textAlign = 'left'; wrap(c, uk ? tu : te, 42, y + 25, W - 62, 13, 2);
+      if (done) { c.strokeStyle = '#889'; c.beginPath(); c.moveTo(42, y + 21); c.lineTo(42 + Math.min(W - 62, c.measureText(uk ? tu : te).width), y + 21); c.stroke(); }
     });
     const n = tasks.list.filter(x => x[2]).length;
-    c.fillStyle = n === 3 ? GREEN : '#889'; c.font = F(n === 3 ? 12 : 8, 'bold'); c.textAlign = 'center'; c.fillText(n === 3 ? (uk ? 'ДЕНЬ ЗРОБЛЕНО ✓' : 'DAY DONE ✓') : `${n}/3`, 85, 220);
-    c.fillStyle = '#556'; c.font = F(7); c.textAlign = 'left'; c.fillText(uk ? 'Todoist / GitHub Issues · тап по чекбоксу' : 'Todoist / GitHub Issues · tap the checkbox', 10, 240);
+    c.fillStyle = n === 3 ? GREEN : '#889'; c.font = F(n === 3 ? 14 : 10, 'bold'); c.textAlign = 'center'; c.fillText(n === 3 ? (uk ? 'ДЕНЬ ЗРОБЛЕНО ✓' : 'DAY DONE ✓') : `${n}/3`, 85, 262);
+    c.lineWidth = 6; c.strokeStyle = '#2a2f3a'; c.beginPath(); c.arc(85, 300, 22, 0, Math.PI * 2); c.stroke(); c.strokeStyle = GREEN; c.beginPath(); c.arc(85, 300, 22, -Math.PI / 2, -Math.PI / 2 + n / 3 * Math.PI * 2); c.stroke();
+    c.fillStyle = '#8a92a6'; c.font = F(8); c.textAlign = 'left'; wrap(c, uk ? 'Todoist / GitHub Issues · тап по чекбоксу' : 'Todoist / GitHub Issues · tap the checkbox', 10, H - 24, W - 20, 11, 2);
   }
   scr_fact(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170, loc = uk ? 'uk-UA' : 'en-GB';
     frame(c, W, H); title(c, uk ? 'ЦЬОГО ДНЯ' : 'ON THIS DAY');
     c.fillStyle = '#889'; c.font = F(8); c.fillText(now.toLocaleDateString(loc, { day: 'numeric', month: 'long' }), 10, 36);
-    c.fillStyle = ORANGE; c.font = F(36, 'bold'); c.fillText(String(fact.year), 10, 76);
-    c.fillStyle = '#fff'; c.font = F(9); wrap(c, fact.text[uk ? 'uk' : 'en'].replace(/^\d+ — /, ''), 10, 96, W - 20, 12, 12);
-    c.fillStyle = '#556'; c.font = F(7); c.fillText(fact.live ? 'wikipedia · on this day · live' : 'wikipedia · static', 10, H - 30);
+    c.fillStyle = ORANGE; c.font = F(40, 'bold'); c.fillText(String(fact.year), 10, 80);
+    c.fillStyle = '#fff'; c.font = F(11); wrap(c, fact.text[uk ? 'uk' : 'en'].replace(/^\d+ — /, ''), 10, 104, W - 20, 15, 14);
+    c.fillStyle = '#8a92a6'; c.font = F(7); c.fillText(fact.live ? 'wikipedia · on this day · live' : 'wikipedia · static', 10, H - 30);
     c.fillText(uk ? 'тап — ще один факт' : 'tap — another fact', 10, H - 20);
   }
   scr_word(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170, w = words[now.getDate() % words.length];
     frame(c, W, H); title(c, uk ? 'СЛОВО ДНЯ' : 'WORD OF THE DAY');
-    c.fillStyle = '#fff'; c.font = F(18, 'bold'); c.fillText(w[0], 10, 70); c.fillStyle = ORANGE; c.font = F(12); c.fillText(w[1], 10, 90);
-    c.fillStyle = '#aab'; c.font = F(9); wrap(c, w[2], 10, 112, W - 20, 12);
-    c.fillStyle = BLUE; c.beginPath(); c.arc(30, 170, 14, 0, Math.PI * 2); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(25, 165); c.lineTo(25, 175); c.lineTo(35, 170); c.fill();
-    c.fillStyle = '#889'; c.font = F(8); c.fillText(uk ? 'озвучити через спікер' : 'play on the speaker', 52, 173);
-    for (let i = 0; i < 12; i++) { const h = 3 + Math.abs(Math.sin(t * 6 + i)) * 10; c.fillStyle = '#3a3f4a'; c.fillRect(52 + i * 6, 190 - h / 2, 3, h); }
+    c.fillStyle = '#fff'; c.font = F(22, 'bold'); c.fillText(w[0], 10, 76); c.fillStyle = ORANGE; c.font = F(14); c.fillText(w[1], 10, 100);
+    c.fillStyle = '#aab'; c.font = F(11); wrap(c, w[2], 10, 126, W - 20, 15);
+    c.fillStyle = BLUE; c.beginPath(); c.arc(30, 210, 16, 0, Math.PI * 2); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(24, 203); c.lineTo(24, 217); c.lineTo(37, 210); c.fill();
+    c.fillStyle = '#889'; c.font = F(9); c.fillText(uk ? 'озвучити через спікер' : 'play on the speaker', 54, 214);
+    for (let i = 0; i < 16; i++) { const h = 3 + Math.abs(Math.sin(t * 6 + i)) * 14; c.fillStyle = '#3a3f4a'; c.fillRect(54 + i * 6, 244 - h / 2, 3, h); }
+    c.fillStyle = '#8a92a6'; c.font = F(9); wrap(c, uk ? 'Приклад: «Це була чиста серендипність — я шукав кабель, а знайшов ідею.»' : 'Example: “It was pure serendipity — I was looking for a cable and found an idea.”', 10, 280, W - 20, 13, 4);
   }
   scr_rates(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170;
     frame(c, W, H); title(c, uk ? 'КУРСИ' : 'RATES');
     rates.list.forEach(([name, v, ch], i) => {
-      const y = 34 + i * 70; tile(c, 8, y, W - 16, 62, ch >= 0 ? GREEN : RED);
+      const y = 34 + i * 84; tile(c, 8, y, W - 16, 74, ch >= 0 ? GREEN : RED);
       c.fillStyle = '#889'; c.font = F(8); c.textAlign = 'left'; c.fillText(name, 16, y + 14);
-      c.fillStyle = '#fff'; c.font = F(16, 'bold'); c.fillText(v >= 1000 ? v.toLocaleString('en-US') : v, 16, y + 34);
+      c.fillStyle = '#fff'; c.font = F(18, 'bold'); c.fillText(v >= 1000 ? v.toLocaleString('en-US') : v, 16, y + 38);
       c.fillStyle = ch >= 0 ? GREEN : RED; c.font = F(9, 'bold'); c.textAlign = 'right'; c.fillText(`${ch >= 0 ? '▲' : '▼'} ${Math.abs(ch)}%`, W - 16, y + 14);
       c.strokeStyle = ch >= 0 ? GREEN : RED; c.lineWidth = 1.5; c.beginPath();
-      for (let k = 0; k < 14; k++) { const x = 90 + k * 5, yy = y + 46 - Math.sin(k * 0.9 + i) * 6 - k * ch * 0.6; k ? c.lineTo(x, yy) : c.moveTo(x, yy); } c.stroke();
+      for (let k = 0; k < 14; k++) { const x = 90 + k * 5, yy = y + 56 - Math.sin(k * 0.9 + i) * 7 - k * ch * 0.7; k ? c.lineTo(x, yy) : c.moveTo(x, yy); } c.stroke();
     });
-    c.fillStyle = '#556'; c.font = F(7); c.textAlign = 'left'; c.fillText(rates.live ? 'open.er-api.com · live' : 'static', 10, 258);
-    wrap(c, uk ? 'Зміна > 2 % за день → рамка картки світиться 10 с.' : 'Change > 2 % per day → the card border glows for 10 s.', 10, 272, W - 20, 10);
+    c.fillStyle = '#8a92a6'; c.font = F(8); c.textAlign = 'left'; c.fillText(rates.live ? 'open.er-api.com · live' : 'static', 10, 300);
+    wrap(c, uk ? 'Зміна > 2 % за день → рамка картки світиться 10 с.' : 'Change > 2 % per day → the card border glows for 10 s.', 10, 316, W - 20, 12);
   }
   scr_music(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170;
@@ -657,7 +660,7 @@ export class Screen {
     c.fillStyle = '#889'; c.font = F(7); c.textAlign = 'left'; c.fillText(`${Math.floor(music.pos / 60)}:${pad(Math.floor(music.pos % 60))}`, 20, 238); c.textAlign = 'right'; c.fillText(`${Math.floor(music.len / 60)}:${pad(music.len % 60)}`, W - 20, 238);
     c.fillStyle = '#fff'; if (music.playing) { c.fillRect(78, 256, 5, 16); c.fillRect(88, 256, 5, 16); } else { c.beginPath(); c.moveTo(78, 256); c.lineTo(78, 272); c.lineTo(94, 264); c.fill(); }
     for (let i = 0; i < 24; i++) { const h = music.playing ? 3 + Math.abs(Math.sin(t * 5 + i * 0.7)) * 16 : 3; c.fillStyle = GREEN; c.fillRect(14 + i * 6, 300 - h / 2, 3, h); }
-    c.fillStyle = '#556'; c.font = F(7); c.textAlign = 'left'; c.fillText('spotify · demo', 10, H - 20);
+    c.fillStyle = '#8a92a6'; c.font = F(7); c.textAlign = 'left'; c.fillText('spotify · demo', 10, H - 20);
   }
   scr_moon(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170, ph = moonPhase(now);
@@ -674,7 +677,7 @@ export class Screen {
       tile(c, 8, 268, W - 16, 60, ORANGE); c.fillStyle = '#889'; c.font = F(7); c.textAlign = 'left'; c.fillText(uk ? 'наступний запуск · Falcon 9 · Starlink' : 'next launch · Falcon 9 · Starlink', 16, 280);
       c.fillStyle = left > 0 ? ORANGE : GREEN; c.font = F(22, 'bold'); c.fillText(left > 0 ? `T-${pad(Math.floor(left / 60))}:${pad(Math.floor(left % 60))}` : (uk ? 'СТАРТ' : 'LIFTOFF'), 16, 310);
       c.fillStyle = '#fff'; c.font = F(16); c.textAlign = 'right'; c.fillText('🚀', W - 16, 310 - (left > 0 ? 0 : Math.min(40, (performance.now() - this.launchT) / 30)));
-    } else { tile(c, 8, 268, W - 16, 30, '#556'); c.fillStyle = '#889'; c.font = F(7); c.textAlign = 'left'; c.fillText(uk ? 'наступний запуск · Falcon 9 · через 2 дн 04:12' : 'next launch · Falcon 9 · in 2 d 04:12', 16, 280); c.fillStyle = '#556'; c.fillText('launch library 2 · demo', 16, 292); }
+    } else { tile(c, 8, 268, W - 16, 36, '#8a92a6'); c.fillStyle = '#8a92a6'; c.font = F(8); c.textAlign = 'left'; c.fillText(uk ? 'наступний запуск · Falcon 9' : 'next launch · Falcon 9', 16, 281); c.fillStyle = '#fff'; c.font = F(9, 'bold'); c.fillText(uk ? 'через 2 дн 04:12' : 'in 2 d 04:12', 16, 296); c.fillStyle = '#8a92a6'; c.font = F(8); c.textAlign = 'right'; c.fillText('LL2 · demo', W - 16, 296); }
   }
   horizon(c, x, y, r) {
     c.save(); c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.clip();
@@ -685,7 +688,7 @@ export class Screen {
     for (let i = -2; i <= 2; i++) if (i) { c.strokeStyle = 'rgba(255,255,255,.5)'; c.beginPath(); c.moveTo(-r * 0.3, off + i * r * 0.25); c.lineTo(r * 0.3, off + i * r * 0.25); c.stroke(); }
     c.restore();
     c.strokeStyle = ORANGE; c.lineWidth = 2; c.beginPath(); c.moveTo(x - r * 0.6, y); c.lineTo(x - r * 0.2, y); c.moveTo(x + r * 0.2, y); c.lineTo(x + r * 0.6, y); c.stroke();
-    c.strokeStyle = '#667'; c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.stroke();
+    c.strokeStyle = '#8a92a6'; c.lineWidth = 1; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.stroke();
   }
   scr_landing(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170, tilt = Math.hypot(sensors.roll, sensors.pitch);
@@ -695,7 +698,7 @@ export class Screen {
     c.fillStyle = '#889'; c.font = F(8); c.fillText(tilt > 30 ? (uk ? 'ВИРІВНЯЙ ПОСАДКУ' : 'LEVEL THE LANDER') : (uk ? `roll ${sensors.roll.toFixed(0)}° · pitch ${sensors.pitch.toFixed(0)}°` : `roll ${sensors.roll.toFixed(0)}° · pitch ${sensors.pitch.toFixed(0)}°`), 85, 212);
     const tiles = [[`${sensors.alt} m`, uk ? 'висота (тиск)' : 'altitude (pressure)'], [`${(sensors.mic * 2).toFixed(2)} g`, uk ? 'вібрація' : 'vibration'], ['4/4', uk ? 'ноги на ґрунті' : 'legs down'], [`${sensors.pressure.toFixed(0)} hPa`, uk ? 'тиск' : 'pressure']];
     tiles.forEach(([v, l], i) => { const x = 10 + (i % 2) * 78, y = 226 + Math.floor(i / 2) * 44; tile(c, x, y, 72, 38, '#7aa2f7'); c.fillStyle = '#fff'; c.font = F(12, 'bold'); c.textAlign = 'left'; c.fillText(v, x + 8, y + 18); c.fillStyle = '#889'; c.font = F(7); c.fillText(l, x + 8, y + 30); });
-    c.fillStyle = '#556'; c.font = F(7); c.fillText(uk ? 'LSM6DSOX · десктоп: курсор над екраном = нахил' : 'LSM6DSOX · desktop: cursor over screen = tilt', 10, 330);
+    c.fillStyle = '#8a92a6'; c.font = F(8); wrap(c, uk ? 'LSM6DSOX · на десктопі курсор над екраном = нахил' : 'LSM6DSOX · on desktop the cursor over the screen = tilt', 10, 330, W - 20, 11, 2);
   }
   // --- бак: пружинна поверхня ---
   makeTank() { const n = 60; return { n, h: new Float32Array(n), v: new Float32Array(n), drops: [], bubbles: [], level: () => 300 - sensors.battery * 200 }; }
@@ -728,11 +731,11 @@ export class Screen {
     for (const d of tk.drops) { c.fillStyle = col; c.beginPath(); c.arc(d.x, d.y, d.drop ? 3 : 1.5, 0, Math.PI * 2); c.fill(); }
     c.restore();
     // риски рівня
-    for (let i = 0; i <= 4; i++) { const y = 100 + i * 50; c.fillStyle = '#3a3f4a'; c.fillRect(W - 22, y, 8, 1); c.fillStyle = '#667'; c.font = F(6); c.textAlign = 'right'; c.fillText(`${100 - i * 25}`, W - 24, y + 2); }
+    for (let i = 0; i <= 4; i++) { const y = 100 + i * 50; c.fillStyle = '#3a3f4a'; c.fillRect(W - 22, y, 8, 1); c.fillStyle = '#8a92a6'; c.font = F(7); c.textAlign = 'right'; c.fillText(`${100 - i * 25}`, W - 24, y + 2); }
     c.strokeStyle = '#3a3f4a'; c.lineWidth = 2; c.strokeRect(12, 50, W - 24, 290);
     c.fillStyle = '#fff'; c.font = F(22, 'bold'); c.textAlign = 'center'; c.fillText(`${Math.round(sensors.battery * 100)}%`, 85, 80);
     c.fillStyle = '#aab'; c.font = F(7); c.fillText(sensors.charging ? (uk ? 'заряджається · USB-C' : 'charging · USB-C') : `16340 · ${(3.3 + sensors.battery * 0.9).toFixed(2)} V · ~${Math.round(sensors.battery * 6)} ${uk ? 'год' : 'h'}`, 85, 92);
-    c.fillStyle = '#556'; c.font = F(7); c.textAlign = 'left'; c.fillText(uk ? 'нахил — IMU · тап — крапля · струс — сплеск' : 'tilt — IMU · tap — drop · shake — splash', 12, H - 22);
+    c.fillStyle = '#8a92a6'; c.font = F(7); c.textAlign = 'left'; c.fillText(uk ? 'нахил — IMU · тап — крапля · струс — сплеск' : 'tilt — IMU · tap — drop · shake — splash', 12, H - 22);
   }
   scr_face(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170, tn = performance.now();
@@ -746,13 +749,13 @@ export class Screen {
     });
     // рот
     c.strokeStyle = ORANGE; c.lineWidth = 3; c.beginPath(); const smile = wink ? 14 : 6 + Math.sin(t) * 2; c.moveTo(60, 215); c.quadraticCurveTo(85, 215 + smile, 110, 215); c.stroke();
-    c.fillStyle = '#556'; c.font = F(7); c.textAlign = 'center'; c.fillText(uk ? 'очі дивляться на звук і нахил · хлопок — підморгує' : 'eyes follow sound and tilt · clap — wink', 85, H - 20);
+    c.fillStyle = '#8a92a6'; c.font = F(8); c.textAlign = 'left'; wrap(c, uk ? 'очі дивляться на звук і нахил · хлопок — підморгує' : 'eyes follow sound and tilt · clap — wink', 10, H - 30, W - 20, 11, 2);
   }
   scr_night(c, now, t, H) {
     const uk = this.lang === 'uk', W = 170;
     c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
     sevenSeg(c, `${pad(now.getHours())}:${pad(now.getMinutes())}`, 30, H / 2 - 22, 22, 44, '#4a4033', null, now.getMilliseconds() < 500);
-    c.fillStyle = '#333'; c.font = F(8); c.textAlign = 'center'; c.fillText(uk ? `ніч · ${Math.round(sensors.lux)} lx · LED вимкнено` : `night · ${Math.round(sensors.lux)} lx · LED off`, 85, H / 2 + 40);
+    c.fillStyle = '#776f66'; c.font = F(9); c.textAlign = 'center'; c.fillText(uk ? `ніч · ${Math.round(sensors.lux)} lx · LED вимкнено` : `night · ${Math.round(sensors.lux)} lx · LED off`, 85, H / 2 + 40);
     drawMoon(c, 85, H / 2 - 60, 10, moonPhase(now), '#3a3a44', '#111');
   }
   scr_sleep(c, now, t, H) {
@@ -819,7 +822,7 @@ export class Screen {
     horizonIcon(c, 38, 172, true, INK, 0, 1.2); horizonIcon(c, 114, 172, false, INK, 0, 1.2);
     c.textAlign = 'center'; c.fillStyle = INK; c.font = F(12); c.fillText(weather.sunrise, 38, 191); c.fillText(weather.sunset, 114, 191);
     c.fillStyle = INK; c.fillRect(8, 200, W - 16, 22); c.fillStyle = PAPER; c.textAlign = 'left'; c.font = F(10, 'bold');
-    c.fillText(cal.next.inMin > 0 ? (uk ? `${cal.next.inMin} хв · ${cal.next.title}` : `${cal.next.inMin} min · ${cal.next.title}`).slice(0, 22) : cal.next.title.slice(0, 22), 13, 215);
+    c.fillText(cal.next.inMin > 0 ? (uk ? `${cal.next.inMin} хв · ${cal.next.title}` : `${cal.next.inMin} min · ${cal.next.title}`).slice(0, 20) + '…' : cal.next.title.slice(0, 20) + '…', 13, 215);
     c.fillStyle = INK; c.textAlign = 'left'; c.font = F(9); c.fillText('HUM', 8, 240); c.strokeRect(34.5, 231.5, 56, 10); c.fillRect(36, 233, 53 * weather.hum / 100, 7); c.fillText(`${weather.hum}%`, 96, 240);
     c.fillText('WIND', 8, 258); c.font = F(13, 'bold'); c.fillText(`${weather.wind}`, 38, 259); c.font = F(9); c.fillText('km/h', 60, 258);
     drawMoon(c, W - 20, 250, 11, moonPhase(now), INK, PAPER); c.beginPath(); c.arc(W - 20, 250, 11, 0, Math.PI * 2); c.stroke();
@@ -839,10 +842,10 @@ export class Screen {
     c.fillStyle = INK; c.font = F(8); c.textAlign = 'center'; c.fillText(m.link, W / 2, 266); c.fillText(uk ? 'стук по столу = «іду»' : 'knock = “on my way”', W / 2, 282);
   }
   ink_day(c, now, t, W, H, uk) {
-    this.inkHead(c, now, W); const cur = now.getHours() + now.getMinutes() / 60, y0 = 56, hpx = 18;
-    c.fillStyle = INK; c.font = F(10, 'bold'); c.textAlign = 'left'; c.fillText(uk ? 'ДЕНЬ' : 'DAY', 8, y0 - 6);
+    this.inkHead(c, now, W); const cur = now.getHours() + now.getMinutes() / 60, y0 = 72, hpx = 16;
+    c.fillStyle = INK; c.font = F(10, 'bold'); c.textAlign = 'left'; c.fillText(uk ? 'ДЕНЬ' : 'DAY', 8, y0 - 10);
     for (let hh = 8; hh <= 20; hh++) { const y = y0 + (hh - 8) * hpx; c.fillStyle = INK; c.fillRect(28, y, W - 36, 0.7); c.font = F(7); c.textAlign = 'right'; c.fillText(pad(hh), 24, y + 3); }
-    for (const [a, b, name] of cal.day) { const y = y0 + (a - 8) * hpx, h = (b - a) * hpx, past = b < cur; c.fillStyle = INK; if (past) { c.strokeStyle = INK; c.lineWidth = 1; c.strokeRect(30.5, y + 1.5, W - 40, h - 3); } else c.fillRect(30, y + 1, W - 39, h - 2); c.fillStyle = past ? INK : PAPER; c.font = F(8, 'bold'); c.textAlign = 'left'; c.fillText(name, 34, y + 10); }
+    for (const [a, b, name] of cal.day) { const y = y0 + (a - 8) * hpx, h = Math.max((b - a) * hpx, 12), past = b < cur; c.fillStyle = INK; if (past) { c.strokeStyle = INK; c.lineWidth = 1; c.strokeRect(30.5, y + 0.5, W - 40, h - 1); } else c.fillRect(30, y, W - 39, h); c.fillStyle = past ? INK : PAPER; c.font = F(8, 'bold'); c.textAlign = 'left'; c.fillText(name, 34, y + h / 2 + 3); }
     if (cur >= 8 && cur <= 20) { const y = y0 + (cur - 8) * hpx; c.fillStyle = INK; c.beginPath(); c.moveTo(20, y - 3); c.lineTo(26, y); c.lineTo(20, y + 3); c.fill(); }
   }
   ink_dev(c, now, t, W, H, uk) {
@@ -854,7 +857,7 @@ export class Screen {
     c.textAlign = 'left'; c.fillText(uk ? 'ліміт тижня' : 'weekly', 8, 122); c.strokeRect(8.5, 126.5, W - 17, 9); c.fillRect(10, 128, (W - 20) * claude.usedWeek, 6); c.textAlign = 'right'; c.fillText(`${Math.round(claude.usedWeek * 100)}%`, W - 8, 122);
     c.textAlign = 'left'; c.font = F(9, 'bold'); c.fillText(uk ? 'PR' : 'PRs', 8, 152);
     claude.prs.forEach(([name, st, ci], i) => { const y = 166 + i * 22; c.font = F(8, 'bold'); c.fillText(name.slice(0, 20), 8, y); c.font = F(7); c.fillText(st, 8, y + 9); c.textAlign = 'right'; c.font = F(9, 'bold'); c.fillText(ci === 'ok' ? 'CI ✓' : 'CI ✗', W - 8, y + 4); c.textAlign = 'left'; });
-    c.font = F(8); c.fillText(`${claude.commits} ${uk ? 'комітів сьогодні' : 'commits today'} · ${claude.session}`.slice(0, 34), 8, 240);
+    c.font = F(8); c.fillText(`${claude.commits} ${uk ? 'комітів сьогодні' : 'commits today'}`, 8, 240); c.fillText(claude.session.slice(0, 26), 8, 251);
     const wk = [3, 8, 5, 11, 7, 2, claude.commits]; wk.forEach((v, i) => { c.fillRect(10 + i * 19, 284 - v * 3, 13, v * 3); });
   }
   ink_forecast(c, now, t, W, H, uk) {
@@ -889,7 +892,7 @@ export class Screen {
   ink_night(c, now, t, W, H, uk) {
     c.fillStyle = PAPER; c.fillRect(0, 0, W, H); c.fillStyle = INK; drawMoon(c, W / 2, 90, 30, moonPhase(now), INK, PAPER); c.beginPath(); c.arc(W / 2, 90, 30, 0, Math.PI * 2); c.stroke();
     sevenSeg(c, `${pad(now.getHours())}:${pad(now.getMinutes())}`, 20, 150, 24, 40, INK, null);
-    c.font = F(9); c.textAlign = 'center'; c.fillText(uk ? 'ніч · екран не оновлюється' : 'night · no refresh', W / 2, 220); c.fillText(uk ? 'картинка тримається без живлення' : 'image holds without power', W / 2, 234);
+    c.font = F(9); c.textAlign = 'center'; c.fillText(uk ? 'ніч · без оновлень' : 'night · no refresh', W / 2, 220); c.fillText(uk ? 'картинка тримається' : 'the image holds', W / 2, 234); c.fillText(uk ? 'без живлення' : 'without power', W / 2, 248);
   }
   ink_note(c, now, t, W, H, uk) {
     this.inkHead(c, now, W);
@@ -898,7 +901,7 @@ export class Screen {
     c.font = 'italic 15px Georgia, serif';
     const lines = uk ? ['Пішов на каву ☕', 'буду о 14:10.', '', 'Якщо CI впаде —', 'не чіпай, я гляну.', '', '— A.'] : ['Out for coffee ☕', 'back at 14:10.', '', 'If CI fails —', 'leave it, I’ll check.', '', '— A.'];
     lines.forEach((l, i) => c.fillText(l, 14, 84 + i * 22));
-    c.font = F(7); c.fillText(uk ? 'надіслано з телефону · тримається без живлення' : 'sent from the phone · holds without power', 8, 290);
+    c.font = F(8); c.fillText(uk ? 'з телефону · без живлення' : 'from the phone · no power needed', 8, 290);
   }
   ink_mooncal(c, now, t, W, H, uk) {
     this.inkHead(c, now, W); const loc = uk ? 'uk-UA' : 'en-GB';
@@ -906,7 +909,7 @@ export class Screen {
     const first = new Date(now.getFullYear(), now.getMonth(), 1), days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(), off = (first.getDay() + 6) % 7;
     const cw = (W - 16) / 7; c.font = F(7); (uk ? 'ПВСЧПСН' : 'MTWTFSS').split('').forEach((d, i) => c.fillText(d, 8 + cw * (i + 0.5), 76));
     for (let d = 1; d <= days; d++) {
-      const i = off + d - 1, x = 8 + cw * (i % 7 + 0.5), y = 92 + Math.floor(i / 7) * 30;
+      const i = off + d - 1, x = 8 + cw * (i % 7 + 0.5), y = 92 + Math.floor(i / 7) * 32;
       const ph = moonPhase(new Date(now.getFullYear(), now.getMonth(), d, 12));
       drawMoon(c, x, y + 4, 7, ph, INK, PAPER); c.strokeStyle = INK; c.lineWidth = 0.8; c.beginPath(); c.arc(x, y + 4, 7, 0, Math.PI * 2); c.stroke();
       c.fillStyle = INK; c.font = F(6, d === now.getDate() ? 'bold' : ''); c.fillText(String(d), x, y + 18);
