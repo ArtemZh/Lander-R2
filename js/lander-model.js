@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-export const STEP_IDS = ['chassis', 'board', 'display', 'tilt', 'shell', 'audio', 'pack', 'antenna', 'legs', 'pads'];
+export const STEP_IDS = ['chassis', 'board', 'display', 'shell', 'audio', 'pack', 'antenna', 'legs', 'pads'];
 
 const WIRE_R = 0.4;                 // 20 AWG ≈ 0.8 мм
 const BRASS = 0xc9a227, SOLDER = 0xd9d9d9, GOLD = 0xe0b040;
@@ -250,8 +250,8 @@ export function buildLander(version, screenCanvas, form = 'v1') {
   };
   const top = BODY_Y + BODY_H;
   const r2 = version !== 'original';          // наша конструкція: сенсори в тілі, нахил дисплея, ноги-модулі
-  const TILT = r2 ? -12 * Math.PI / 180 : 0;   // дисплей нахилений на 12° назад
   const TRAP = r2 && form === 'v2';            // форма v2: каркас-трапеція повторює нахил екрана
+  const TILT = TRAP ? -12 * Math.PI / 180 : 0; // v2 — екран нахилений на 12° назад; v1 — вертикальний
   const SH = BODY_H * Math.tan(-TILT);         // на скільки верх передньої грані відходить назад (≈12.8 мм)
   const fz = yy => (TRAP ? 16 - (yy - BODY_Y) / BODY_H * SH : 16); // z передньої грані на висоті yy
 
@@ -261,11 +261,11 @@ export function buildLander(version, screenCanvas, form = 'v1') {
     const x = 11.5, z0 = -9, y0 = BODY_Y + 3, y1 = top - 3, f = yy => fz(yy) - 7; // передня грань шасі — на 7 мм за передньою гранню шкаралупи
     for (const sx of [-1, 1]) {
       chassis.add(wire([[sx * x, y0, z0], [sx * x, y1, z0], [sx * x, y1, f(y1)], [sx * x, y0, f(y0)]], true));
-      for (const yy of [y0 + 12, y0 + 27, y0 + 42]) chassis.add(wire([[sx * x, yy, z0], [sx * x, yy, f(yy)]], false, 0.32));
+      if (!r2) for (const yy of [y0 + 12, y0 + 27, y0 + 42]) chassis.add(wire([[sx * x, yy, z0], [sx * x, yy, f(yy)]], false, 0.32));
     }
     for (const [yy, zz] of [[y0, z0], [y1, z0], [y0, f(y0)], [y1, f(y1)]]) { chassis.add(wire([[-x, yy, zz], [x, yy, zz]])); chassis.add(joint([-x, yy, zz])); chassis.add(joint([x, yy, zz])); }
-    // стійки до плати: короткі дроти до її контактів
-    for (const sx of [-1, 1]) for (const yy of [y0 + 6, y0 + 20, y0 + 34]) chassis.add(wire([[sx * x, yy, z0], [sx * 10.2, yy, -5.5]], false, 0.3));
+    // прототип: стійки до контактів плати; у R2 плата — модуль у передній грані, стійки не потрібні
+    if (!r2) for (const sx of [-1, 1]) for (const yy of [y0 + 6, y0 + 20, y0 + 34]) chassis.add(wire([[sx * x, yy, z0], [sx * 10.2, yy, -5.5]], false, 0.3));
   }
 
   // 2. Плата контролера — стоїть вертикально, компонентами назад, USB униз
@@ -275,7 +275,7 @@ export function buildLander(version, screenCanvas, form = 'v1') {
     // Waveshare-модуль: сама плата і є дисплеєм — стоїть у передній грані під нахилом, компонентами всередину
     const bp = new THREE.Group(); bp.position.set(0, BODY_Y + 4, 14.5); bp.rotation.x = TILT;
     cb.rotation.y = Math.PI; cb.position.set(0, 26, -1.2); bp.add(cb); board.add(bp);
-  } else { cb.rotation.y = Math.PI; cb.position.set(0, BODY_Y + 31, -5.5); board.add(cb); }
+  } else { cb.rotation.y = Math.PI; cb.position.set(0, BODY_Y + 31, r2 ? 5 : -5.5); board.add(cb); }
 
   // 3. Дисплей — спереду, паралельно платі
   const display = add('display', [0, 0, 70]);
@@ -286,39 +286,29 @@ export function buildLander(version, screenCanvas, form = 'v1') {
   }
   const dm = displayModule(version, screenTex);
   if (r2) {
-    // вісь повороту — нижнє ребро дисплея: воно лежить на передній нижній перекладині, верх відходить назад на 12°
+    // v1 — вертикально врівень із передньою гранню; v2 — вісь по нижньому ребру, верх назад на 12°
     const pivot = new THREE.Group(); pivot.position.set(0, BODY_Y + 4, 14.5); pivot.rotation.x = TILT;
     dm.position.set(0, 26, 0); pivot.add(dm); display.add(pivot);
   } else { dm.position.set(0, BODY_Y + 30, 12); display.add(dm); }
 
-  // 3b. Нахил: v1 — дужки-упори; v2 — не потрібні, нахил дає сам каркас-трапеція
-  const tilt = add('tilt', [0, 0, 60]);
-  if (r2 && !TRAP) {
-    // верхнє ребро дисплея після повороту: y ≈ BODY_Y+4+52·cos12°, z ≈ 14.5−52·sin12°
-    const ty = BODY_Y + 4 + 52 * Math.cos(TILT), tz = 14.5 + 52 * Math.sin(TILT);
-    for (const sx of [-1, 1]) {
-      // Z-подібна дужка: припаяна до передньої верхньої перекладини шкаралупи (z=16), йде назад і вниз до верхнього кута дисплея
-      tilt.add(wire([[sx * 13, top, 16], [sx * 13, top - 2, 16], [sx * 12, ty + 1, tz + 1.5], [sx * 12, ty - 4, tz + 1.5]], false, 0.38, 1.2));
-      tilt.add(joint([sx * 13, top, 16], 0.7)); tilt.add(joint([sx * 12, ty - 2, tz + 1.5], 0.6));
-      // нижній упор: дві петельки на передній нижній перекладині, в які лягає нижнє ребро плати дисплея
-      tilt.add(wire([[sx * 10, BODY_Y, 16], [sx * 10, BODY_Y + 3, 16.5], [sx * 10, BODY_Y + 3.5, 13.5]], false, 0.32, 0.8));
-      tilt.add(joint([sx * 10, BODY_Y, 16], 0.6));
-    }
-  }
-
   // 4. Зовнішня шкаралупа
   const shell = add('shell', [0, 80, 0]);
-  if (!TRAP) shell.add(cage(BODY_W, BODY_H, BODY_D, BODY_Y, { rings: [BODY_Y + 20] }));
-  else {
+  if (!r2) shell.add(cage(BODY_W, BODY_H, BODY_D, BODY_Y, { rings: [BODY_Y + 20] }));
+  else if (!TRAP) {
+    // v1: прямокутник; середня перекладина лише на боках і ззаду — передня грань вільна для тач-скріну
+    const x = 15, z = 16, zb = -16, ym = BODY_Y + 20;
+    shell.add(cage(BODY_W, BODY_H, BODY_D, BODY_Y));
+    shell.add(wire([[-x, ym, z], [-x, ym, zb], [x, ym, zb], [x, ym, z]]));
+  } else {
     // трапеція: задня грань вертикальна, передня нахилена на 12° — верх на SH ближче до центру
     const x = 15, zb = -16, y0 = BODY_Y, y1 = top, f0 = fz(y0), f1 = fz(y1);
     shell.add(wire([[-x, y0, zb], [x, y0, zb], [x, y0, f0], [-x, y0, f0]], true));
     shell.add(wire([[-x, y1, zb], [x, y1, zb], [x, y1, f1], [-x, y1, f1]], true));
     for (const sx of [-1, 1]) { shell.add(wire([[sx * x, y0 - 0.3, zb], [sx * x, y1 + 0.3, zb]])); shell.add(wire([[sx * x, y0 - 0.3, f0], [sx * x, y1 + 0.3, f1]])); for (const [yy, zz] of [[y0, zb], [y1, zb], [y0, f0], [y1, f1]]) shell.add(joint([sx * x, yy, zz])); }
-    const ym = y0 + 20; shell.add(wire([[-x, ym, zb], [x, ym, zb], [x, ym, fz(ym)], [-x, ym, fz(ym)]], true));
+    const ym = y0 + 20; shell.add(wire([[-x, ym, fz(ym)], [-x, ym, zb], [x, ym, zb], [x, ym, fz(ym)]])); // без переднього відрізка
   }
-  // діагональна стяжка на задній стінці
-  shell.add(wire([[-15, BODY_Y + 20, -16], [15, BODY_Y + 40, -16]], false, 0.32));
+  // діагональна стяжка на задній стінці — лише в прототипі
+  if (!r2) shell.add(wire([[-15, BODY_Y + 20, -16], [15, BODY_Y + 40, -16]], false, 0.32));
 
   // 5. Мікрофон / бузер / спікер
   const audio = add('audio', [50, 0, 0]);
@@ -340,21 +330,20 @@ export function buildLander(version, screenCanvas, form = 'v1') {
     audio.add(wire([[15, BODY_Y + 20, 2], [18, BODY_Y + 20, 2]], false, 0.3));
     audio.add(wire([[15, BODY_Y + 24, 2], [18, BODY_Y + 24, 2]], false, 0.3));
   } else if (version === 'touch') {
-    // праворуч: мініспікер 15 мм + MAX98357A; ліворуч: стовпчик сенсорних плат — PDM мік, IMU, BME280, VEML7700
+    // Сенсорна капсула ззаду (замість рюкзака з батареєю): BME280 — на дні отвором униз, подалі від тепла чипа;
+    // спікер 15 мм дивиться назад (капсула — резонатор), поруч MAX98357A; PDM-мікрофон — на боковій стінці.
+    // Зовні лишається тільки VEML7700 зверху — дивиться в стелю.
+    const cz = -BODY_D / 2 - 8, cy = BODY_Y + 8;
+    const mod = (name, col, w = 10, h = 8) => { const m = new THREE.Group(); m.add(pcb(w, h, col, [[name, h / 2 + 1, 1.2, true]], { pitch: 2.54, left: 0, right: 0 })); m.add(at(box(2.4, 2.4, 1, metal(0xa8acb0, 0.3)), w / 2 - 3, -h / 2 + 2.5, 1.3)); return m; };
+    const bme = mod('BME280', 0x6b1fb0, 10, 8); bme.position.set(0, cy + 1.5, cz); bme.rotation.x = Math.PI / 2; audio.add(bme);
     const sp = new THREE.Group();
     sp.add(cyl(7.5, 3.5, plastic(0x141414, 0.5), 32));
     for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2, rr = 3 + (i % 2) * 2; sp.add(at(cyl(0.35, 0.3, plastic(0x000000), 6), Math.cos(a) * rr, 1.8, Math.sin(a) * rr)); }
     sp.add(at(cyl(3, 0.4, plastic(0x2a2a2a), 24), 0, 1.9, 0));
-    sp.rotation.z = Math.PI / 2; sp.position.set(20, BODY_Y + 26, 2); audio.add(sp);
+    sp.rotation.x = -Math.PI / 2; sp.position.set(0, cy + 16, cz - 5); audio.add(sp);
     const amp = pcb(10, 12, 0x1f4fb0, [['MAX', 5, 1.5, true], ['98357', 8, 1.5, true]], { pitch: 2.54, left: 0, right: 4, margin: 1.2 });
-    amp.rotation.y = Math.PI / 2; amp.position.set(17.5, BODY_Y + 10, 2); audio.add(amp);
-    for (const yy of [BODY_Y + 8, BODY_Y + 12, BODY_Y + 24, BODY_Y + 28]) { audio.add(wire([[15, yy, 2], [17.5, yy, 2]], false, 0.3)); audio.add(joint([15, yy, 2], 0.55)); }
-    // сенсори — в тілі: мікрофон збоку (як в оригіналі), IMU за платою по центру мас,
-    // BME280 — низ рюкзака отвором униз, VEML7700 — зверху шкаралупи, дивиться в стелю
-    const mod = (name, col, w = 10, h = 8) => { const m = new THREE.Group(); m.add(pcb(w, h, col, [[name, h / 2 + 1, 1.2, true]], { pitch: 2.54, left: 0, right: 0 })); m.add(at(box(2.4, 2.4, 1, metal(0xa8acb0, 0.3)), w / 2 - 3, -h / 2 + 2.5, 1.3)); return m; };
-    const mic = mod('PDM MIC', 0x1f4fb0, 10, 12); mic.position.set(-19.5, BODY_Y + 27, 4); mic.rotation.y = -0.15; audio.add(mic);
-    for (const yy of [-3, 3]) { audio.add(wire([[-15, BODY_Y + 27 + yy, 4], [-18, BODY_Y + 27 + yy, 4]], false, 0.3)); audio.add(joint([-15, BODY_Y + 27 + yy, 4], 0.55)); }
-    const bme = mod('BME280', 0x6b1fb0, 10, 8); bme.position.set(0, BODY_Y + 10, -BODY_D / 2 - 9); bme.rotation.x = Math.PI / 2; audio.add(bme);
+    amp.rotation.y = Math.PI / 2; amp.position.set(9.5, cy + 12, cz); audio.add(amp);
+    const mic = mod('PDM MIC', 0x1f4fb0, 10, 12); mic.rotation.y = -Math.PI / 2; mic.position.set(-9.5, cy + 12, cz); audio.add(mic);
     const veml = mod('VEML7700', 0x1f4fb0, 10, 8); veml.position.set(6, top + 1.2, TRAP ? -4 : 6); veml.rotation.x = -Math.PI / 2; audio.add(veml);
   }
 
@@ -379,28 +368,29 @@ export function buildLander(version, screenCanvas, form = 'v1') {
       sw.position.set(0, BODY_Y - 4, -12); sw.rotation.x = Math.PI; pack.add(sw);
       pack.add(wire([[-4, BODY_Y, -12], [-4, BODY_Y - 2.5, -12]], false, 0.3)); pack.add(wire([[4, BODY_Y, -12], [4, BODY_Y - 2.5, -12]], false, 0.3));
     } else {
-      // R2: знімна 16340 з захистом (Ø16×34) — вертикально у вузькому рюкзаку в габариті корпусу,
-      // тримається двома пружними латунними клемами (як у ліхтарику); вимикач збоку під палець; USB-C на «спині»
-      const br = 8, bl = 34, pz = -BODY_D / 2 - 9.5, y0 = BODY_Y + 12;
-      const c = cage(22, bl + 6, 19, y0 - 3); c.position.z = pz; pack.add(c);
-      for (const sx of [-1, 1]) for (const yy of [y0 - 3, y0 + bl + 3]) pack.add(wire([[sx * 11, yy, -BODY_D / 2], [sx * 11, yy, pz - 9.5]]));
+      // R2: знімна 16340 з захистом (Ø16×34) — ВСЕРЕДИНІ корпусу, вертикально за модулем екрана, між рамками шасі;
+      // тримається двома пружними латунними клемами, припаяними до шасі. Центр мас нижче й ближче до середини.
+      const br = 8, bl = 34, bz = -8, y0 = BODY_Y + 14;
       const bat = new THREE.Group();
       bat.add(cyl(br, bl, shellM, 40)); bat.add(at(cyl(br * 0.4, 1.2, metal(0xe8e8e8, 0.3), 24), 0, bl / 2 + 0.5, 0));
       bat.add(cyl(br + 0.05, bl * 0.66, plastic(0x1f8f5a, 0.5), 40)); bat.add(at(cyl(br + 0.06, 1.2, plastic(0xffffff, 0.5), 40), 0, bl * 0.2, 0));
-      bat.position.set(0, y0 + bl / 2, pz); pack.add(bat);
-      // пружні клеми: зігнутий латунний лист зверху і знизу
-      for (const [yy, dir] of [[y0 + bl + 1.2, 1], [y0 - 1.2, -1]]) {
-        pack.add(at(box(10, 0.6, 12, brassMat()), 0, yy, pz));
-        pack.add(wire([[-5, yy, pz - 6], [-5, yy + dir * 2.5, pz - 9.5], [5, yy + dir * 2.5, pz - 9.5], [5, yy, pz - 6]], false, 0.35));
-        pack.add(joint([-5, yy + dir * 2.5, pz - 9.5], 0.5)); pack.add(joint([5, yy + dir * 2.5, pz - 9.5], 0.5));
+      bat.position.set(0, y0 + bl / 2, bz); pack.add(bat);
+      for (const yy of [y0 - 0.8, y0 + bl + 0.8]) { // клеми: латунна смужка між рамками шасі
+        pack.add(at(box(23, 0.6, 6, brassMat()), 0, yy, bz));
+        pack.add(joint([-11.5, yy, bz], 0.6)); pack.add(joint([11.5, yy, bz], 0.6));
       }
       // вимикач збоку (правий борт, під великий палець)
       sw.rotation.y = Math.PI / 2; sw.position.set(BODY_W / 2 + 2.2, BODY_Y + 8, -6); pack.add(sw);
       pack.add(wire([[15, BODY_Y + 6, -6], [17, BODY_Y + 6, -6]], false, 0.3)); pack.add(wire([[15, BODY_Y + 10, -6], [17, BODY_Y + 10, -6]], false, 0.3));
-      // USB-C на спині: гніздо на рюкзаку + короткий шлейф до плати
-      pack.add(at(box(9, 3.4, 6, metal(0xc8ccd0, 0.3)), 0, BODY_Y + 5, pz - 10.5));
-      const usb = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0, BODY_Y + 5, pz - 8), new THREE.Vector3(0, BODY_Y + 4, -BODY_D / 2 - 2), new THREE.Vector3(0, BODY_Y + 6, -9), new THREE.Vector3(0, BODY_Y + 8, -6.5)]), 24, 0.9, 8, false), plastic(0x1a1a1a, 0.5));
-      pack.add(usb);
+      if (version === 'touch') {
+        // сенсорна капсула ззаду: мала клітка 22×26×14, чотири дроти до задньої грані
+        const cz = -BODY_D / 2 - 8, cy = BODY_Y + 8;
+        const c = cage(22, 26, 14, cy); c.position.z = cz; pack.add(c);
+        for (const sx of [-1, 1]) for (const yy of [cy, cy + 26]) pack.add(wire([[sx * 11, yy, -BODY_D / 2], [sx * 11, yy, cz + 7]]));
+        pack.add(at(box(9, 3.4, 6, metal(0xc8ccd0, 0.3)), 0, cy + 4, cz - 8)); // USB-C на спині капсули
+      } else {
+        pack.add(at(box(9, 3.4, 6, metal(0xc8ccd0, 0.3)), 0, BODY_Y + 6, -BODY_D / 2 - 2)); // USB-C на задній грані
+      }
     }
   }
 
@@ -416,10 +406,7 @@ export function buildLander(version, screenCanvas, form = 'v1') {
         antenna.add(wire([[ax, top + 5 + i * 6, az], [ax + dx, top + 5 + i * 6, az + dz]], false, 0.25));
         antenna.add(wire([[ax, top + 15 + i * 6, az], [ax + dx, top + 15 + i * 6, az + dz]], false, 0.25));
       });
-    } else { // R2: резистори на платі, антена — чистий дріт; три тонкі провідники R/G/B по антені
-      for (let i = 0; i < 3; i++) antenna.add(wire([[ax + 0.6 + i * 0.5, top, az + 0.6], [ax + 0.6 + i * 0.5, top + 57, az + 0.6]], false, 0.12));
-      for (let i = 0; i < 3; i++) antenna.add(at(box(1.6, 0.8, 0.8, plastic(0x222222, 0.4)), ax + 2 + i * 2.2, top - 1.5, az + 2));
-    }
+    } // R2: резистори на платі, антена — чистий дріт
     const led = led0805('rgba(60,255,90,0.95)', 0x22c55e);
     led.position.set(ax, top + 59, az); led.userData.led.light.intensity = 40; led.userData.led.glow.scale.set(14, 14, 1);
     antenna.add(led);
@@ -452,12 +439,10 @@ export function buildLander(version, screenCanvas, form = 'v1') {
       const sockC = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 5, 12, 1, true), brassMat()); sockC.position.copy(c).addScaledVector(up, 2.5); legs.add(sockC); legs.add(joint(c.clone().addScaledVector(up, 5), 0.6));
       // штирі + стійки
       legs.add(wire([a1.clone().addScaledVector(up, 4.5), a1, b1, b2, a2, a2.clone().addScaledVector(up, 4.5)], false, 0.38, 1.0));
-      for (const k of [0.18, 0.36, 0.54, 0.72, 0.9]) legs.add(wire([a1.clone().lerp(b1, k), a2.clone().lerp(b2, k)], false, 0.3));
+      for (const k of [0.25, 0.5, 0.75]) legs.add(wire([a1.clone().lerp(b1, k), a2.clone().lerp(b2, k)], false, 0.3));
       // трикутник: розкос від верхнього гнізда до середини ноги
       legs.add(wire([c.clone().addScaledVector(up, 4.5), c, m], false, 0.38, 1.0));
       legs.add(joint(m, 0.7));
-      // «коліно» — коротка перемичка між розкосом і драбиною
-      legs.add(wire([m.clone().add(side), m.clone().sub(side)], false, 0.3));
     }
   }
 
@@ -519,7 +504,7 @@ export class Viewer {
     shadow.rotation.x = -Math.PI / 2;
     this.scene.add(shadow);
 
-    this.step = 9;
+    this.step = STEP_IDS.length;
     this.highlight = null;
     this.active = true;
     this.onPick = onPick;
