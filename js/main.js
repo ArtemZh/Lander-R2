@@ -1,7 +1,7 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=8';
 import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=18';
-import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=7';
+import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE } from './data.js?v=8';
 import { schematicSVG, blockSVG, pinRows } from './schematic.js?v=2';
 
 const $ = s => document.querySelector(s);
@@ -163,16 +163,11 @@ function renderScreenSide() {
   renderScreensPanel();
 }
 
-// --- Галерея + lightbox ---
-$('#grid').innerHTML = GALLERY.map(src => `<img src="${src}" alt="Lander R2" loading="lazy">`).join('');
-$('#grid').onclick = e => { if (e.target.tagName === 'IMG') { $('#lightbox img').src = e.target.src; $('#lightbox').hidden = false; } };
-$('#lightbox').onclick = () => { $('#lightbox').hidden = true; };
-addEventListener('keydown', e => { if (e.key === 'Escape') $('#lightbox').hidden = true; });
 
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=4`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=5`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));

@@ -135,5 +135,3 @@ export const COMPARE = [
   ['Мінуси', 'Cons', { uk: 'складніший драйвер', en: 'harder driver' }, { uk: 'повільно, ч/б', en: 'slow, B/W' }, { uk: 'мало живе від батареї', en: 'short battery life' }],
 ];
 
-export const GALLERY = ['IMG_1420', 'IMG_1423', 'IMG_1425', 'IMG_1427', 'IMG_1430', 'IMG_1431', 'IMG_1432', 'IMG_1433', 'IMG_1440', 'IMG_1482', 'IMG_1483', 'IMG_1485', 'IMG_1486']
-  .map(n => `img/${n}.jpg`).concat(['img/lander-r2.gif']);

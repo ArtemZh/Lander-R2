@@ -30,5 +30,5 @@ a procedural 3D model, a screen catalog and 27 event scenarios driving the scree
 Статичний сайт, без збірки: `python3 -m http.server` і відкрити `index.html`.
 
 ## Credits
-Original sculpture, build guide and photos — [Mohit Bhoite, Lander R2](https://bhoite.com/sculptures/lander-r2).
+Inspired by [Mohit Bhoite’s Lander R2](https://bhoite.com/sculptures/lander-r2); no photos by the author are used.
 Unofficial educational demo. Firmware is described only, not included.

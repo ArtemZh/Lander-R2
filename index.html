@@ -20,7 +20,7 @@
   <a class="logo" href="#top">LANDER&nbsp;R2</a>
   <nav class="nav">
     <a href="#build" data-i18n="nav.build"></a><a href="#parts" data-i18n="nav.parts"></a><a href="#wiring" data-i18n="nav.wiring"></a>
-    <a href="#idea" data-i18n="nav.idea"></a><a href="#screens" data-i18n="nav.screen"></a><a href="#firmware" data-i18n="nav.firmware"></a><a href="#versions" data-i18n="nav.versions"></a><a href="#gallery" data-i18n="nav.gallery"></a>
+    <a href="#idea" data-i18n="nav.idea"></a><a href="#screens" data-i18n="nav.screen"></a><a href="#versions" data-i18n="nav.versions"></a>
   </nav>
   <div class="switches">
     <div class="seg" id="verSwitch">
@@ -89,7 +89,7 @@
   <div class="sec-head"><div><h2 data-i18n="wiring.title"></h2></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
   <p class="note" id="pinNote" data-i18n="wiring.approx"></p>
   <div class="scroll-x"><table class="tbl" id="pinTbl"></table></div>
-  <div class="imgs" id="wiringImgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
+  <p class="note" id="wiringImgs" data-i18n="wiring.protoNote"></p>
   <div class="svgs" id="wiringSvg" hidden></div>
 </section>
 
@@ -120,26 +120,13 @@
   </div>
 </section>
 
-<section id="firmware" class="sec">
-  <h2 data-i18n="fw.title"></h2>
-  <p class="lead" data-i18n="fw.lead"></p>
-  <p data-i18n="fw.p1"></p><p data-i18n="fw.p2"></p><p data-i18n="fw.p3"></p>
-  <div class="imgs three"><img src="img/particle-webhooks.png" alt="Particle webhooks" loading="lazy"><img src="img/moon-webhook.png" alt="Moon webhook" loading="lazy"><img src="img/custom-webhook.png" alt="Custom webhook" loading="lazy"></div>
-</section>
-
 <section id="versions" class="sec">
   <h2 data-i18n="versions.title"></h2>
   <div class="scroll-x"><table class="tbl cmp" id="cmpTbl"></table></div>
 </section>
 
-<section id="gallery" class="sec">
-  <h2 data-i18n="gallery.title"></h2>
-  <div class="grid" id="grid"></div>
-</section>
-
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
-<div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=13"></script>
+<script type="module" src="js/main.js?v=14"></script>
 </body>
 </html>
