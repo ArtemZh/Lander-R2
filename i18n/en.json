@@ -60,5 +60,13 @@
  "wiring.block": "Block diagram: sources → hub → device",
  "form.v1": "Form v1 · rectangle",
  "form.v2": "Form v2 · trapezoid",
- "wiring.protoNote": "The prototype's schematic and block diagram are in the author's article: bhoite.com/sculptures/lander-r2."
+ "wiring.protoNote": "The prototype's schematic and block diagram are in the author's article: bhoite.com/sculptures/lander-r2.",
+ "wiring.sources": "Documentation sources",
+ "src.component": "Component",
+ "src.docs": "Documentation",
+ "src.status": "Verified",
+ "src.ok": "verified against pins_arduino.h",
+ "src.partial": "signal names from memory, site not opened",
+ "src.memory": "from memory, not verified",
+ "src.note": "Official pages: Adafruit Learn, Espressif's arduino-esp32 repository, Waveshare Wiki, ST, Bosch, Vishay, Analog Devices. “Verified” means GPIO numbers were taken directly from the vendor's pins_arduino.h; the rest comes from prior experience and must be checked before soldering."
 }

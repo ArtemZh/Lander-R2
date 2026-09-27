@@ -189,3 +189,9 @@ a.btn { text-decoration: none; display: inline-block; }
 .svgs figcaption { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--grey-500); margin-bottom: 8px; }
 .svgs svg { display: block; box-shadow: var(--lift-sm); }
 [hidden] { display: none !important; }
+
+.src { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-family: var(--mono); }
+.src--ok { background: #dcfce7; color: #166534; }
+.src--partial { background: #fef3c7; color: #92400e; }
+.src--memory { background: var(--surface); color: var(--grey-700); }
+.src-tbl a { color: var(--ink); }

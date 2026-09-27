@@ -60,5 +60,13 @@
  "wiring.block": "Блок-діаграма: джерела → хаб → пристрій",
  "form.v1": "Форма v1 · прямокутник",
  "form.v2": "Форма v2 · трапеція",
- "wiring.protoNote": "Схема й блок-діаграма прототипу — у статті автора: bhoite.com/sculptures/lander-r2."
+ "wiring.protoNote": "Схема й блок-діаграма прототипу — у статті автора: bhoite.com/sculptures/lander-r2.",
+ "wiring.sources": "Джерела документації",
+ "src.component": "Компонент",
+ "src.docs": "Документація",
+ "src.status": "Звірено",
+ "src.ok": "звірено з pins_arduino.h",
+ "src.partial": "назви сигналів — з пам'яті, сайт не відкривався",
+ "src.memory": "з пам'яті, не звірялось",
+ "src.note": "Офіційні сторінки: Adafruit Learn, репозиторій Espressif arduino-esp32, Waveshare Wiki, ST, Bosch, Vishay, Analog Devices. Статус «звірено» означає, що GPIO-номери взяті безпосередньо з файлу pins_arduino.h виробника; решта — з попереднього досвіду й потребує перевірки перед пайкою."
 }

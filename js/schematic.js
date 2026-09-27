@@ -121,3 +121,17 @@ export function blockSVG(kind, lang = 'uk') {
   o += `<text x="30" y="${H - 22}" font-size="10.5" fill="#5A5A63">${uk ? 'Прошивка: тонка, однакова для AMOLED і e-ink — лише «намалюй екран із JSON».' : 'Firmware: thin, identical for AMOLED and e-ink — just “draw a screen from JSON”.'}</text>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" style="font-family:Inter,system-ui,sans-serif;background:#F5F5F7;border-radius:12px">${o}</svg>`;
 }
+
+// Джерела документації по компонентах: [компонент, для яких kind, URL офіційної сторінки, URL другого джерела, статус перевірки]
+export const SOURCES = [
+  ['ESP32-S3 Feather (Adafruit #5477)', 'touch', 'https://learn.adafruit.com/adafruit-esp32-s3-feather/pinouts', 'https://github.com/espressif/arduino-esp32/blob/master/variants/adafruit_feather_esp32s3/pins_arduino.h', 'ok'],
+  ['ESP32-C6 Feather (Adafruit #5933)', 'ink', 'https://learn.adafruit.com/adafruit-esp32-c6-feather/pinouts', 'https://github.com/espressif/arduino-esp32/blob/master/variants/adafruit_feather_esp32c6/pins_arduino.h', 'ok'],
+  ['AMOLED 1.91″ 240×536 · RM67162 + FT3168', 'touch', 'https://www.waveshare.com/wiki/ESP32-S3-AMOLED-1.91', 'https://www.waveshare.com/esp32-s3-amoled-1.91.htm', 'partial'],
+  ['E-ink 2.66″ 152×296 · SSD1680', 'ink', 'https://www.waveshare.com/wiki/2.66inch_e-Paper_Module', 'https://www.waveshare.com/2.66inch-e-paper-module.htm', 'partial'],
+  ['MAX98357A I²S amp', 'touch', 'https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts', 'https://www.analog.com/en/products/max98357a.html', 'memory'],
+  ['LSM6DSOX IMU', 'touch', 'https://learn.adafruit.com/lsm6dsox-and-ism330dhc-6-dof-imu/pinouts', 'https://www.st.com/en/mems-and-sensors/lsm6dsox.html', 'memory'],
+  ['BME280 · T / RH / P', 'touch', 'https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts', 'https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/', 'memory'],
+  ['VEML7700 lux', 'touch', 'https://learn.adafruit.com/adafruit-veml7700/pinouts', 'https://www.vishay.com/en/product/84286/', 'memory'],
+  ['PDM-мікрофон MP34DT05', 'touch', 'https://learn.adafruit.com/adafruit-pdm-microphone-breakout/pinouts', 'https://www.st.com/en/mems-and-sensors/mp34dt05-a.html', 'memory'],
+  ['16340 Li-ion з захистом · клеми', 'touch,ink', 'https://learn.adafruit.com/li-ion-and-lipoly-batteries/protection-circuitry', '', 'memory'],
+];

@@ -2,7 +2,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=8';
 import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=18';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE } from './data.js?v=8';
-import { schematicSVG, blockSVG, pinRows } from './schematic.js?v=2';
+import { schematicSVG, blockSVG, pinRows, SOURCES } from './schematic.js?v=3';
 
 const $ = s => document.querySelector(s);
 const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
@@ -148,7 +148,13 @@ function renderPins() {
   $('#pinNote').hidden = key() === 'original';
   const orig = key() === 'original';
   $('#wiringImgs').hidden = !orig; $('#wiringSvg').hidden = orig;
-  if (!orig) $('#wiringSvg').innerHTML = `<figure><figcaption>${T('wiring.schematic')}</figcaption>${schematicSVG(key(), state.lang)}</figure><figure><figcaption>${T('wiring.block')}</figcaption>${blockSVG(key(), state.lang)}</figure>`;
+  if (!orig) {
+    const host = u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return u; } };
+    const st = { ok: T('src.ok'), partial: T('src.partial'), memory: T('src.memory') };
+    const rows = SOURCES.filter(r => r[1].includes(key())).map(([name, , u1, u2, v]) => `<tr><td>${esc(name)}</td><td><a href="${u1}" target="_blank" rel="noopener">${esc(host(u1))}</a>${u2 ? ` · <a href="${u2}" target="_blank" rel="noopener">${esc(host(u2))}</a>` : ''}</td><td><span class="src src--${v}">${st[v]}</span></td></tr>`).join('');
+    $('#wiringSvg').innerHTML = `<figure><figcaption>${T('wiring.schematic')}</figcaption>${schematicSVG(key(), state.lang)}</figure><figure><figcaption>${T('wiring.block')}</figcaption>${blockSVG(key(), state.lang)}</figure>
+      <figure><figcaption>${T('wiring.sources')}</figcaption><table class="tbl src-tbl"><tr><th>${T('src.component')}</th><th>${T('src.docs')}</th><th>${T('src.status')}</th></tr>${rows}</table><p class="note">${T('src.note')}</p></figure>`;
+  }
 }
 function renderCompare() {
   const L = state.lang === 'uk' ? 0 : 1;
@@ -167,7 +173,7 @@ function renderScreenSide() {
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=5`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=6`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
