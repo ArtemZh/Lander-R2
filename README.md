@@ -8,23 +8,24 @@
 навколо неї**, як у Flipper і Pebble. Пристрій — привід; продукт — каталог віджетів і сценаріїв подій.
 
 ## Що на сторінці
-- **Дві версії:** Lander R2 (наш) з перемикачем дисплея **AMOLED 1.91″ 240×536 + touch / E-ink 2.66″ 152×296**,
-  і **Прототип** — оригінальна скульптура Mohit Bhoite (TFT 1.9″, Photon 2), якою ми надихнулись.
-- Процедурна 3D-модель (Three.js), збірка по кроках, список деталей ↔ підсвічування, піни, порівняння.
-- **Екрани і сценарії:** 2D-антена з RGB-маяком (стан Claude Code: зелений працює, червоний чекає відповіді,
-  помаранчевий простій) + емулятор екрана; каталог з 18 AMOLED-екранів (місія, мітинг, день, Dev/Claude,
-  кімната, прогноз, повітря, фокус, задачі, факт дня, слово дня, курси, музика, місяць, посадка, паливний бак,
-  обличчя, ніч) і 9 e-ink-екранів (у т.ч. записка й місячний календар); 27 сценаріїв подій із ▶ —
-  мітинг за 5 хв, CI впав, Claude поставив питання, ранок, ніч, струс, зарядка тощо.
-- Живі дані без ключів: Open-Meteo (погода, прогноз 7 днів, AQI), Wikipedia «On this day», курси валют.
-  Решта (календар, GitHub, Claude-стан, сенсори) — симуляція з позначкою demo.
+- **Дві версії:** Lander R2 (наш) і **Прототип** — скульптура Mohit Bhoite (TFT 1.9″, Photon 2), якою ми надихнулись.
+- Lander R2 має перемикач дисплея:
+  - **AMOLED** — плата Waveshare ESP32-S3-Touch-AMOLED-1.91 (ESP32-S3R8, 240×536 з тачем, IMU QMI8658, зарядка) + BME280, VEML7700, PDM-мікрофон, MAX98357A зі спікером;
+  - **E-ink** — ESP32-C6 Feather + e-ink 2.66″ 152×296.
+- Форма каркаса: **v1** — прямокутник із дужками нахилу, **v2** — трапеція, що повторює нахил екрана 12°.
+- Процедурна 3D-модель (Three.js), збірка по 10 кроках, деталі ↔ підсвічування.
+- **Піни:** схема з'єднань і блок-діаграма генеруються кодом; таблиця джерел документації з посиланнями й статусом перевірки.
+- **Екрани і сценарії:** антена з RGB-маяком (стан Claude Code) + емулятор екрана; 18 AMOLED- і 10 e-ink-екранів;
+  **7 історій** (робочий ранок з мітингом, сесія з Claude, фокус-блок, погода і дім, фізика, ніч і живлення, день e-ink) і швидкі події.
+- Живі дані без ключів: Open-Meteo (погода, прогноз, AQI), Wikipedia «On this day», курси валют; решта — демо-симуляція.
 - UK / EN.
 
 ## Idea (EN)
 With Claude Code anyone can add a widget to a device like this in an evening — a widget is one
 `draw(data)` function. The goal is a widget platform and a community, the Flipper/Pebble way.
-The page is a demo: two versions (Lander R2 with an AMOLED/E-ink switch, and Bhoite's prototype),
-a procedural 3D model, a screen catalog and 27 event scenarios driving the screen and the RGB beacon.
+The page is a demo: Lander R2 (Waveshare ESP32-S3 AMOLED touch board or ESP32-C6 + e-ink, rectangular or trapezoid frame)
+and Bhoite's prototype; a procedural 3D model, generated wiring with sources, a screen catalog and 7 connected stories
+driving the screen and the RGB beacon.
 
 ## Запуск
 Статичний сайт, без збірки: `python3 -m http.server` і відкрити `index.html`.
