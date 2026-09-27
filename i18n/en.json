@@ -65,5 +65,7 @@
  "screen.sec": "s",
  "screen.stop": "■ Stop",
  "wiring.schematic": "Wiring — Lander R2",
- "wiring.block": "Block diagram: sources → hub → device"
+ "wiring.block": "Block diagram: sources → hub → device",
+ "form.v1": "Form v1 · rectangle",
+ "form.v2": "Form v2 · trapezoid"
 }

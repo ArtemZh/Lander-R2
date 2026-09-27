@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-export const STEP_IDS = ['chassis', 'board', 'display', 'shell', 'audio', 'pack', 'antenna', 'legs', 'pads'];
+export const STEP_IDS = ['chassis', 'board', 'display', 'tilt', 'shell', 'audio', 'pack', 'antenna', 'legs', 'pads'];
 
 const WIRE_R = 0.4;                 // 20 AWG ≈ 0.8 мм
 const BRASS = 0xc9a227, SOLDER = 0xd9d9d9, GOLD = 0xe0b040;
@@ -222,7 +222,7 @@ function displayModule(version, screenTex) {
   return g;
 }
 
-export function buildLander(version, screenCanvas) {
+export function buildLander(version, screenCanvas, form = 'v1') {
   const root = new THREE.Group();
   const add = (id, from) => {
     const g = new THREE.Group();
@@ -236,16 +236,19 @@ export function buildLander(version, screenCanvas) {
   const top = BODY_Y + BODY_H;
   const r2 = version !== 'original';          // наша конструкція: сенсори в тілі, нахил дисплея, ноги-модулі
   const TILT = r2 ? -12 * Math.PI / 180 : 0;   // дисплей нахилений на 12° назад
+  const TRAP = r2 && form === 'v2';            // форма v2: каркас-трапеція повторює нахил екрана
+  const SH = BODY_H * Math.tan(-TILT);         // на скільки верх передньої грані відходить назад (≈12.8 мм)
+  const fz = yy => (TRAP ? 16 - (yy - BODY_Y) / BODY_H * SH : 16); // z передньої грані на висоті yy
 
   // 1. Шасі — внутрішня рамка (дві драбини + поперечки), тримає плату й дисплей
   const chassis = add('chassis', [0, -60, 0]);
   {
-    const x = 11.5, z0 = -9, z1 = 9, y0 = BODY_Y + 3, y1 = top - 3;
+    const x = 11.5, z0 = -9, y0 = BODY_Y + 3, y1 = top - 3, f = yy => fz(yy) - 7; // передня грань шасі — на 7 мм за передньою гранню шкаралупи
     for (const sx of [-1, 1]) {
-      chassis.add(wire([[sx * x, y0, z0], [sx * x, y1, z0], [sx * x, y1, z1], [sx * x, y0, z1]], true));
-      for (const yy of [y0 + 12, y0 + 27, y0 + 42]) chassis.add(wire([[sx * x, yy, z0], [sx * x, yy, z1]], false, 0.32));
+      chassis.add(wire([[sx * x, y0, z0], [sx * x, y1, z0], [sx * x, y1, f(y1)], [sx * x, y0, f(y0)]], true));
+      for (const yy of [y0 + 12, y0 + 27, y0 + 42]) chassis.add(wire([[sx * x, yy, z0], [sx * x, yy, f(yy)]], false, 0.32));
     }
-    for (const [yy, zz] of [[y0, z0], [y1, z0], [y0, z1], [y1, z1]]) { chassis.add(wire([[-x, yy, zz], [x, yy, zz]])); chassis.add(joint([-x, yy, zz])); chassis.add(joint([x, yy, zz])); }
+    for (const [yy, zz] of [[y0, z0], [y1, z0], [y0, f(y0)], [y1, f(y1)]]) { chassis.add(wire([[-x, yy, zz], [x, yy, zz]])); chassis.add(joint([-x, yy, zz])); chassis.add(joint([x, yy, zz])); }
     // стійки до плати: короткі дроти до її контактів
     for (const sx of [-1, 1]) for (const yy of [y0 + 6, y0 + 20, y0 + 34]) chassis.add(wire([[sx * x, yy, z0], [sx * 10.2, yy, -5.5]], false, 0.3));
   }
@@ -264,15 +267,38 @@ export function buildLander(version, screenCanvas) {
     screenTex.colorSpace = THREE.SRGBColorSpace;
   }
   const dm = displayModule(version, screenTex);
-  dm.position.set(0, BODY_Y + 30, r2 ? 13.5 : 12); dm.rotation.x = TILT;
-  display.add(dm);
-  if (r2) { // дві опорні дужки під нахил
-    for (const sx of [-1, 1]) { display.add(wire([[sx * 11.5, BODY_Y + 3, 9], [sx * 11.5, BODY_Y + 4, 16], [sx * 11.5, top - 4, 10.5], [sx * 11.5, top - 3, 9]], false, 0.32)); display.add(joint([sx * 11.5, BODY_Y + 4, 16], 0.55)); display.add(joint([sx * 11.5, top - 4, 10.5], 0.55)); }
+  if (r2) {
+    // вісь повороту — нижнє ребро дисплея: воно лежить на передній нижній перекладині, верх відходить назад на 12°
+    const pivot = new THREE.Group(); pivot.position.set(0, BODY_Y + 4, 14.5); pivot.rotation.x = TILT;
+    dm.position.set(0, 26, 0); pivot.add(dm); display.add(pivot);
+  } else { dm.position.set(0, BODY_Y + 30, 12); display.add(dm); }
+
+  // 3b. Нахил: v1 — дужки-упори; v2 — не потрібні, нахил дає сам каркас-трапеція
+  const tilt = add('tilt', [0, 0, 60]);
+  if (r2 && !TRAP) {
+    // верхнє ребро дисплея після повороту: y ≈ BODY_Y+4+52·cos12°, z ≈ 14.5−52·sin12°
+    const ty = BODY_Y + 4 + 52 * Math.cos(TILT), tz = 14.5 + 52 * Math.sin(TILT);
+    for (const sx of [-1, 1]) {
+      // Z-подібна дужка: припаяна до передньої верхньої перекладини шкаралупи (z=16), йде назад і вниз до верхнього кута дисплея
+      tilt.add(wire([[sx * 13, top, 16], [sx * 13, top - 2, 16], [sx * 12, ty + 1, tz + 1.5], [sx * 12, ty - 4, tz + 1.5]], false, 0.38, 1.2));
+      tilt.add(joint([sx * 13, top, 16], 0.7)); tilt.add(joint([sx * 12, ty - 2, tz + 1.5], 0.6));
+      // нижній упор: дві петельки на передній нижній перекладині, в які лягає нижнє ребро плати дисплея
+      tilt.add(wire([[sx * 10, BODY_Y, 16], [sx * 10, BODY_Y + 3, 16.5], [sx * 10, BODY_Y + 3.5, 13.5]], false, 0.32, 0.8));
+      tilt.add(joint([sx * 10, BODY_Y, 16], 0.6));
+    }
   }
 
   // 4. Зовнішня шкаралупа
   const shell = add('shell', [0, 80, 0]);
-  shell.add(cage(BODY_W, BODY_H, BODY_D, BODY_Y, { rings: [BODY_Y + 20] }));
+  if (!TRAP) shell.add(cage(BODY_W, BODY_H, BODY_D, BODY_Y, { rings: [BODY_Y + 20] }));
+  else {
+    // трапеція: задня грань вертикальна, передня нахилена на 12° — верх на SH ближче до центру
+    const x = 15, zb = -16, y0 = BODY_Y, y1 = top, f0 = fz(y0), f1 = fz(y1);
+    shell.add(wire([[-x, y0, zb], [x, y0, zb], [x, y0, f0], [-x, y0, f0]], true));
+    shell.add(wire([[-x, y1, zb], [x, y1, zb], [x, y1, f1], [-x, y1, f1]], true));
+    for (const sx of [-1, 1]) { shell.add(wire([[sx * x, y0 - 0.3, zb], [sx * x, y1 + 0.3, zb]])); shell.add(wire([[sx * x, y0 - 0.3, f0], [sx * x, y1 + 0.3, f1]])); for (const [yy, zz] of [[y0, zb], [y1, zb], [y0, f0], [y1, f1]]) shell.add(joint([sx * x, yy, zz])); }
+    const ym = y0 + 20; shell.add(wire([[-x, ym, zb], [x, ym, zb], [x, ym, fz(ym)], [-x, ym, fz(ym)]], true));
+  }
   // діагональна стяжка на задній стінці
   shell.add(wire([[-15, BODY_Y + 20, -16], [15, BODY_Y + 40, -16]], false, 0.32));
 
@@ -312,7 +338,7 @@ export function buildLander(version, screenCanvas) {
     for (const yy of [-3, 3]) { audio.add(wire([[-15, BODY_Y + 27 + yy, 4], [-18, BODY_Y + 27 + yy, 4]], false, 0.3)); audio.add(joint([-15, BODY_Y + 27 + yy, 4], 0.55)); }
     const imu = mod('LSM6DSOX', 0x1f4fb0, 10, 8); imu.position.set(0, BODY_Y + 30, -11.5); imu.rotation.y = Math.PI; audio.add(imu);
     const bme = mod('BME280', 0x6b1fb0, 10, 8); bme.position.set(0, BODY_Y + 10, -BODY_D / 2 - 9); bme.rotation.x = Math.PI / 2; audio.add(bme);
-    const veml = mod('VEML7700', 0x1f4fb0, 10, 8); veml.position.set(6, top + 1.2, 6); veml.rotation.x = -Math.PI / 2; audio.add(veml);
+    const veml = mod('VEML7700', 0x1f4fb0, 10, 8); veml.position.set(6, top + 1.2, TRAP ? -4 : 6); veml.rotation.x = -Math.PI / 2; audio.add(veml);
   }
 
   // 6. Рюкзак-клітка + батарея 14250 (горизонтально) + вимикач

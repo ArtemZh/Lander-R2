@@ -1,13 +1,13 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=7';
+import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=8';
 import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=18';
-import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=6';
+import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=7';
 import { schematicSVG, blockSVG, pinRows } from './schematic.js?v=2';
 
 const $ = s => document.querySelector(s);
 const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 
-const state = { lang: store.get('lang') === 'en' ? 'en' : 'uk', version: 'r2', display: store.get('display') === 'ink' ? 'ink' : 'touch', step: 1, dict: {}, sel: null };
+const state = { lang: store.get('lang') === 'en' ? 'en' : 'uk', version: 'r2', display: store.get('display') === 'ink' ? 'ink' : 'touch', form: store.get('form') === 'v2' ? 'v2' : 'v1', step: 1, dict: {}, sel: null };
 // ключ даних: Lander R2 має два дисплеї (touch/ink), прототип — один
 const key = () => (state.version === 'r2' ? state.display : 'original');
 const tr = o => (o && typeof o === 'object' ? o[state.lang] : o);
@@ -37,7 +37,8 @@ const vio = new IntersectionObserver(es => es.forEach(e => {
 viewers.forEach(v => vio.observe(v.canvas));
 
 function rebuildModels() {
-  for (const v of viewers) v.setModel(buildLander(key(), screenCanvas));
+  for (const v of viewers) v.setModel(buildLander(key(), screenCanvas, state.form));
+  document.querySelectorAll('[data-form]').forEach(b => b.classList.toggle('on', b.dataset.form === state.form));
 }
 // Антена з RGB-маяком (2D), синхронна з LED-контролером емулятора
 const ant = $('#antennaCanvas'), actx = ant.getContext('2d');
@@ -99,6 +100,7 @@ $('#storyStop').onclick = () => screen.stopScenario(true);
 $('#prevScr').onclick = () => { screen.stopScenario(true); screen.next(-1); state.sel = null; updateScrName(); };
 $('#nextScr').onclick = () => { screen.stopScenario(true); screen.next(1); state.sel = null; updateScrName(); };
 document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => setDisplay(b.dataset.d));
+document.querySelectorAll('[data-form]').forEach(b => b.onclick = () => { state.form = b.dataset.form; store.set('form', state.form); rebuildModels(); renderSteps(); });
 // e-ink: повне оновлення раз на 10 хв
 setInterval(() => { if (screen.version === 'ink') screen.fullRefresh(); }, 600000);
 
@@ -116,9 +118,9 @@ function renderSteps() {
   setStep(state.step, false);
 }
 function setStep(n, scroll) {
-  state.step = Math.max(1, Math.min(9, n));
+  state.step = Math.max(1, Math.min(STEP_IDS.length, n));
   buildV.setStep(state.step);
-  $('#stepNum').textContent = `${state.step} / 9`;
+  $('#stepNum').textContent = `${state.step} / ${STEP_IDS.length}`;
   document.querySelectorAll('#steps li').forEach(li => li.classList.toggle('cur', +li.dataset.i === state.step));
   if (scroll) document.querySelector(`#steps li[data-i="${state.step}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -170,7 +172,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape') $('#lightbox').hidden
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=3`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=4`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
