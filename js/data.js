@@ -35,8 +35,8 @@ export const STEPS = {
   },
   legs: {
     original: { uk: ['Ноги', 'Чотири ноги — подвійні стійки з поперечками й розкосами, паяні прямо до шкаралупи.'], en: ['Legs', 'Four legs — double struts with cross-bars and braces, soldered straight to the shell.'] },
-    touch: { uk: ['Ноги-модулі', 'Кожна нога — окремий модуль на трьох штирях, що входять у трубочки-гнізда на шкаралупі: зняв — поправив — вставив. Драбина з трьома поперечками і розкос, замкнутий у трикутник, — мінімум вигинів, максимум жорсткості.'], en: ['Modular legs', 'Each leg is a module on three pins that slide into tube sockets on the shell: pull — straighten — push back. A ladder with three rungs and a brace closing a triangle — few bends, maximum stiffness.'] },
-    ink: { uk: ['Ноги-модулі', 'Ті самі ноги-модулі на штирях із трикутним розкосом.'], en: ['Modular legs', 'The same pinned leg modules with a triangular brace.'] },
+    touch: { uk: ['Ноги', 'Чотири ноги паяні до ребер шкаралупи: драбина з трьома поперечками і розкос від ребра корпусу до середини ноги — замкнутий трикутник. Мінімум вигинів і дрібних деталей; у трапеції передні ноги кріпляться до похилої грані.'], en: ['Legs', 'Four legs soldered to the shell edges: a ladder with three rungs and a brace from the body edge to mid-leg — a closed triangle. Few bends and small parts; on the trapezoid the front legs attach to the sloped face.'] },
+    ink: { uk: ['Ноги', 'Ті самі паяні ноги з трикутним розкосом.'], en: ['Legs', 'The same soldered legs with a triangular brace.'] },
   },
   pads: {
     original: { uk: ['Посадкові диски', 'Плоскі диски Ø14 мм, паяються останніми, щоб не хиталось.'], en: ['Landing pads', 'Flat Ø14 mm discs, soldered last so nothing wobbles.'] },

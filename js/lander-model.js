@@ -429,20 +429,19 @@ export function buildLander(version, screenCanvas, form = 'v1') {
       legs.add(wire([c, m]));
       legs.add(joint(c)); legs.add(joint(a1, 0.6)); legs.add(joint(a2, 0.6)); legs.add(joint(m, 0.7));
     } else {
-      // R2: нога-модуль — два штирі входять у трубочки-гнізда на шкаралупі (зняв — поправив — вставив);
-      // драбина з поперечками + замкнутий трикутний розкос (верхнє гніздо → середина ноги → нижнє гніздо)
-      const up = new THREE.Vector3(0, 1, 0);
-      for (const p of [a1, a2]) { // гнізда на шкаралупі
-        const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 5, 12, 1, true), brassMat()); sock.position.copy(p).addScaledVector(up, 2.5); legs.add(sock);
-        legs.add(joint(p.clone().addScaledVector(up, 5), 0.6));
-      }
-      const sockC = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 5, 12, 1, true), brassMat()); sockC.position.copy(c).addScaledVector(up, 2.5); legs.add(sockC); legs.add(joint(c.clone().addScaledVector(up, 5), 0.6));
-      // штирі + стійки
-      legs.add(wire([a1.clone().addScaledVector(up, 4.5), a1, b1, b2, a2, a2.clone().addScaledVector(up, 4.5)], false, 0.38, 1.0));
-      for (const k of [0.25, 0.5, 0.75]) legs.add(wire([a1.clone().lerp(b1, k), a2.clone().lerp(b2, k)], false, 0.3));
-      // трикутник: розкос від верхнього гнізда до середини ноги
-      legs.add(wire([c.clone().addScaledVector(up, 4.5), c, m], false, 0.38, 1.0));
-      legs.add(joint(m, 0.7));
+      // R2: нога паяна до ребра шкаралупи (не розбірна). Точки кріплення беруться з реальної грані:
+      // для передніх ніг у трапеції z = fz(y), тож нічого не висить у повітрі.
+      const zOn = yy => (sz > 0 ? fz(yy) : -16);
+      const aa = new THREE.Vector3(sx * 15, BODY_Y + 1, zOn(BODY_Y + 1));
+      const cc = new THREE.Vector3(sx * 15, BODY_Y + 24, zOn(BODY_Y + 24));
+      const sd = new THREE.Vector3(-sz, 0, sx).normalize().multiplyScalar(2.2);
+      const p1 = aa.clone().add(sd), p2 = aa.clone().sub(sd);
+      const q1 = b.clone().add(sd.clone().multiplyScalar(0.5)), q2 = b.clone().sub(sd.clone().multiplyScalar(0.5));
+      const mm = aa.clone().lerp(b, 0.5);
+      legs.add(wire([p1, q1, q2, p2], false, 0.4, 1.0));
+      for (const k of [0.25, 0.5, 0.75]) legs.add(wire([p1.clone().lerp(q1, k), p2.clone().lerp(q2, k)], false, 0.3));
+      legs.add(wire([cc, mm]));                       // розкос від ребра корпусу до середини ноги — трикутник
+      legs.add(joint(p1, 0.7)); legs.add(joint(p2, 0.7)); legs.add(joint(cc, 0.7)); legs.add(joint(mm, 0.7));
     }
   }
 
