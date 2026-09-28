@@ -1,5 +1,5 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=12';
+import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=13';
 import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=18';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=13';
 import { schematicSVG, blockSVG, pinRows, SOURCES } from './schematic.js?v=5';
@@ -175,11 +175,17 @@ $('#grid').innerHTML = GALLERY.map(src => `<img src="${src}" alt="Lander R2 · M
 $('#grid').onclick = e => { if (e.target.tagName === 'IMG') { $('#lightbox img').src = e.target.src; $('#lightbox').hidden = false; } };
 $('#lightbox').onclick = () => { $('#lightbox').hidden = true; };
 addEventListener('keydown', e => { if (e.key === 'Escape') $('#lightbox').hidden = true; });
+// --- Рендери (Blender) ---
+const RENDERS = ['01-hero', '02-wide', '03-low', '04-screen', '05-leg', '06-left45', '07-right45', '08-left45-high', '09-right45-high'];
+function drawRenders() {
+  $('#rgrid').innerHTML = RENDERS.map((n, i) => `<figure><img src="img/renders/${n}${i ? '-sm' : ''}.webp" data-full="img/renders/${n}.webp" alt="Lander R2 — ${esc(T('renders.' + n))}" loading="lazy"><figcaption>${esc(T('renders.' + n))}</figcaption></figure>`).join('');
+}
+$('#rgrid').onclick = e => { if (e.target.tagName === 'IMG') { $('#lightbox img').src = e.target.dataset.full; $('#lightbox').hidden = false; } };
 
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=8`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=9`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
@@ -206,7 +212,7 @@ function setDisplay(d) {
   rebuildModels();
   renderAll();
 }
-function renderAll() { renderSteps(); renderParts(); renderPins(); renderCompare(); renderScreenSide(); }
+function renderAll() { renderSteps(); renderParts(); renderPins(); renderCompare(); renderScreenSide(); drawRenders(); }
 
 document.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => setVersion(b.dataset.v)));
 document.querySelectorAll('#langSwitch button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));

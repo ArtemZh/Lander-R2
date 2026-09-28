@@ -18,6 +18,7 @@
 - **Екрани і сценарії:** антена з RGB-маяком (стан Claude Code) + емулятор екрана; 18 AMOLED- і 10 e-ink-екранів;
   **7 історій** (робочий ранок з мітингом, сесія з Claude, фокус-блок, погода і дім, фізика, ніч і живлення, день e-ink) і швидкі події.
 - Живі дані без ключів: Open-Meteo (погода, прогноз, AQI), Wikipedia «On this day», курси валют; решта — демо-симуляція.
+- **Рендери:** 9 кадрів Lander R2 (AMOLED, форма v1) на робочому столі — Blender / Cycles, екран у режимі годинника (`img/renders/`, WebP).
 - UK / EN.
 
 ## Idea (EN)
@@ -32,4 +33,5 @@ driving the screen and the RGB beacon.
 
 ## Credits
 Prototype, photos and schematics — [Mohit Bhoite, Lander R2](https://bhoite.com/sculptures/lander-r2); shown only in the Prototype view.
+Render scene 3D models: Magic Keyboard — jyun_studio (CC BY-NC 4.0), Magic Trackpad — EwanLejkowski (CC BY 4.0), Mac Studio — CGTrader (free); the lander is modelled from scratch. The `.blend` scene is not published.
 Unofficial educational demo. Firmware is described only, not included.

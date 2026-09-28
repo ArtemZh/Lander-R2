@@ -75,5 +75,18 @@
  "fw.p2": "Погоду й фазу місяця Photon 2 отримує через Particle Webhooks: хмара Particle сама звертається до OpenWeather та moon API і повертає пристрою коротку відповідь, яку розбирає простий парсер.",
  "fw.p3": "Оригінальний код і інші проєкти автора — на GitHub: github.com/mohitbhoite",
  "gallery.title": "Галерея",
- "gallery.lead": "Фото оригінальної скульптури Mohit Bhoite (bhoite.com/sculptures/lander-r2)."
+ "gallery.lead": "Фото оригінальної скульптури Mohit Bhoite (bhoite.com/sculptures/lander-r2).",
+ "nav.renders": "Рендери",
+ "renders.title": "Рендери",
+ "renders.lead": "Lander R2 (AMOLED, прямокутна форма v1) на робочому столі — Blender, Cycles. Екран у режимі годинника.",
+ "renders.credit": "3D-моделі оточення: Magic Keyboard — jyun_studio (CC BY-NC 4.0), Magic Trackpad — EwanLejkowski (CC BY 4.0), Mac Studio — CGTrader (free). Лендер змодельовано з нуля.",
+ "renders.01-hero": "На столі програміста",
+ "renders.02-wide": "Робоче місце",
+ "renders.03-low": "Низька точка",
+ "renders.04-screen": "Екран — годинник",
+ "renders.05-leg": "Нога й лапа",
+ "renders.06-left45": "45° зліва",
+ "renders.07-right45": "45° справа",
+ "renders.08-left45-high": "45° зліва згори",
+ "renders.09-right45-high": "45° справа згори"
 }

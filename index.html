@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=9">
+<link rel="stylesheet" href="css/style.css?v=10">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -20,7 +20,7 @@
   <a class="logo" href="#top">LANDER&nbsp;R2</a>
   <nav class="nav">
     <a href="#build" data-i18n="nav.build"></a><a href="#parts" data-i18n="nav.parts"></a><a href="#wiring" data-i18n="nav.wiring"></a>
-    <a href="#idea" data-i18n="nav.idea"></a><a href="#screens" data-i18n="nav.screen"></a><a href="#versions" data-i18n="nav.versions"></a>
+    <a href="#idea" data-i18n="nav.idea"></a><a href="#screens" data-i18n="nav.screen"></a><a href="#renders" class="only-r2" data-i18n="nav.renders"></a><a href="#versions" data-i18n="nav.versions"></a>
   </nav>
   <div class="switches">
     <div class="seg" id="verSwitch">
@@ -133,6 +133,13 @@
   <div class="grid" id="grid"></div>
 </section>
 
+<section id="renders" class="sec only-r2">
+  <h2 data-i18n="renders.title"></h2>
+  <p class="lead" data-i18n="renders.lead"></p>
+  <div class="rgrid" id="rgrid"></div>
+  <p class="note" data-i18n="renders.credit"></p>
+</section>
+
 <section id="versions" class="sec">
   <h2 data-i18n="versions.title"></h2>
   <div class="scroll-x"><table class="tbl cmp" id="cmpTbl"></table></div>
@@ -141,6 +148,6 @@
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=18"></script>
+<script type="module" src="js/main.js?v=20"></script>
 </body>
 </html>

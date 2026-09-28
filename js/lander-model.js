@@ -221,12 +221,12 @@ function displayModule(version, screenTex) {
       g.add(pinRow(11, 0, -28, 0)); // піни знизу
     }
     // скляна панель
-    // скло: у Waveshare — 24.5×57.5 з активною зоною 19.8×44.2; у прототипу — 27×48 з зоною 24×45
-    const glass = box(isTouch ? 24.5 : 27, isTouch ? 57.5 : 48, 1.2, new THREE.MeshPhysicalMaterial({ color: 0x050608, roughness: 0.15, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 }));
-    glass.position.set(0, isTouch ? 0 : 1, 1.4); g.add(glass);
+    // скло: у Waveshare — ≈22×47 (активна зона 19.8×44.2 + тонка рамка) на платі 24.5×57.5; у прототипу — 27×48 з зоною 24×45
+    const glass = box(isTouch ? 22 : 27, isTouch ? 47 : 48, 1.2, new THREE.MeshPhysicalMaterial({ color: 0x050608, roughness: 0.15, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08 }));
+    glass.position.set(0, isTouch ? 4.29 : 1, 1.4); g.add(glass);
     const scr = new THREE.Mesh(new THREE.PlaneGeometry(isTouch ? 19.8 : 24, isTouch ? 44.22 : 45), new THREE.MeshBasicMaterial({ map: screenTex, color: screenTex ? 0xffffff : 0x000000 }));
-    scr.position.set(0, isTouch ? 4.29 : 1, 2.05); // Waveshare: рамка зверху 2.35 мм, «підборіддя» знизу ≈10.9 мм scr.userData.isScreen = true; g.add(scr);
-    if (isTouch) { const cover = new THREE.Mesh(new THREE.PlaneGeometry(24.5, 57.5), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.95, roughness: 0.05, thickness: 0.3, transparent: true, opacity: 0.35 })); cover.position.set(0, 0, 2.1); g.add(cover); }
+    scr.position.set(0, isTouch ? 4.29 : 1, 2.05); scr.userData.isScreen = true; g.add(scr); // Waveshare: активна зона 2.35 мм від верхнього краю плати
+    if (isTouch) { const cover = new THREE.Mesh(new THREE.PlaneGeometry(22, 47), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transmission: 0.95, roughness: 0.05, thickness: 0.3, transparent: true, opacity: 0.35 })); cover.position.set(0, 4.29, 2.1); g.add(cover); }
     if (!isTouch) {
       const flex = box(16, 5, 0.25, plastic(0xa7643a, 0.5)); flex.position.set(0, 26.2, 1.0); flex.rotation.x = 0.5; g.add(flex); // шлейф FPC
       g.add(at(box(14, 15, 2, metal(0xc0c4c8, 0.35)), 0, 14, -1.8)); // microSD ззаду

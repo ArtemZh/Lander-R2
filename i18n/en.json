@@ -75,5 +75,18 @@
  "fw.p2": "Weather and moon phase reach the Photon 2 through Particle Webhooks: the Particle cloud calls OpenWeather and a moon API and returns a short response that a simple parser picks apart.",
  "fw.p3": "Original code and the author’s other projects are on GitHub: github.com/mohitbhoite",
  "gallery.title": "Gallery",
- "gallery.lead": "Photos of Mohit Bhoite's original sculpture (bhoite.com/sculptures/lander-r2)."
+ "gallery.lead": "Photos of Mohit Bhoite's original sculpture (bhoite.com/sculptures/lander-r2).",
+ "nav.renders": "Renders",
+ "renders.title": "Renders",
+ "renders.lead": "Lander R2 (AMOLED, rectangular form v1) on a desk — Blender, Cycles. Screen in clock mode.",
+ "renders.credit": "Scene 3D models: Magic Keyboard — jyun_studio (CC BY-NC 4.0), Magic Trackpad — EwanLejkowski (CC BY 4.0), Mac Studio — CGTrader (free). The lander is modelled from scratch.",
+ "renders.01-hero": "On a developer's desk",
+ "renders.02-wide": "The workspace",
+ "renders.03-low": "Low angle",
+ "renders.04-screen": "Screen — clock",
+ "renders.05-leg": "Leg and footpad",
+ "renders.06-left45": "45° left",
+ "renders.07-right45": "45° right",
+ "renders.08-left45-high": "45° left, from above",
+ "renders.09-right45-high": "45° right, from above"
 }
