@@ -1,5 +1,5 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=13';
+import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=14';
 import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=18';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=13';
 import { schematicSVG, blockSVG, pinRows, SOURCES } from './schematic.js?v=5';
@@ -185,9 +185,10 @@ $('#rgrid').onclick = e => { if (e.target.tagName === 'IMG') { $('#lightbox img'
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=9`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=10`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
+  if (matchMedia('(pointer: coarse)').matches) $('.hint').textContent = T('hero.hintTouch');
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
   screen.lang = l; screen.draw();
   renderAll();

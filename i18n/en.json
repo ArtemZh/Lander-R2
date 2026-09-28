@@ -88,5 +88,6 @@
  "renders.06-left45": "45° left",
  "renders.07-right45": "45° right",
  "renders.08-left45-high": "45° left, from above",
- "renders.09-right45-high": "45° right, from above"
+ "renders.09-right45-high": "45° right, from above",
+ "hero.hintTouch": "Scroll with one finger · rotate with two"
 }

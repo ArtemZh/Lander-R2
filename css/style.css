@@ -203,3 +203,22 @@ a.btn { text-decoration: none; display: inline-block; }
 .rgrid img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; cursor: zoom-in; border-radius: var(--r-md); box-shadow: var(--lift-sm); transition: transform .2s; display: block; }
 .rgrid img:hover { transform: translateY(-2px); }
 .rgrid figcaption { font-size: .85rem; opacity: .7; margin-top: 6px; }
+
+/* телефони: нічого не ширше за екран, модель над текстом */
+.svgs { grid-template-columns: minmax(0, 1fr); }
+.svgs figure { min-width: 0; overflow-x: auto; }
+@media (max-width: 800px) {
+  .hero { height: auto; min-height: 0; }
+  #heroCanvas { position: relative; height: 56svh; }
+  .hero-text { position: static; max-width: none; padding: 0 16px 28px; }
+}
+@media (max-width: 600px) {
+  .top { flex-wrap: wrap; gap: 10px; }
+  .top .switches { flex-wrap: wrap; gap: 6px; }
+  .seg button { white-space: nowrap; padding: 6px 9px; font-size: 13px; }
+  .sec-head .switches { flex-wrap: wrap; }
+  .sec-head .seg { flex: 1 1 auto; flex-wrap: wrap; }
+  .sec-head .seg button { white-space: normal; }
+  .top { position: static; }
+  .build-view { top: 8px; }
+}

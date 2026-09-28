@@ -375,7 +375,7 @@ export function buildLander(version, screenCanvas, form = 'v1') {
       bat.add(cyl(br, bl, shellM, 40)); bat.add(at(cyl(br * 0.4, 1.2, metal(0xe8e8e8, 0.3), 24), 0, bl / 2 + 0.5, 0));
       bat.add(cyl(br + 0.05, bl * 0.66, plastic(0x1f8f5a, 0.5), 40)); bat.add(at(cyl(br + 0.06, 1.2, plastic(0xffffff, 0.5), 40), 0, bl * 0.2, 0));
       bat.position.set(0, y0 + bl / 2, bz); pack.add(bat);
-      for (const yy of [y0 - 0.8, y0 + bl + 0.8]) { // клеми: латунна смужка між рамками шасі
+      for (const yy of [y0 - 0.6, y0 + bl + 1.45]) { // клеми: латунна смужка між рамками шасі; верхня лягає на «+», не перетинаючи його
         pack.add(at(box(23, 0.6, 6, brassMat()), 0, yy, bz));
         pack.add(joint([-11.5, yy, bz], 0.6)); pack.add(joint([11.5, yy, bz], 0.6));
       }
@@ -487,6 +487,11 @@ export class Viewer {
     this.controls.enableZoom = true;
     this.controls.minDistance = 60;
     this.controls.maxDistance = 600;
+    // сенсорні екрани: один палець гортає сторінку, два — обертають і масштабують модель
+    if (matchMedia('(pointer: coarse)').matches) {
+      this.controls.touches = { ONE: -1, TWO: THREE.TOUCH.DOLLY_ROTATE };
+      canvas.style.touchAction = 'pan-y';
+    }
 
     this.scene.add(new THREE.HemisphereLight(0xfff4e0, 0x202030, 0.6));
     const d1 = new THREE.DirectionalLight(0xffffff, 1.6); d1.position.set(100, 200, 150); this.scene.add(d1);

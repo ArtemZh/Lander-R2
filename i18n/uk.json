@@ -88,5 +88,6 @@
  "renders.06-left45": "45° зліва",
  "renders.07-right45": "45° справа",
  "renders.08-left45-high": "45° зліва згори",
- "renders.09-right45-high": "45° справа згори"
+ "renders.09-right45-high": "45° справа згори",
+ "hero.hintTouch": "Гортайте одним пальцем · обертайте двома"
 }
