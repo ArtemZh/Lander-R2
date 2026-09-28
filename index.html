@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=14">
+<link rel="stylesheet" href="css/style.css?v=16">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -91,12 +91,22 @@
     <div class="seg" id="dispSwitch"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div>
   </div>
   <div class="scen">
+    <div class="scen-list">
+      <h3 data-i18n="screen.stories"></h3>
+      <div class="tiles tiles--story" id="storyTiles"></div>
+      <h3 data-i18n="screen.scenarios"></h3>
+      <div class="tiles" id="scenTiles"></div>
+      <h3 data-i18n="screen.screens"></h3>
+      <div class="tiles" id="screenTiles"></div>
+    </div>
     <div class="scen-left">
       <div class="device">
         <canvas id="antennaCanvas" width="120" height="150"></canvas>
         <canvas id="screenCanvas" width="240" height="536"></canvas>
       </div>
       <div class="scr-nav"><button class="btn btn--ghost" id="prevScr">‹</button><span id="scrName"></span><button class="btn btn--ghost" id="nextScr">›</button></div>
+    </div>
+    <div class="scen-info">
       <div class="story-box" id="storyBox" hidden>
         <div class="story-top"><span id="storyName"></span><button class="btn btn--ghost" id="storyStop" data-i18n="screen.stop"></button></div>
         <div class="story-steps" id="storySteps"></div>
@@ -104,12 +114,6 @@
         <div class="story-track"><div class="story-bar" id="storyBar"></div></div>
       </div>
       <div class="scr-desc" id="scrDesc"><b id="scrDescTitle"></b><p id="scrDescText"></p><p class="note" id="wxState"></p></div>
-    </div>
-    <div class="scen-right">
-      <div class="tabs" id="scenTabs" role="tablist"><button data-tab="story" data-i18n="screen.stories"></button><button data-tab="scr" data-i18n="screen.screens"></button><button data-tab="evt" data-i18n="screen.scenarios"></button></div>
-      <div class="tab-pane" data-pane="story"><p class="lead small" data-i18n="screen.storiesLead"></p><div class="tiles tiles--story" id="storyTiles"></div></div>
-      <div class="tab-pane" data-pane="scr" hidden><p class="lead small" data-i18n="screen.screensLead"></p><div class="tiles" id="screenTiles"></div></div>
-      <div class="tab-pane" data-pane="evt" hidden><p class="lead small" data-i18n="screen.eventsLead"></p><div class="tiles" id="scenTiles"></div></div>
     </div>
   </div>
 </section>
@@ -150,6 +154,6 @@
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=27"></script>
+<script type="module" src="js/main.js?v=28"></script>
 </body>
 </html>

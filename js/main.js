@@ -85,14 +85,6 @@ function showDevice() {
   const r = $('#screenCanvas').getBoundingClientRect();
   if (r.top < 0 || r.bottom > innerHeight) $('.device').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-// вкладки «Історії | Екрани | Події»
-function setTab(tab) {
-  state.tab = tab; store.set('tab', tab);
-  document.querySelectorAll('#scenTabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
-  document.querySelectorAll('.tab-pane').forEach(p => { p.hidden = p.dataset.pane !== tab; });
-}
-document.querySelectorAll('#scenTabs button').forEach(b => b.onclick = () => setTab(b.dataset.tab));
-setTab(['story', 'scr', 'evt'].includes(store.get('tab')) ? store.get('tab') : 'story');
 function select(kind, id) {
   state.sel = { kind, id };
   const src = kind === 'scr' ? SCREENS : kind === 'story' ? STORIES : SCENARIOS, it = src.find(x => x[0] === id); if (!it) return;

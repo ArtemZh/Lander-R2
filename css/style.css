@@ -251,3 +251,28 @@ a.btn { text-decoration: none; display: inline-block; }
   #screenCanvas.ink { width: 220px; }
   .tabs button { font-size: 14px; padding: 9px 6px; }
 }
+
+/* сценарії: три колонки — список | пристрій | що відбувається */
+.scen { grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 1fr); gap: 32px; }
+.scen-left, .scen-info { position: sticky; top: 80px; }
+.scen-list h3 { margin: 18px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--grey-500); }
+.scen-list h3:first-child { margin-top: 0; }
+.scen-list .tiles, .scen-list .tiles--story { grid-template-columns: 1fr 1fr; gap: 6px; }
+.scen-list .tile { min-height: 0; padding: 7px 9px; gap: 7px; box-shadow: none; }
+.scen-list .tile b { font-size: 12.5px; font-weight: 500; }
+.scen-list .tile-ic, .scen-list .tile--story .tile-ic { width: 20px; height: 20px; font-size: 10px; border-radius: 5px; }
+.scen-list .tile--story { align-items: center; padding: 7px 9px; }
+.scen-list .tile--story small { font-size: 11px; margin-top: 1px; }
+.scen-info .story-box { margin-bottom: 12px; }
+@media (max-width: 1100px) {
+  .scen { grid-template-columns: auto 1fr; }
+  .scen-list { grid-column: 1 / -1; order: 3; }
+}
+@media (max-width: 900px) {
+  .scen { grid-template-columns: 1fr; }
+  .scen-left, .scen-info { position: static; }
+  .scen-left { order: 1; } .scen-info { order: 2; } .scen-list { order: 3; }
+}
+#screenCanvas { width: clamp(200px, calc((100vh - 290px) * 0.448 + 20px), 300px); }
+#screenCanvas.ink { width: clamp(200px, calc((100vh - 290px) * 0.513 + 20px), 266px); }
+@media (max-width: 900px) { #screenCanvas, #screenCanvas.ink { width: 220px; } }
