@@ -89,5 +89,8 @@
  "renders.07-right45": "45° right",
  "renders.08-left45-high": "45° left, from above",
  "renders.09-right45-high": "45° right, from above",
- "hero.hintTouch": "Scroll with one finger · rotate with two"
+ "hero.hintTouch": "Scroll with one finger · rotate with two",
+ "screen.screensLead": "Each screen is a widget: tap to show it on the device.",
+ "screen.eventsLead": "One event — one reaction: screen, LED and sound.",
+ "screen.step": "Step"
 }

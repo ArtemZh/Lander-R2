@@ -1,16 +1,19 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=14';
-import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES } from './screen.js?v=18';
+import { buildLander, Viewer, STEP_IDS, setLedColor } from './lander-model.js?v=16';
+import { Screen, loadWeather, loadExtras, weather, SCREENS, SCENARIOS, STORIES, HIDDEN_SCREENS } from './screen.js?v=21';
 import { VERSIONS, STEPS, PARTS, PINS, DIFFS, COMPARE, GALLERY } from './data.js?v=13';
 import { schematicSVG, blockSVG, pinRows, SOURCES } from './schematic.js?v=5';
+import { applyPL } from './pl.js?v=4';
+applyPL();
 
 const $ = s => document.querySelector(s);
 const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 
-const state = { lang: store.get('lang') === 'en' ? 'en' : 'uk', version: 'r2', display: store.get('display') === 'ink' ? 'ink' : 'touch', form: store.get('form') === 'v2' ? 'v2' : 'v1', step: 1, dict: {}, sel: null };
+const state = { lang: ['en', 'pl'].includes(store.get('lang')) ? store.get('lang') : 'uk', version: 'r2', display: store.get('display') === 'ink' ? 'ink' : 'touch', form: store.get('form') === 'v2' ? 'v2' : 'v1', step: 1, dict: {}, sel: null };
 // ключ даних: Lander R2 має два дисплеї (touch/ink), прототип — один
 const key = () => (state.version === 'r2' ? state.display : 'original');
-const tr = o => (o && typeof o === 'object' ? o[state.lang] : o);
+const tr = o => (o && typeof o === 'object' ? (o[state.lang] ?? o.en) : o);
+const devLang = () => (state.lang === 'uk' ? 'uk' : 'en'); // екран пристрою й схеми: PL → EN
 const T = k => state.dict[k] ?? k;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -27,7 +30,7 @@ const setHl = id => {
 };
 const heroV = new Viewer($('#heroCanvas'), OrbitControls, { autoRotate: true });
 heroV.controls.enableZoom = false;
-const buildV = new Viewer($('#buildCanvas'), OrbitControls);
+const buildV = new Viewer($('#buildCanvas'), OrbitControls, { step: 1, fitZoom: 0.62, fitLift: 0.12 });
 const partsV = new Viewer($('#partsCanvas'), OrbitControls, { onPick: id => setHl(id) });
 const viewers = [heroV, buildV, partsV];
 // рендеримо лише видимі канваси
@@ -70,32 +73,52 @@ function renderScreensPanel() {
   $('#screenTiles').innerHTML = SCREENS.filter(x => x[3].includes(d)).map(([id, name]) => `<button class="tile" data-scr="${id}"><span class="tile-ic">▣</span><b>${esc(name[L])}</b></button>`).join('');
   $('#storyTiles').innerHTML = STORIES.filter(x => x[3].includes(d)).map(([id, name, desc, , dur]) => `<button class="tile tile--story" data-story="${id}"><span class="tile-ic">▶</span><span><b>${esc(name[L])}</b><small>${Math.round(dur / 1000)} ${T('screen.sec')}</small></span></button>`).join('');
   $('#scenTiles').innerHTML = SCENARIOS.filter(x => x[3].includes(d)).map(([id, name]) => `<button class="tile tile--play" data-scn="${id}"><span class="tile-ic">▶</span><b>${esc(name[L])}</b></button>`).join('');
-  document.querySelectorAll('[data-story]').forEach(b => b.onclick = () => { screen.runStory(b.dataset.story); select('story', b.dataset.story); });
-  document.querySelectorAll('[data-scr]').forEach(b => b.onclick = () => { screen.stopScenario(true); screen.show(b.dataset.scr); select('scr', b.dataset.scr); });
-  document.querySelectorAll('[data-scn]').forEach(b => b.onclick = () => { screen.run(b.dataset.scn); select('scn', b.dataset.scn); });
+  document.querySelectorAll('[data-story]').forEach(b => b.onclick = () => { screen.runStory(b.dataset.story); select('story', b.dataset.story); showDevice(); });
+  document.querySelectorAll('[data-scr]').forEach(b => b.onclick = () => { screen.stopScenario(true); screen.show(b.dataset.scr); select('scr', b.dataset.scr); showDevice(); });
+  document.querySelectorAll('[data-scn]').forEach(b => b.onclick = () => { screen.run(b.dataset.scn); select('scn', b.dataset.scn); showDevice(); });
   document.querySelectorAll('[data-d]').forEach(b => b.classList.toggle('on', b.dataset.d === state.display));
   updateScrName();
 }
+// на вузьких екранах пристрій над плитками — після тапу підкрутити до нього, щоб було видно результат
+function showDevice() {
+  if (innerWidth > 900) return;
+  const r = $('#screenCanvas').getBoundingClientRect();
+  if (r.top < 0 || r.bottom > innerHeight) $('.device').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+// вкладки «Історії | Екрани | Події»
+function setTab(tab) {
+  state.tab = tab; store.set('tab', tab);
+  document.querySelectorAll('#scenTabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-pane').forEach(p => { p.hidden = p.dataset.pane !== tab; });
+}
+document.querySelectorAll('#scenTabs button').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+setTab(['story', 'scr', 'evt'].includes(store.get('tab')) ? store.get('tab') : 'story');
 function select(kind, id) {
   state.sel = { kind, id };
   const src = kind === 'scr' ? SCREENS : kind === 'story' ? STORIES : SCENARIOS, it = src.find(x => x[0] === id); if (!it) return;
-  $('#scrDescTitle').textContent = (kind === 'scn' ? '▶ ' : '') + it[1][state.lang];
-  $('#scrDescText').textContent = it[2][state.lang];
+  $('#scrDescTitle').textContent = (kind === 'scn' ? '▶ ' : '') + tr(it[1]);
+  $('#scrDescText').textContent = tr(it[2]);
   document.querySelectorAll('.tile').forEach(t => t.classList.toggle('on', t.dataset.scr === id && kind === 'scr' || t.dataset.scn === id && kind === 'scn' || t.dataset.story === id && kind === 'story'));
 }
 function updateScrName() {
   const it = SCREENS.find(x => x[0] === screen.screen);
-  $('#scrName').textContent = it ? it[1][state.lang] : screen.screen;
+  $('#scrName').textContent = it ? tr(it[1]) : tr(HIDDEN_SCREENS[screen.screen]) ?? screen.screen;
   if (!state.sel || state.sel.kind === 'scr') { if (it) select('scr', it[0]); }
 }
-screen.onScreen = () => updateScrName();
+screen.onScreen = id => { updateScrName(); $('#screenCanvas').style.touchAction = id === 'landing' ? 'none' : 'pan-y'; }; // у грі палець = тяга, не прокрутка
 // прогрес історії + підпис поточного кроку
+// стрічка історії: назва, точки кроків (клік — перейти до кроку), великий підпис поточного кроку
 screen.onStory = () => {
   const st = screen.story, box = $('#storyBox');
   box.hidden = !st;
-  if (!st) return;
-  $('#storyCap').textContent = st.caption ? `${st.step + 1}/${st.n} · ${st.caption[state.lang]}` : '…';
+  if (!st) { setTimeout(() => { if (!screen.story && !screen.scenario && (state.sel?.kind === 'story' || state.sel?.kind === 'scn')) { state.sel = null; updateScrName(); } }, 0); return; }
+  if (state.sel?.kind !== 'story' || state.sel.id !== st.id) select('story', st.id);
+  const def = STORIES.find(x => x[0] === st.id);
+  $('#storyName').textContent = `▶ ${tr(def[1])}`;
+  $('#storySteps').innerHTML = def[5].map((x, i) => `<button class="${i < st.step ? 'done' : i === st.step ? 'cur' : ''}" data-step="${i}" title="${esc(tr(x[1]))}"><span>${i + 1}</span></button>`).join('');
+  $('#storyCap').textContent = st.caption ? `${T('screen.step')} ${st.step + 1}/${st.n} · ${tr(st.caption)}` : '…';
 };
+$('#storySteps').onclick = e => { const b = e.target.closest('[data-step]'); if (b && screen.story) screen.runStory(screen.story.id, +b.dataset.step); };
 $('#storyStop').onclick = () => screen.stopScenario(true);
 $('#prevScr').onclick = () => { screen.stopScenario(true); screen.next(-1); state.sel = null; updateScrName(); };
 $('#nextScr').onclick = () => { screen.stopScenario(true); screen.next(1); state.sel = null; updateScrName(); };
@@ -131,7 +154,7 @@ $('#nextStep').onclick = () => setStep(state.step + 1, true);
 
 // --- Таблиці ---
 function renderParts() {
-  const L = state.lang === 'uk' ? 1 : 2;
+  const L = { uk: 1, en: 2, pl: 4 }[state.lang] ?? 2;
   $('#partsTbl').innerHTML = `<tr><th>${T('parts.part')}</th><th>${T('parts.qty')}</th></tr>` +
     PARTS[key()].map(p => `<tr data-id="${p[0]}"><td>${esc(p[L])}</td><td>${esc(p[3])}</td></tr>`).join('');
   document.querySelectorAll('#partsTbl tr[data-id]').forEach(r => {
@@ -152,7 +175,7 @@ function renderPins() {
     const host = u => { try { return new URL(u).hostname.replace('www.', ''); } catch { return u; } };
     const st = { ok: T('src.ok'), partial: T('src.partial'), memory: T('src.memory') };
     const rows = SOURCES.filter(r => r[1].includes(key())).map(([name, , u1, u2, v]) => `<tr><td>${esc(name)}</td><td><a href="${u1}" target="_blank" rel="noopener">${esc(host(u1))}</a>${u2 ? ` · <a href="${u2}" target="_blank" rel="noopener">${esc(host(u2))}</a>` : ''}</td><td><span class="src src--${v}">${st[v]}</span></td></tr>`).join('');
-    $('#wiringSvg').innerHTML = `<figure><figcaption>${T('wiring.schematic')}</figcaption>${schematicSVG(key(), state.lang)}</figure><figure><figcaption>${T('wiring.block')}</figcaption>${blockSVG(key(), state.lang)}</figure>
+    $('#wiringSvg').innerHTML = `<figure><figcaption>${T('wiring.schematic')}</figcaption>${schematicSVG(key(), devLang())}</figure><figure><figcaption>${T('wiring.block')}</figcaption>${blockSVG(key(), devLang())}</figure>
       <figure><figcaption>${T('wiring.sources')}</figcaption><table class="tbl src-tbl"><tr><th>${T('src.component')}</th><th>${T('src.docs')}</th><th>${T('src.status')}</th></tr>${rows}</table><p class="note">${T('src.note')}</p></figure>`;
   }
 }
@@ -160,7 +183,7 @@ function renderCompare() {
   const L = state.lang === 'uk' ? 0 : 1;
   const cols = ['touch', 'ink', 'original'];
   const head = `<tr><th>${T('versions.param')}</th>${cols.map(v => `<th class="${v === key() ? 'cur' : ''}">${T('col.' + v)}</th>`).join('')}</tr>`;
-  $('#cmpTbl').innerHTML = head + COMPARE.map(r => `<tr><th>${esc(r[L])}</th>${r.slice(2).map((c, i) =>
+  $('#cmpTbl').innerHTML = head + COMPARE.map(r => `<tr><th>${esc(state.lang === 'pl' ? (r.pl ?? r[1]) : r[L])}</th>${r.slice(2).map((c, i) =>
     `<td class="${cols[i] === key() ? 'cur' : ''}">${esc(tr(c))}</td>`).join('')}</tr>`).join('');
 }
 function renderScreenSide() {
@@ -185,12 +208,12 @@ $('#rgrid').onclick = e => { if (e.target.tagName === 'IMG') { $('#lightbox img'
 // --- Мова / версія ---
 async function setLang(l) {
   state.lang = l; store.set('lang', l);
-  try { state.dict = await (await fetch(`i18n/${l}.json?v=10`)).json(); } catch (e) { console.warn('i18n', e); }
+  try { state.dict = await (await fetch(`i18n/${l}.json?v=12`)).json(); } catch (e) { console.warn('i18n', e); }
   document.documentElement.lang = l;
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
   if (matchMedia('(pointer: coarse)').matches) $('.hint').textContent = T('hero.hintTouch');
   document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
-  screen.lang = l; screen.draw();
+  screen.lang = devLang(); screen.draw();
   renderAll();
   if (state.sel) select(state.sel.kind, state.sel.id);
 }

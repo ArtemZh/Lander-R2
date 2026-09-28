@@ -467,7 +467,8 @@ const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 // Глядач: сцена, камера, контроли, анімація збірки, підсвічування
 export class Viewer {
-  constructor(canvas, OrbitControls, { autoRotate = false, onPick = null } = {}) {
+  constructor(canvas, OrbitControls, { autoRotate = false, onPick = null, step = STEP_IDS.length, fitZoom = 1, fitLift = 0 } = {}) {
+    this.fitZoom = fitZoom; this.fitLift = fitLift; // fitLift > 0 — модель вище в кадрі (під нею кнопки)
     this.canvas = canvas;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -508,7 +509,7 @@ export class Viewer {
     shadow.rotation.x = -Math.PI / 2;
     this.scene.add(shadow);
 
-    this.step = STEP_IDS.length;
+    this.step = step; // вікно збірки стартує з кроку 1, інші — з повністю зібраної моделі
     this.highlight = null;
     this.active = true;
     this.onPick = onPick;
@@ -546,7 +547,8 @@ export class Viewer {
     const fovV = THREE.MathUtils.degToRad(this.camera.fov);
     const fovH = 2 * Math.atan(Math.tan(fovV / 2) * this.camera.aspect);
     const radius = Math.hypot(size.x, size.z) / 2;
-    const dist = Math.max(size.y / 2 / Math.tan(fovV / 2), radius / Math.tan(fovH / 2)) * 1.15 + radius;
+    const dist = (Math.max(size.y / 2 / Math.tan(fovV / 2), radius / Math.tan(fovH / 2)) * 1.15 + radius) * this.fitZoom;
+    center.y -= size.y * this.fitLift;
     this.controls.target.copy(center);
     const dir = this.camera.position.clone().sub(this.controls.target).normalize();
     if (!dir.length()) dir.set(0.6, 0.55, 0.8).normalize();

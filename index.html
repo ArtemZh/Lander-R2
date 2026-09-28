@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=12">
+<link rel="stylesheet" href="css/style.css?v=14">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -19,15 +19,15 @@
 <header class="top">
   <a class="logo" href="#top">LANDER&nbsp;R2</a>
   <nav class="nav">
-    <a href="#build" data-i18n="nav.build"></a><a href="#parts" data-i18n="nav.parts"></a><a href="#wiring" data-i18n="nav.wiring"></a>
-    <a href="#idea" data-i18n="nav.idea"></a><a href="#screens" data-i18n="nav.screen"></a><a href="#renders" class="only-r2" data-i18n="nav.renders"></a><a href="#versions" data-i18n="nav.versions"></a>
+    <a href="#idea" data-i18n="nav.idea"></a><a href="#build" data-i18n="nav.build"></a><a href="#parts" data-i18n="nav.parts"></a>
+    <a href="#screens" data-i18n="nav.screen"></a><a href="#renders" class="only-r2" data-i18n="nav.renders"></a><a href="#wiring" data-i18n="nav.wiring"></a><a href="#versions" data-i18n="nav.versions"></a>
   </nav>
   <div class="switches">
     <div class="seg" id="verSwitch">
       <button data-v="r2" data-i18n="v.r2"></button><button data-v="original" data-i18n="v.original"></button>
     </div>
     <div class="seg only-r2" id="dispTop"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div>
-    <div class="seg" id="langSwitch"><button data-lang="uk">UK</button><button data-lang="en">EN</button></div>
+    <div class="seg" id="langSwitch"><button data-lang="uk">UK</button><button data-lang="en">EN</button><button data-lang="pl">PL</button></div>
   </div>
 </header>
 
@@ -85,14 +85,6 @@
   </div>
 </section>
 
-<section id="wiring" class="sec">
-  <div class="sec-head"><div><h2 data-i18n="wiring.title"></h2></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
-  <p class="note" id="pinNote" data-i18n="wiring.approx"></p>
-  <div class="scroll-x"><table class="tbl" id="pinTbl"></table></div>
-  <div class="imgs" id="wiringImgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
-  <div class="svgs" id="wiringSvg" hidden></div>
-</section>
-
 <section id="screens" class="sec">
   <div class="sec-head">
     <div><h2 data-i18n="screen.title"></h2><p class="lead" data-i18n="screen.lead"></p></div>
@@ -105,26 +97,28 @@
         <canvas id="screenCanvas" width="240" height="536"></canvas>
       </div>
       <div class="scr-nav"><button class="btn btn--ghost" id="prevScr">‹</button><span id="scrName"></span><button class="btn btn--ghost" id="nextScr">›</button></div>
-      <div class="story-box" id="storyBox" hidden><div class="story-track"><div class="story-bar" id="storyBar"></div></div><p id="storyCap"></p><button class="btn btn--ghost" id="storyStop" data-i18n="screen.stop"></button></div>
+      <div class="story-box" id="storyBox" hidden>
+        <div class="story-top"><span id="storyName"></span><button class="btn btn--ghost" id="storyStop" data-i18n="screen.stop"></button></div>
+        <div class="story-steps" id="storySteps"></div>
+        <p id="storyCap"></p>
+        <div class="story-track"><div class="story-bar" id="storyBar"></div></div>
+      </div>
       <div class="scr-desc" id="scrDesc"><b id="scrDescTitle"></b><p id="scrDescText"></p><p class="note" id="wxState"></p></div>
     </div>
     <div class="scen-right">
-      <h3 data-i18n="screen.stories"></h3>
-      <p class="lead small" data-i18n="screen.storiesLead"></p>
-      <div class="tiles tiles--story" id="storyTiles"></div>
-      <h3 data-i18n="screen.screens"></h3>
-      <div class="tiles" id="screenTiles"></div>
-      <h3 data-i18n="screen.scenarios"></h3>
-      <div class="tiles" id="scenTiles"></div>
+      <div class="tabs" id="scenTabs" role="tablist"><button data-tab="story" data-i18n="screen.stories"></button><button data-tab="scr" data-i18n="screen.screens"></button><button data-tab="evt" data-i18n="screen.scenarios"></button></div>
+      <div class="tab-pane" data-pane="story"><p class="lead small" data-i18n="screen.storiesLead"></p><div class="tiles tiles--story" id="storyTiles"></div></div>
+      <div class="tab-pane" data-pane="scr" hidden><p class="lead small" data-i18n="screen.screensLead"></p><div class="tiles" id="screenTiles"></div></div>
+      <div class="tab-pane" data-pane="evt" hidden><p class="lead small" data-i18n="screen.eventsLead"></p><div class="tiles" id="scenTiles"></div></div>
     </div>
   </div>
 </section>
 
-<section id="firmware" class="sec only-proto">
-  <h2 data-i18n="fw.title"></h2>
-  <p class="lead" data-i18n="fw.lead"></p>
-  <p data-i18n="fw.p1"></p><p data-i18n="fw.p2"></p><p data-i18n="fw.p3"></p>
-  <div class="imgs three"><img src="img/particle-webhooks.png" alt="Particle webhooks" loading="lazy"><img src="img/moon-webhook.png" alt="Moon webhook" loading="lazy"><img src="img/custom-webhook.png" alt="Custom webhook" loading="lazy"></div>
+<section id="renders" class="sec only-r2">
+  <h2 data-i18n="renders.title"></h2>
+  <p class="lead" data-i18n="renders.lead"></p>
+  <div class="rgrid" id="rgrid"></div>
+  <p class="note" data-i18n="renders.credit"></p>
 </section>
 
 <section id="gallery" class="sec only-proto">
@@ -133,11 +127,19 @@
   <div class="grid" id="grid"></div>
 </section>
 
-<section id="renders" class="sec only-r2">
-  <h2 data-i18n="renders.title"></h2>
-  <p class="lead" data-i18n="renders.lead"></p>
-  <div class="rgrid" id="rgrid"></div>
-  <p class="note" data-i18n="renders.credit"></p>
+<section id="wiring" class="sec">
+  <div class="sec-head"><div><h2 data-i18n="wiring.title"></h2></div><div class="seg only-r2"><button data-d="touch">AMOLED</button><button data-d="ink">E-ink</button></div></div>
+  <p class="note" id="pinNote" data-i18n="wiring.approx"></p>
+  <div class="scroll-x"><table class="tbl" id="pinTbl"></table></div>
+  <div class="imgs" id="wiringImgs"><img src="img/photon2-lander-R2-schematic.jpg" alt="Schematic" loading="lazy"><img src="img/Photon-2-Lander-R2-Block-Diagram.jpg" alt="Block diagram" loading="lazy"></div>
+  <div class="svgs" id="wiringSvg" hidden></div>
+</section>
+
+<section id="firmware" class="sec only-proto">
+  <h2 data-i18n="fw.title"></h2>
+  <p class="lead" data-i18n="fw.lead"></p>
+  <p data-i18n="fw.p1"></p><p data-i18n="fw.p2"></p><p data-i18n="fw.p3"></p>
+  <div class="imgs three"><img src="img/particle-webhooks.png" alt="Particle webhooks" loading="lazy"><img src="img/moon-webhook.png" alt="Moon webhook" loading="lazy"><img src="img/custom-webhook.png" alt="Custom webhook" loading="lazy"></div>
 </section>
 
 <section id="versions" class="sec">
@@ -148,6 +150,6 @@
 <footer class="foot"><p data-i18n="footer.credit"></p></footer>
 <div class="lightbox" id="lightbox" hidden><img alt=""></div>
 
-<script type="module" src="js/main.js?v=21"></script>
+<script type="module" src="js/main.js?v=27"></script>
 </body>
 </html>

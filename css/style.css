@@ -222,3 +222,32 @@ a.btn { text-decoration: none; display: inline-block; }
   .top { position: static; }
   .build-view { top: 8px; }
 }
+
+/* сценарії: компактний пристрій, щоб sticky-колонка влазила у вікно */
+#antennaCanvas { width: 96px; height: 120px; }
+#screenCanvas { width: clamp(190px, calc((100vh - 440px) * 0.448 + 20px), 300px); }
+#screenCanvas.ink { width: clamp(190px, calc((100vh - 440px) * 0.513 + 20px), 266px); }
+.scr-nav { margin: 10px 0; }
+.scr-desc { min-height: 0; }
+/* вкладки */
+.tabs { display: flex; gap: 4px; background: var(--surface); border-radius: var(--r); padding: 4px; margin-bottom: 14px; }
+.tabs button { flex: 1; background: none; border: 0; padding: 10px 12px; border-radius: 6px; font-size: 15px; font-weight: 600; color: var(--grey-700); cursor: pointer; }
+.tabs button.on { background: var(--paper); color: var(--ink); box-shadow: var(--lift-sm); }
+.tab-pane .lead.small { margin: 0 0 12px; }
+.tile b { overflow-wrap: anywhere; }
+.tiles { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.tile { min-height: 56px; }
+/* стрічка історії */
+.story-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.story-top span { font-weight: 600; font-size: 14px; }
+.story-top .btn { color: #fff; border-color: rgba(255,255,255,.25); background: transparent; }
+.story-steps { display: flex; gap: 4px; margin-bottom: 10px; }
+.story-steps button { flex: 1; height: 22px; border: 0; border-radius: 4px; background: rgba(255,255,255,.14); color: rgba(255,255,255,.7); font: 600 11px var(--mono); cursor: pointer; padding: 0; }
+.story-steps button.done { background: rgba(245,166,35,.45); color: #fff; }
+.story-steps button.cur { background: var(--signal); color: #fff; }
+.story-box #storyCap { font-size: 15px; line-height: 1.4; min-height: 42px; }
+@media (max-width: 900px) {
+  #screenCanvas { width: 220px; }
+  #screenCanvas.ink { width: 220px; }
+  .tabs button { font-size: 14px; padding: 9px 6px; }
+}
